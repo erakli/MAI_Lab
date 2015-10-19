@@ -18,9 +18,6 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Matrix\Matrix_classes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Integrator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -35,16 +32,8 @@
     <ClCompile Include="Integrator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Matrix\Matrix_classes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test_DormanPrince.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MyForm.resx">
-      <Filter>Resource Files</Filter>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>
