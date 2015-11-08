@@ -55,7 +55,11 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>..\Matrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+=======
+      <AdditionalIncludeDirectories>..\Matrix\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+>>>>>>> origin/master
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
