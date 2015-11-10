@@ -1,23 +1,45 @@
+#pragma once
 #include "Model.h"
 
-/* В разработке. Нужно прокомментировать */
-
+/*	Базовый класс для моделей маятников	*/
 class TPendulum : public TModel
 {
 protected:
-	TYPE length, angle, mass;
-	TYPE g;
-public:
-	TPendulum(){ g = 9.81; };
-};
-
-class TMathPendulum : public TPendulum
-{
-protected:
-	TYPE Omega0;
+	TYPE mass,
+		g; // гравитационная постоянная
 public:
 	TYPE Period;
 
-	TMathPendulum(TYPE l, TYPE ang, TYPE m);
+	TPendulum();
+};
+
+
+/*	Математический маятник	*/
+class TMathPendulum : public TPendulum
+{
+private:
+	TYPE
+		Omega0,	// циклическая частота
+		fading; // коэффициент затухания
+
+public:
+	TMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad = 0);
+	TVector getRight(TVector &X, TYPE t) const;
+};
+
+
+/*	Пружинный маятник	*/
+class TSpringPendulum : public TPendulum
+{
+private:
+	TYPE
+		Omega,	// коэффициент в силе упругости, соотнесённый с массой (k / m)
+		k,		// коэффициент упругости
+		coeff;	// коэффициент в силе трения, соотн. с массой (mu / m)
+		
+	bool bForceType; // тип трения
+
+public:
+	TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k, TYPE coeff = 0, bool bForceType = false);
 	TVector getRight(TVector &X, TYPE t) const;
 };

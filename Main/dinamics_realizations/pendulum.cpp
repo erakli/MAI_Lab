@@ -1,32 +1,74 @@
 #include "pendulum.h"
 
-#define PI	3.14159265358979323846
+/* * * * * * * * * * TPendulum * * * * * * * * * */
 
-/* В разработке. Нужно прокомментировать */
+TPendulum::TPendulum(){
+	
+	g = 9.81;
 
-TMathPendulum::TMathPendulum(TYPE l, TYPE ang, TYPE m){
-	t0 = 0;
+};
+
+
+/* * * * * * * * * * TMathPendulum * * * * * * * * * */
+
+TMathPendulum::TMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad){
+	
 	StartValues.setSize(2);
 	s_size = StartValues.getSize();
+	
+	fading = fad; // задаём значение коэффициента затухания
 
-	length = l;
-	angle = ang;
-	mass = m;
+	Omega0 = g / leng; // квадрат циклической частоты
 
-	Omega0 = sqrt(g / length);
+	Period = 2 * PI * sqrt(leng / g);
 
-	Period = 2 * PI * sqrt(length / g);
-
-	StartValues[0] = angle * PI / 180;	// fi in rad			// fi
-	StartValues[1] = Omega0;	// fi'
+	StartValues[0] = ang * PI / 180;	// fi in rad
+	StartValues[1] = 0;					// fi'
 }
 
 TVector TMathPendulum::getRight(TVector &X, TYPE t) const{
 	TVector Y(s_size);
 
-	Y[0] = X[1];					// p = fi'
-	Y[1] = -pow(X[1], 2) * sin(X[0]);
+	Y[0] = X[1];									// p = fi'
+	Y[1] = -Omega0 * sin(X[0]) - 2 * fading * X[1];	// p' = fi"
 
 	return Y;
 }
 
+
+
+/* * * * * * * * * * TSpringPendulum * * * * * * * * * */
+
+TSpringPendulum::TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k,
+	TYPE coeff, bool bForceType){
+
+	StartValues.setSize(2);
+	s_size = StartValues.getSize();
+
+	this->k = k; // задаём значение коэффициента упругости
+
+	Omega = k / mass;
+	Period = 2 * PI * sqrt(mass / k);
+
+	// сила трения скольжения или вязкое трение? (по-умолчанию коэффициент = 0)
+	(bForceType) ? this->coeff = coeff : this->coeff = coeff / mass;
+	
+	this->bForceType = bForceType;
+
+	StartValues[0] = StartPos;	// x
+	StartValues[1] = 0;			// x'
+}
+
+TVector TSpringPendulum::getRight(TVector &X, TYPE t) const{
+	TVector Y(s_size);
+
+	Y[0] = X[1];			// p  = x'
+	Y[1] = -Omega * X[0];	// p' = x"
+	if (!bForceType)
+	{
+		// дописать вычитание сил трения
+	}
+	
+
+	return Y;
+}

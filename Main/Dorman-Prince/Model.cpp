@@ -3,7 +3,8 @@
 /* * * * * * * * * * TModel * * * * * * * * * */
 
 TModel::TModel(){
-	Interval = 1; // перенести на ручной ввод
+	Interval = 0.1; // перенести на ручной ввод
+	t0 = 0;
 	t1 = 5;
 }
 
@@ -69,7 +70,7 @@ void TModel::set_t1(const TYPE &arg){
 /* * * * * * * * * * TArenstorfModel * * * * * * * * * */
 
 TArenstorfModel::TArenstorfModel(int variant){
-	t0 = 0;
+
 	StartValues.setSize(4);
 	s_size = StartValues.getSize();
 

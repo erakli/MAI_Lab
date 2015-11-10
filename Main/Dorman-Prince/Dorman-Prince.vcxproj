@@ -87,6 +87,7 @@
     <ClInclude Include="Model.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
     <ClCompile Include="file_output.cpp" />
     <ClCompile Include="Integrator.cpp" />
     <ClCompile Include="Model.cpp" />

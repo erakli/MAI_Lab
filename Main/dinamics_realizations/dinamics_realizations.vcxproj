@@ -66,7 +66,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="model_tests.cpp" />
+    <ClCompile Include="..\Dorman-Prince\file_output.cpp" />
+    <ClCompile Include="..\Dorman-Prince\Integrator.cpp" />
+    <ClCompile Include="..\Dorman-Prince\Model.cpp" />
+    <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="test_model.cpp" />
     <ClCompile Include="pendulum.cpp" />
   </ItemGroup>
   <ItemGroup>

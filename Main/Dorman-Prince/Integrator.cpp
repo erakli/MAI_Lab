@@ -38,8 +38,9 @@ TDormanPrince::TDormanPrince(){
 	set_b1();
 	setA();
 
-	Eps = 0;
-	Eps_Max = 1.0e-5;
+	Step = 1.0e-3;
+	Eps = 1.0e-5;
+	Eps_Max = 1.0e-17;
 	Eps_Global = 0;
 
 	iter = 0; // количество итераций
