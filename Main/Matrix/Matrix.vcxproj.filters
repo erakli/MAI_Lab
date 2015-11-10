@@ -18,9 +18,6 @@
     <ClInclude Include="Matrix_classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Dorman-Prince\Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Matrix_classes.cpp">

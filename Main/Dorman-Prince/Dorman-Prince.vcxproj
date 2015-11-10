@@ -55,11 +55,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-<<<<<<< HEAD
       <AdditionalIncludeDirectories>..\Matrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-=======
       <AdditionalIncludeDirectories>..\Matrix\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
->>>>>>> origin/master
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -85,11 +82,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="file_output.h" />
     <ClInclude Include="Integrator.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="file_output.cpp" />
     <ClCompile Include="Integrator.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="test_DormanPrince.cpp" />

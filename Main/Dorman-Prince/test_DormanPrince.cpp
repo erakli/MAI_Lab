@@ -1,15 +1,4 @@
-#include <windows.h>
-#include <ShellAPI.h>
-
-#include <iostream>
-#include <fstream>
-
-#include "Integrator.h"
-
-#define FILE "output.txt"
-#define DELAY 1000
-
-using namespace std;
+#include "file_output.h"
 
 int main(){
 	// ------------------------------------------------------------ Интерфейс
@@ -46,39 +35,5 @@ int main(){
 	// делаем вывод результатов в файл
 	TMatrix Result(Model.getResult());
 
-	ofstream fout/*, ftest("test.txt")*/;
-	fout.open(FILE);
-	if (!fout.is_open())
-	{
-		cout << "File couldn't been created";
-		system("pause");
-		exit;
-	}
-
-	for (int i = 0; i < Result.getRowCount(); i++)
-	{
-		for (int j = 0; j < Result.getColCount(); j++)
-		{
-			fout << Result[i][j] << "	";
-		}
-		/*ftest <<
-			cos(i) / pow(1 + exp(2 * i), 0.5) << "	" <<
-			sin(i) / pow(1 + exp(2 * i), 0.5) << "\n";*/
-		//ftest << pow(i, 2) / 2 << "\n";
-		//ftest << pow(Result[i][0], 3) / 3 << "\n";
-		fout << "\n";
-	}
-
-	//ftest.close();
-	fout.close();
-	
-	// ------------------------------------------------------------ Интерфейс
-	cout << "\n\nProcess have been ended. \n	Number of iterations: " 
-		<< Dorman.get_iter()
-		<< "\n	Global Eps: " << Dorman.getEps_Global()
-		<< "\n\nNow would be opened result file\n";
-	Sleep(DELAY);
-	// ------------------------------------------------------------ Интерфейс
-
-	ShellExecute(NULL, TEXT("open"), TEXT(FILE), NULL, NULL, SW_RESTORE);
+	Dorman_to_file(Result, Dorman);
 };

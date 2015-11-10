@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B19CF55-4ADE-4FEB-B80C-2B03067BAF9D}</ProjectGuid>
     <RootNamespace>dinamics_realizations</RootNamespace>
+    <ProjectName>dynamics_realizations</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -65,6 +66,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="model_tests.cpp" />
     <ClCompile Include="pendulum.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +76,9 @@
     <ProjectReference Include="..\Matrix\Matrix.vcxproj">
       <Project>{ef706f73-91af-4e82-89b3-61911ec626e9}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pendulum.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

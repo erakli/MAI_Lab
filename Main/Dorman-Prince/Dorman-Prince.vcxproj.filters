@@ -21,7 +21,7 @@
     <ClInclude Include="Integrator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Types.h">
+    <ClInclude Include="file_output.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test_DormanPrince.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
