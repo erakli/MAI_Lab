@@ -22,6 +22,8 @@ TMathPendulum::TMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad){
 
 	Period = 2 * PI * sqrt(leng / g);
 
+	set_t1(Period * 5); // сразу задаём граничное значение, равное 5 периодам
+
 	StartValues[0] = ang * PI / 180;	// fi in rad
 	StartValues[1] = 0;					// fi'
 }
@@ -47,11 +49,21 @@ TSpringPendulum::TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k,
 
 	this->k = k; // задаём значение коэффициента упругости
 
-	Omega = k / mass;
+	Omega = k / mass; // квадрат круговой частоты (собственная частота)
 	Period = 2 * PI * sqrt(mass / k);
 
+	set_t1(Period * 5); // сразу задаём граничное значение, равное 5 периодам
+
 	// сила трения скольжения или вязкое трение? (по-умолчанию коэффициент = 0)
-	(bForceType) ? this->coeff = coeff : this->coeff = coeff / mass;
+		/* 
+			Для вязкого трения мы вводим не обобщённый коэффициент 
+			mu, а параметр "кси" (коэффициент затухания), делая подстановку
+				mu / m = 2 * ksi
+
+			В данном случае коэффициентом будет выступать коэф. пропорциональности
+			для "кси" по отношению к циклической частоте Omega^0.5
+		*/
+	(!bForceType) ? this->coeff = coeff : this->coeff = coeff * sqrt(Omega);
 	
 	this->bForceType = bForceType;
 
@@ -70,10 +82,13 @@ TVector TSpringPendulum::getRight(TVector &X, TYPE t) const{
 	Y[1] = -Omega * X[0];			// p' = x"
 
 	// Вычитаем силу трения
-	if ((!bForceType) && (coeff != 0))
-		Y[1] -= coeff * g * sign;
-	else
-		Y[1] -= coeff * X[1];
+	if (coeff != 0)
+	{
+		if (!bForceType)
+			Y[1] -= coeff * g * sign;
+		else
+			Y[1] -= 2 * coeff * X[1];
+	}
 
 	return Y;
 }
