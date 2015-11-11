@@ -60,15 +60,20 @@ TSpringPendulum::TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k,
 }
 
 TVector TSpringPendulum::getRight(TVector &X, TYPE t) const{
+
+	// знак скорости (сила трения противоположно-направлена)
+	const short int sign = (X[1] > 0) - (X[1] < 0);
+
 	TVector Y(s_size);
 
-	Y[0] = X[1];			// p  = x'
-	Y[1] = -Omega * X[0];	// p' = x"
-	if (!bForceType)
-	{
-		// дописать вычитание сил трения
-	}
-	
+	Y[0] = X[1];					// p  = x'
+	Y[1] = -Omega * X[0];			// p' = x"
+
+	// Вычитаем силу трения
+	if ((!bForceType) && (coeff != 0))
+		Y[1] -= coeff * g * sign;
+	else
+		Y[1] -= coeff * X[1];
 
 	return Y;
 }

@@ -9,13 +9,13 @@ int main(){
 
 	TDormanPrince Integrator;
 
-	cout << " * * * Basic laws of physics * * *\n\n";
+	cout << " * * * Basic laws of physics * * *";
 
 	bool cont;
 	do
 	{
-		cout << "What pendulum are we testing? (Mathematical/String) ";
-		int bMath;
+		bool bMath;
+		cout << "\n\nWhat pendulum are we testing? (Mathematical - 0/String - 1) ";
 		cin >> bMath; cout << "\n";
 
 		// выбор тестируемого маятника
@@ -53,6 +53,31 @@ void Mathematical(TDormanPrince &Integrator){
 
 void Spring(TDormanPrince &Integrator){
 
+	TYPE StartPos, mass, k, coeff;
+	bool bForceType(false);
 
+	cout << "Testing spring pendulum\n\n"
+		<< "	Starting position: "; cin >> StartPos;
+
+	cout << "	Mass: "; cin >> mass;
+
+	cout << "	Elasticity coefficient: "; cin >> k;
+
+	cout << "	Friction coefficient: "; cin >> coeff;
+
+	if (coeff != 0)
+	{
+		cout << "	Friction force type (slide - 0/viscous - 1): ";
+		cin >> bForceType;
+	}
+
+	TSpringPendulum SpringPendulum(StartPos, mass, k, coeff, bForceType);
+
+	SpringPendulum.set_t1(SpringPendulum.Period * 5);
+
+	Integrator.Run(SpringPendulum);
+
+	TMatrix Result(SpringPendulum.getResult());
+	Dorman_to_file(Result, Integrator, true);
 
 }	// end of Spring(...)
