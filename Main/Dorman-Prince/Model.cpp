@@ -6,6 +6,10 @@ TModel::TModel(){
 	Interval = 0.1; // перенести на ручной ввод
 	t0 = 0;
 	t1 = 5;
+
+	stop_count = 0;
+	stop_count_max = 5;
+	stop_flag = false;
 }
 
 void TModel::addResult(TVector &X, TYPE t){

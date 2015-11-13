@@ -70,7 +70,10 @@ void TDormanPrince::Run(TModel &Mod){
 	while (t < Model->get_t1())
 	{
 		// необходим контроль количества итераций
-		iter++;
+		if (iter < 50000) iter++;
+		else
+			break;
+
 		set_k(x_size);
 
 		TVector sum(x_size), sum_1(sum);
@@ -97,9 +100,12 @@ void TDormanPrince::Run(TModel &Mod){
 		StepCorrection();	
 
 		// если мы не довольны ошибкой, уточняем шаг с текущим t
-		if (Eps > Eps_Max)	continue;
+		if (Eps > Eps_Max)	continue; // ------------------- основной перевалочный пункт
 
 		Eps_Global += Eps; // считаем глобальную погрешность как сумму локальных
+
+		// если приращение координаты менее заданного условия прерываем процесс
+		if (Model->Stop_Calculation(t, PrevStep, x0, x1)) break;
 
 		/*
 			Плотная выдача. Результаты уходят в матрицу

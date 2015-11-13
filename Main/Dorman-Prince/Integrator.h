@@ -50,7 +50,7 @@ private:
 	void set_b();
 	void set_b1();
 
-	int iter; // счётчик количества итераций
+	unsigned int iter; // счётчик количества итераций
 
 public:
 

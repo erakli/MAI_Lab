@@ -11,6 +11,7 @@ public:
 	TYPE Period;
 
 	TPendulum();
+	bool Stop_Calculation(TYPE t, TYPE Step, TVector &PrevStep, TVector &CurStep);
 };
 
 
@@ -25,6 +26,7 @@ private:
 public:
 	TMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad = 0);
 	TVector getRight(TVector &X, TYPE t) const;
+
 };
 
 
@@ -42,4 +44,5 @@ private:
 public:
 	TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k, TYPE coeff = 0, bool bForceType = false);
 	TVector getRight(TVector &X, TYPE t) const;
+
 };

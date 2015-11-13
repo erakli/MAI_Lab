@@ -5,6 +5,8 @@
 void Mathematical(TDormanPrince &Integrator);
 void Spring(TDormanPrince &Integrator);
 
+void Set_Periods(TYPE &num);
+
 int main(){
 
 	TDormanPrince Integrator;
@@ -26,9 +28,10 @@ int main(){
 
 }	// end of main()
 
+// Тестирование математического маятника
 void Mathematical(TDormanPrince &Integrator){
 
-	int num_of_rounds = 5; // количество периодов
+	TYPE num_of_rounds = 5; // количество периодов
 
 	TYPE l, ang, m, fad;
 
@@ -41,7 +44,7 @@ void Mathematical(TDormanPrince &Integrator){
 
 	cout << "	Fading coefficient: "; cin >> fad;
 
-	if (fad != 0) num_of_rounds = 10;
+	if (fad != 0) Set_Periods(num_of_rounds);
 
 	TMathPendulum MathPendulum(l, ang, m, fad);
 
@@ -54,9 +57,10 @@ void Mathematical(TDormanPrince &Integrator){
 
 }	// end of Mathematical(...)
 
+// Тестирование пружинного маятника
 void Spring(TDormanPrince &Integrator){
 
-	int num_of_rounds = 5; // количество периодов
+	TYPE num_of_rounds = 5; // количество периодов
 
 	TYPE StartPos, mass, k, coeff(0);
 	bool bForceType(false), bFriction;
@@ -73,8 +77,6 @@ void Spring(TDormanPrince &Integrator){
 	// формируем коэффициент для одной из сил трения
 	if (bFriction)
 	{
-		num_of_rounds = 10;
-
 		cout << "		Friction force type (slide - 0/viscous - 1): ";
 		cin >> bForceType;
 
@@ -84,6 +86,8 @@ void Spring(TDormanPrince &Integrator){
 			cout << "		Fading coefficient (0.2 for \"water\", 0.01 for \"air\"): ";
 
 		cin >> coeff;
+
+		Set_Periods(num_of_rounds);
 	}
 
 	TSpringPendulum SpringPendulum(StartPos, mass, k, coeff, bForceType);
@@ -96,3 +100,11 @@ void Spring(TDormanPrince &Integrator){
 	Dorman_to_file(Result, Integrator);
 
 }	// end of Spring(...)
+
+// Дополнительная функция для задания количества периодов
+void Set_Periods(TYPE &num){
+	cout << "\n	Type number of pendulum's motion periods (0 - automaticaly): ";
+	cin >> num;
+
+	if (num <= 0) num = 10;
+}

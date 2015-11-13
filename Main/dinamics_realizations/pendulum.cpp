@@ -8,6 +8,27 @@ TPendulum::TPendulum(){
 
 };
 
+bool TPendulum::Stop_Calculation(TYPE t, TYPE Step, TVector &PrevStep, TVector &CurStep){
+
+	TYPE delta = abs(PrevStep[0] - CurStep[0]);
+
+	if (delta <= stop_condition)
+	{
+		stop_count++;
+		if (stop_count >= stop_count_max)
+		{
+			addResult(PrevStep, t);
+			addResult(CurStep, t + Step);
+
+			stop_flag = true;
+			return stop_flag;
+		}
+	}
+	//else if (stop_count > 0) stop_count = 0;
+
+	return false;
+
+}
 
 /* * * * * * * * * * TMathPendulum * * * * * * * * * */
 
@@ -26,6 +47,9 @@ TMathPendulum::TMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad){
 
 	StartValues[0] = ang * PI / 180;	// fi in rad
 	StartValues[1] = 0;					// fi'
+
+	stop_condition = 1.0e-15; // нужно уточнить!
+
 }
 
 TVector TMathPendulum::getRight(TVector &X, TYPE t) const{
@@ -69,6 +93,8 @@ TSpringPendulum::TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k,
 
 	StartValues[0] = StartPos;	// x
 	StartValues[1] = 0;			// x'
+
+	stop_condition = 1.0e-15;
 }
 
 TVector TSpringPendulum::getRight(TVector &X, TYPE t) const{
