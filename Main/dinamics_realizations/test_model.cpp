@@ -2,14 +2,14 @@
 
 #include "pendulum.h"
 
-void Mathematical(TDormanPrince &Integrator);
-void Spring(TDormanPrince &Integrator);
+void Mathematical(CDormanPrince &Integrator);
+void Spring(CDormanPrince &Integrator);
 
 void Set_Periods(TYPE &num);
 
 int main(){
 
-	TDormanPrince Integrator;
+	CDormanPrince Integrator;
 
 	cout << " * * * Basic laws of physics * * *";
 
@@ -29,7 +29,7 @@ int main(){
 }	// end of main()
 
 // Тестирование математического маятника
-void Mathematical(TDormanPrince &Integrator){
+void Mathematical(CDormanPrince &Integrator){
 
 	TYPE num_of_rounds = 5; // количество периодов
 
@@ -46,19 +46,19 @@ void Mathematical(TDormanPrince &Integrator){
 
 	if (fad != 0) Set_Periods(num_of_rounds);
 
-	TMathPendulum MathPendulum(l, ang, m, fad);
+	CMathPendulum MathPendulum(l, ang, m, fad);
 
 	MathPendulum.set_t1(MathPendulum.Period * num_of_rounds);
 
 	Integrator.Run(MathPendulum);
 
-	TMatrix Result(MathPendulum.getResult());
+	CMatrix Result(MathPendulum.getResult());
 	Dorman_to_file(Result, Integrator, false);
 
 }	// end of Mathematical(...)
 
 // Тестирование пружинного маятника
-void Spring(TDormanPrince &Integrator){
+void Spring(CDormanPrince &Integrator){
 
 	TYPE num_of_rounds = 5; // количество периодов
 
@@ -90,13 +90,13 @@ void Spring(TDormanPrince &Integrator){
 		Set_Periods(num_of_rounds);
 	}
 
-	TSpringPendulum SpringPendulum(StartPos, mass, k, coeff, bForceType);
+	CSpringPendulum SpringPendulum(StartPos, mass, k, coeff, bForceType);
 
 	SpringPendulum.set_t1(SpringPendulum.Period * num_of_rounds);
 
 	Integrator.Run(SpringPendulum);
 
-	TMatrix Result(SpringPendulum.getResult());
+	CMatrix Result(SpringPendulum.getResult());
 	Dorman_to_file(Result, Integrator);
 
 }	// end of Spring(...)

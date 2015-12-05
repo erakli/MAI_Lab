@@ -9,23 +9,23 @@ namespace LinearAlgebra{
 
 using namespace LinearAlgebra;
 
-class TMatrix;
-class TSymmetricMatrix;
+class CMatrix;
+class CSymmetricMatrix;
 
 // класс для вектора ----------------------------------
-class TVector : public BaseVector
+class CVector : public BaseVector
 {
 public:
 	// constructor пустой
-	TVector() : BaseVector(){ 
+	CVector() : BaseVector(){ 
 	} 
 
 	// создаём вектор заданной длины
-	TVector(int n) : BaseVector(n){ 
+	CVector(int n) : BaseVector(n){ 
 	} 
 
 	// конструктор копии вектора arg
-	TVector(const BaseVector &arg) : BaseVector(arg){ 
+	CVector(const BaseVector &arg) : BaseVector(arg){ 
 	} 
 
 	TYPE getElement(int i) const;
@@ -35,32 +35,34 @@ public:
 	void setElement(int i, TYPE value);
 	void setSize(int i);
 
-	TVector operator + (const TVector &arg);
+	CVector operator + (const CVector &arg);
+	const CVector operator + (const CVector &arg) const;
 
-	TVector operator * (const TYPE num);
-	TYPE operator * (const TVector &arg);
-	TVector operator * (const TMatrix &arg);
+	CVector operator * (const TYPE num);
+	const CVector operator * (const TYPE num) const;
+	TYPE operator * (const CVector &arg);
+	CVector operator * (const CMatrix &arg);
 
 	// векторное произведение
-	TVector crossProduct(const TVector &b);
+	CVector crossProduct(const CVector &b);
 };
 
 
 // класс для матрицы ----------------------------------
-class TMatrix : protected BaseMatrix
+class CMatrix : protected BaseMatrix
 {
 public:
 	// путсой конструктор
-	TMatrix() : BaseMatrix(){ 
+	CMatrix() : BaseMatrix(){ 
 	}
 
 	// constructor
-	TMatrix(int n, int m) : BaseMatrix(){ 
+	CMatrix(int n, int m) : BaseMatrix(){ 
 		this->setSize(n, m);
 	}
 
 	// конструктор копии
-	TMatrix(const TMatrix &arg) : BaseMatrix(arg){ 	
+	CMatrix(const CMatrix &arg) : BaseMatrix(arg){ 	
 	} 
 
 	TYPE getElement(int i, int j) const;
@@ -73,41 +75,41 @@ public:
 	void setSize(int n, int m);
 	void setElement(int n, int m, TYPE value);
 
-	TMatrix flip();
-	TMatrix inverse(); // обратная матрица методом Гаусса
+	CMatrix flip();
+	CMatrix inverse(); // обратная матрица методом Гаусса
 
 	TYPE detGauss() const;
 	bool PositiveDef() const;
 
 	BaseVector &operator [] (int i);
-	const BaseVector &operator [] (int i) const;
+	const BaseVector &operator [] (int i) const;  // проверить, нужна ли здесь ссылка
 
-	TMatrix operator + (const TMatrix &arg);
+	CMatrix operator + (const CMatrix &arg);
 
-	TMatrix operator * (const TYPE num); // матрица на число
-	TVector operator * (const TVector &arg);
-	TMatrix operator * (const TMatrix &arg);
+	CMatrix operator * (const TYPE num); // матрица на число
+	CVector operator * (const CVector &arg);
+	CMatrix operator * (const CMatrix &arg);
 
-	TMatrix &operator = (const TMatrix &arg);
+	CMatrix &operator = (const CMatrix &arg);
 };
 
-class TSymmetricMatrix : public TMatrix
+class CSymmetricMatrix : public CMatrix
 {
 public:
-	TSymmetricMatrix() : TMatrix(){
+	CSymmetricMatrix() : CMatrix(){
 	}
 
 	// конструктор
-	TSymmetricMatrix(int n) : TMatrix(){
+	CSymmetricMatrix(int n) : CMatrix(){
 		this->setSize(n, n);
 	}
 
 	// конструктор копии
-	TSymmetricMatrix(const TMatrix &arg) : TMatrix(arg){
+	CSymmetricMatrix(const CMatrix &arg) : CMatrix(arg){
 	}
 
 	// обратная матрица методом Холецкого
-	TMatrix inverse();
+	CMatrix inverse();
 
 	void setElement(int n, int m, TYPE value);
 };

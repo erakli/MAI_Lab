@@ -1,8 +1,8 @@
 #include "Model.h"
 
-/* * * * * * * * * * TModel * * * * * * * * * */
+/* * * * * * * * * * CModel * * * * * * * * * */
 
-TModel::TModel(){
+CModel::CModel(){
 	Interval = 0.1; // перенести на ручной ввод
 	t0 = 0;
 	t1 = 5;
@@ -12,9 +12,9 @@ TModel::TModel(){
 	stop_flag = false;
 }
 
-void TModel::addResult(TVector &X, TYPE t){
+void CModel::addResult(CVector &X, TYPE t){
 	int Row = Result.getRowCount();
-	TVector compile(s_size + 1); // вектор результата + время
+	CVector compile(s_size + 1); // вектор результата + время
 
 	/*
 		по хорошему, стоит ввести обработчик, 
@@ -33,39 +33,39 @@ void TModel::addResult(TVector &X, TYPE t){
 }
 
 // ----- свойства
-TVector TModel::getStart() const{
+CVector CModel::getStart() const{
 	return StartValues;
 }
 
-TYPE TModel::getInterval() const{
+TYPE CModel::getInterval() const{
 	return Interval;
 }
 
-TYPE TModel::get_t0() const{
+TYPE CModel::get_t0() const{
 	return t0;
 }
 
-TYPE TModel::get_t1() const{
+TYPE CModel::get_t1() const{
 	return t1;
 }
 
-TMatrix TModel::getResult() const{
+CMatrix CModel::getResult() const{
 	return Result;
 }
 
-void TModel::setStart(TVector &arg){
+void CModel::setStart(CVector &arg){
 	StartValues = arg;
 }
 
-void TModel::setInterval(const TYPE &arg){
+void CModel::setInterval(const TYPE &arg){
 	Interval = arg;
 }
 
-void TModel::set_t0(const TYPE &arg){
+void CModel::set_t0(const TYPE &arg){
 	t0 = arg;
 }
 
-void TModel::set_t1(const TYPE &arg){
+void CModel::set_t1(const TYPE &arg){
 	t1 = arg;
 }
 // ----- конец свойств
@@ -98,8 +98,8 @@ TArenstorfModel::TArenstorfModel(int variant){
 	}
 }
 
-TVector TArenstorfModel::getRight(TVector &X, TYPE t) const{
-	TVector Y(s_size);
+CVector TArenstorfModel::getRight(CVector &X, TYPE t) const{
+	CVector Y(s_size);
 	TYPE
 		R[2] = 
 		{

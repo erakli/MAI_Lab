@@ -8,7 +8,7 @@ int main(){
 	cin >> orbit;
 	// ------------------------------------------------------------ Интерфейс
 
-	TDormanPrince Dorman;
+	CDormanPrince Dorman;
 
 	Dorman.setStep(1.0e-3);  // задали величину шага
 	Dorman.setEps_Max(1.0e-17); // задали максимально допустимую погрешность
@@ -33,7 +33,7 @@ int main(){
 	Dorman.Run(Model); 
 
 	// делаем вывод результатов в файл
-	TMatrix Result(Model.getResult());
+	CMatrix Result(Model.getResult());
 
 	Dorman_to_file(Result, Dorman);
 };

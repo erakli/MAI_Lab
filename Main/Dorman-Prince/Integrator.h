@@ -7,31 +7,31 @@
 class TIntegrator{
 protected:
 	TYPE Step, t;
-	TModel *Model;
+	CModel *Model;
 public:
 	TIntegrator();
 
 	TYPE getStep() const;
 	void setStep(const TYPE &arg);
 
-	virtual void Run(TModel &Mod) = 0; // pure virtual function
+	virtual void Run(CModel &Mod) = 0; // pure virtual function
 };
 
-class TDormanPrince : public TIntegrator{
+class CDormanPrince : public TIntegrator{
 private:
-	TVector
+	CVector
 		c,  // вектор-столбец слева от таблицы
 		b,  // вектор-строка снизу таблицы
 		b1;  // вектор-строка ниже b
-	TMatrix A;  // так называемая нижне тругольная матрица Бутчера
-	TVector k[SIZE];  // вспомогательные коэффициенты
+	CMatrix A;  // так называемая нижне тругольная матрица Бутчера
+	CVector k[SIZE];  // вспомогательные коэффициенты
 
 	TYPE
 		Eps, // Относительная вычислительная ошибка (локальная погрешность)
 		Eps_Max, // максимальная относительная вычислительная ошибка 
 		Eps_Global;
 
-	TVector 
+	CVector 
 		x0, // начальные значения
 		x1, _x1; // конечные для шага (4 и 5 порядка)
 
@@ -43,7 +43,7 @@ private:
 
 	void set_k(int size);
 
-	TVector thick_extradition(TYPE &Teta, TYPE &Step); // плотная выдача
+	CVector thick_extradition(TYPE &Teta, TYPE &Step); // плотная выдача
 
 	void set_c();
 	void setA();
@@ -54,8 +54,8 @@ private:
 
 public:
 
-	TDormanPrince();
-	void Run(TModel &Mod);
+	CDormanPrince();
+	void Run(CModel &Mod);
 
 	void setEps_Max(const TYPE &arg);
 	void setEps(const TYPE &arg);

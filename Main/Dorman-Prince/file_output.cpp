@@ -7,7 +7,7 @@
 #define FILE "output"
 #define EXTENSION ".txt"
 
-void Dorman_to_file(const TMatrix &Result, const TDormanPrince &Integrator,
+void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 					bool radians){
 
 	static short int FirstNum = 0, SecondNum = 0;

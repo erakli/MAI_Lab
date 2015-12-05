@@ -5,22 +5,22 @@ using namespace std;
 
 static double ClearZero(const double &arg);
 
-void Show(const TVector &vec);
-void Show(const TMatrix &arg);
+void Show(const CVector &vec);
+void Show(const CMatrix &arg);
 
-void Fill(TVector &vec);
-void Fill(TMatrix &arg);
+void Fill(CVector &vec);
+void Fill(CMatrix &arg);
 
-void Second(const TVector &vec, TVector &n_vec);
-void Second(const TMatrix &arg, TMatrix &n_arg);
-void Second(TVector &n_vec);
-void Second(TMatrix &arg);
+void Second(const CVector &vec, CVector &n_vec);
+void Second(const CMatrix &arg, CMatrix &n_arg);
+void Second(CVector &n_vec);
+void Second(CMatrix &arg);
 
 void Vector();
 void Matrix();
 
-void Test(int n, TMatrix &arg);
-void inverseCheck(const TMatrix &arg, TMatrix &test);
+void Test(int n, CMatrix &arg);
+void inverseCheck(const CMatrix &arg, CMatrix &test);
 
 int main(){
 
@@ -53,7 +53,7 @@ void Vector(){
 	int n;
 	cout << "Vector size: "; cin >> n;
 
-	TVector vec(n);
+	CVector vec(n);
 
 	//cout << "\nVector: ";
 	//Show(vec);
@@ -98,7 +98,7 @@ void Vector(){
 		case 4: // 4. +
 		{
 			cout << "Let's do a little summation.\n";
-			TVector n_vec(n);
+			CVector n_vec(n);
 			Second(vec, n_vec);
 
 			cout << "\nResult = ";
@@ -125,14 +125,14 @@ void Vector(){
 			}
 			case 2: // 2. Vector
 			{
-				TVector n_vec(n);
+				CVector n_vec(n);
 				Second(vec, n_vec);
 				cout << "\nResult = " << vec * n_vec;
 				break;
 			}
 			case 3: // 3. Matrix
 			{
-				TMatrix n_matr(n, n);
+				CMatrix n_matr(n, n);
 				Second(n_matr);
 				cout << "\nResult = ";
 				vec = vec * n_matr;
@@ -147,7 +147,7 @@ void Vector(){
 		}
 		case 6: // 6. Cross Product
 		{
-			TVector n_vec(n);
+			CVector n_vec(n);
 			Second(vec, n_vec);
 			cout << "\nResult = ";
 			vec = vec.crossProduct(n_vec);
@@ -166,7 +166,7 @@ void Matrix(){
 	int Row, Col;
 	cout << "Matrix size (Row, Col): "; cin >> Row >> Col;
 
-	TMatrix matr(Row, Col);
+	CMatrix matr(Row, Col);
 
 	int mode;
 	cout << "Test or manual matrix? "; cin >> mode;
@@ -209,7 +209,7 @@ void Matrix(){
 
 			if (matr.checkSymmetric())
 			{	
-				TSymmetricMatrix temp(matr);
+				CSymmetricMatrix temp(matr);
 				temp.setElement(num - 1, num_2 - 1, value);
 				matr = temp;
 			}
@@ -231,7 +231,7 @@ void Matrix(){
 		case 4: // 4. +
 		{
 			cout << "Let's do a little summation.\n";
-			TMatrix n_matr(Row, Col);
+			CMatrix n_matr(Row, Col);
 			Second(matr, n_matr);
 
 			cout << "\nResult:\n";
@@ -251,13 +251,13 @@ void Matrix(){
 			case 1: // 1. Number
 			{
 				cout << "Number "; cin >> value;
-				cout << "\nResult = ";
+				cout << "\nResult:\n ";
 				Show(matr * value);
 				break;
 			}
 			case 2: // 2. Vector
 			{
-				TVector n_vec(Col);
+				CVector n_vec(Col);
 				Second(n_vec);
 				cout << "\nResult = ";
 				Show(matr * n_vec);
@@ -265,7 +265,7 @@ void Matrix(){
 			}
 			case 3: // 3. Matrix
 			{
-				TMatrix n_matr(Row, Col);
+				CMatrix n_matr(Row, Col);
 				Second(matr, n_matr);
 				cout << "\nResult:\n ";
 				matr = matr * n_matr;
@@ -298,8 +298,8 @@ void Matrix(){
 				bool Positive = matr.PositiveDef(); // положительно определена?
 				if (matr.checkSymmetric() && Positive)	// симметричная матрица?
 				{										
-					TSymmetricMatrix temp(matr);
-					TMatrix test_matrix(matr);
+					CSymmetricMatrix temp(matr);
+					CMatrix test_matrix(matr);
 					cout << "I'll show you inverse matrix, boy\n";
 					matr = temp.inverse();
 					inverseCheck(matr, test_matrix);
@@ -315,7 +315,7 @@ void Matrix(){
 							<< "\nWe'll do the inverse matrix thanks to Gauss\n\n";
 					}
 
-					TMatrix test_matrix(matr);
+					CMatrix test_matrix(matr);
 					matr = matr.inverse();
 					inverseCheck(matr, test_matrix);
 				}
@@ -350,14 +350,14 @@ static double ClearZero(const double &arg){
 	else return 0;
 }
 
-void Show(const TVector &vec){
+void Show(const CVector &vec){
 	int length = vec.getSize();
 	for (int i = 0; i < length; i++){
 		cout << ClearZero(vec[i]) << "	";
 	}
 }
 
-void Show(const TMatrix &arg){
+void Show(const CMatrix &arg){
 	int Row = arg.getRowCount(), Col = arg.getColCount();
 	for (int i = 0; i < Row; i++){
 		for (int j = 0; j < Col; j++)
@@ -368,7 +368,7 @@ void Show(const TMatrix &arg){
 	}
 }
 
-void Fill(TVector &vec){
+void Fill(CVector &vec){
 	int length = vec.getSize();
 	cout << "\nFill the vector (length = " << length << "): ";
 	for (int i = 0; i < length; i++){
@@ -376,7 +376,7 @@ void Fill(TVector &vec){
 	}
 }
 
-void Fill(TMatrix &arg){
+void Fill(CMatrix &arg){
 	int Row = arg.getRowCount(), Col = arg.getColCount();
 	cout << "\nFill the matrix [" << Row << "x" << Col <<"]:\n";
 	for (int i = 0; i < Row; i++){
@@ -387,7 +387,7 @@ void Fill(TMatrix &arg){
 	}
 }
 
-void Second(const TVector &vec, TVector &n_vec){
+void Second(const CVector &vec, CVector &n_vec){
 	cout << "How would look a second vector? (new/same) ";
 	int same;
 	cin >> same; cout << "\n";
@@ -406,7 +406,7 @@ void Second(const TVector &vec, TVector &n_vec){
 	}
 }
 
-void Second(const TMatrix &arg, TMatrix &n_arg){
+void Second(const CMatrix &arg, CMatrix &n_arg){
 	cout << "How would look a second matrix? (new/same) ";
 	int same;
 	cin >> same; cout << "\n";
@@ -425,14 +425,14 @@ void Second(const TMatrix &arg, TMatrix &n_arg){
 	}
 }
 
-void Second(TVector &n_vec){
+void Second(CVector &n_vec){
 	int size;
 	cout << "Vector size: "; cin >> size;
 	n_vec.setSize(size);
 	Fill(n_vec);
 }
 
-void Second(TMatrix &arg){
+void Second(CMatrix &arg){
 	int Row, Col;
 	cout << "Matrix size (Row, Col): "; cin >> Row >> Col;
 	arg.setSize(Row, Col);
@@ -440,7 +440,7 @@ void Second(TMatrix &arg){
 }
 
 // функции для проверки -----------------------------------
-void Test(int n, TMatrix &arg){
+void Test(int n, CMatrix &arg){
 	const int size = 4;
 	int Res[size][size] =
 	{
@@ -460,7 +460,7 @@ void Test(int n, TMatrix &arg){
 	}
 }
 
-void inverseCheck(const TMatrix &arg, TMatrix &test){
+void inverseCheck(const CMatrix &arg, CMatrix &test){
 	Show(arg);
 	cout << "\n\nNow we check inverse matrix (multiply it on original)";
 	cout << "\nOriginal:\n"; Show(test);

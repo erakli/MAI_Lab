@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <math.h>
 
-TVector SetValues(TYPE *values){
-	TVector Res(SIZE);
+CVector SetValues(TYPE *values){
+	CVector Res(SIZE);
 	for (int i = 0; i < SIZE; i++)
 	{
 		Res[i] = values[i];
@@ -23,8 +23,8 @@ void TIntegrator::setStep(const TYPE &arg){
 	Step = arg;
 }
 
-/* * * * * * * * * * TDormanPrince * * * * * * * * * */
-TDormanPrince::TDormanPrince(){
+/* * * * * * * * * * CDormanPrince * * * * * * * * * */
+CDormanPrince::CDormanPrince(){
 
 	// инициализируем все коэффициенты
 	c.setSize(SIZE);
@@ -50,7 +50,7 @@ TDormanPrince::TDormanPrince(){
 /*
 ------------- основная функция
 */
-void TDormanPrince::Run(TModel &Mod){
+void CDormanPrince::Run(CModel &Mod){
 
 	Model = &Mod; // Храним адрес модели для внутренних нужд
 
@@ -76,7 +76,7 @@ void TDormanPrince::Run(TModel &Mod){
 
 		set_k(x_size);
 
-		TVector sum(x_size), sum_1(sum);
+		CVector sum(x_size), sum_1(sum);
 
 		for (int i = 0; i < x_size; i++) // проходим по элементам вектора Х
 		{
@@ -112,7 +112,7 @@ void TDormanPrince::Run(TModel &Mod){
 			результатов модели
 		*/
 		TYPE Teta;
-		TVector Xout; // сюда записываются значения с учётом коэф. плотной выдачи
+		CVector Xout; // сюда записываются значения с учётом коэф. плотной выдачи
 		while ((tout < t + PrevStep) && (tout < Model->get_t1()))
 		{
 			Teta = (tout - t) / PrevStep;
@@ -129,7 +129,7 @@ void TDormanPrince::Run(TModel &Mod){
 /*
 ------------- Вычисление k-элементов
 */
-void TDormanPrince::set_k(int size){
+void CDormanPrince::set_k(int size){
 
 	k[0] = Model->getRight(x0, t);
 
@@ -138,7 +138,7 @@ void TDormanPrince::set_k(int size){
 		// инициализируем элементы-векторы вектора вспомогательных коэфф.
 		k[s].setSize(size);
 
-		TVector sum(size);
+		CVector sum(size);
 
 		for (int i = 0; i < s; i++) // проходим по строкам A, складывая их
 		{
@@ -161,14 +161,14 @@ void TDormanPrince::set_k(int size){
 ------------- Плотная выдача. 
 	Необходима для записи результатов на подшагах.
 */
-TVector TDormanPrince::thick_extradition(TYPE &Teta, TYPE &Step){
+CVector CDormanPrince::thick_extradition(TYPE &Teta, TYPE &Step){
 	TYPE sqrTeta;
 
 	sqrTeta = pow(Teta, 2); // квадрат от тета
 
 	const int b_size = 6;
 
-	TVector b(b_size);
+	CVector b(b_size);
 
 	b[0] = Teta *
 		(1.0 + Teta *
@@ -188,7 +188,7 @@ TVector TDormanPrince::thick_extradition(TYPE &Teta, TYPE &Step){
 		(-3.0 / 10 + Teta * (29.0 / 30 + Teta * (-17.0 / 24))) / 7;
 
 
-	TVector sum(x_size);
+	CVector sum(x_size);
 	for (int i = 0; i < x_size; i++)
 	{
 		for (int j = 0; j < b_size; j++)
@@ -204,7 +204,7 @@ TVector TDormanPrince::thick_extradition(TYPE &Teta, TYPE &Step){
 /*
 ------------- Коррекция текущего шага на основе погрешности
 */
-void TDormanPrince::StepCorrection(){
+void CDormanPrince::StepCorrection(){
 	TYPE min_part =
 			std::min<TYPE>
 			(5.0, pow(Eps / Eps_Max, 0.2) / 0.9);
@@ -215,10 +215,10 @@ void TDormanPrince::StepCorrection(){
 /*
 ------------- Получение локальной погрешности
 */
-void TDormanPrince::getEps(){
+void CDormanPrince::getEps(){
 
 	// числитель и знаменатель дроби под корнем
-	TVector numerator(x_size), denominator(x_size), fraction(x_size);
+	CVector numerator(x_size), denominator(x_size), fraction(x_size);
 	
 	TYPE u = RoundingError(); // вычисление ошибки округления
 
@@ -238,7 +238,7 @@ void TDormanPrince::getEps(){
 	
 }
 
-TYPE TDormanPrince::RoundingError(){
+TYPE CDormanPrince::RoundingError(){
 	TYPE v(1), u;
 
 	while (1 + v > 1)
@@ -251,12 +251,12 @@ TYPE TDormanPrince::RoundingError(){
 }
 
 // -------------- вспомогательные коэффициенты
-void TDormanPrince::set_c(){
+void CDormanPrince::set_c(){
 	TYPE prep[SIZE] = { 0, 0.2, 0.3, 0.8, 8.0 / 9, 1, 1 };
 	c = SetValues(prep);
 }
 
-void TDormanPrince::setA(){
+void CDormanPrince::setA(){
 	TYPE prep[SIZE][SIZE] =
 	{
 		{},
@@ -277,13 +277,13 @@ void TDormanPrince::setA(){
 	}
 }
 
-void TDormanPrince::set_b(){
+void CDormanPrince::set_b(){
 	TYPE prep[SIZE] = 
 	{ 35.0 / 384, 0, 500.0 / 1113, 125.0 / 192, -2187.0 / 6784, 11.0 / 84, 0 };
 	b = SetValues(prep);
 }
 
-void TDormanPrince::set_b1(){
+void CDormanPrince::set_b1(){
 	TYPE prep[SIZE] =
 	{ 5179.0 / 57600, 0, 7571.0 / 16695, 393.0 / 640, -92097.0 / 339200, 187.0 / 2100, 1.0 / 40 };
 	b1 = SetValues(prep);
@@ -291,22 +291,22 @@ void TDormanPrince::set_b1(){
 
 
 // ------------ инкапсуляция
-void TDormanPrince::setEps_Max(const TYPE &arg){
+void CDormanPrince::setEps_Max(const TYPE &arg){
 	Eps_Max = arg;
 }
 
-void TDormanPrince::setEps(const TYPE &arg){
+void CDormanPrince::setEps(const TYPE &arg){
 	Eps = arg;
 }
 
-TYPE TDormanPrince::getEps_Max() const{
+TYPE CDormanPrince::getEps_Max() const{
 	return Eps_Max;
 }
 
-TYPE TDormanPrince::get_iter() const{
+TYPE CDormanPrince::get_iter() const{
 	return iter;
 }
 
-TYPE TDormanPrince::getEps_Global() const{
+TYPE CDormanPrince::getEps_Global() const{
 	return Eps_Global;
 }

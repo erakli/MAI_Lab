@@ -1,12 +1,12 @@
 #include "Matrix_classes.h"
 #include <math.h>
-#include <string>
-#include <algorithm>
+//#include <string>
+//#include <algorithm>
 //#include <iostream>
 //
 //using namespace std;
 //
-//void Show(const TMatrix &arg){
+//void Show(const CMatrix &arg){
 //	cout << "\n";
 //	int Row = arg.getRowCount(), Col = arg.getColCount();
 //	for (int i = 0; i < Row; i++){
@@ -25,16 +25,17 @@
 
 
 /* * * * * * * * перегрузки для матриц * * * * * * * */
-BaseVector &TMatrix::operator [] (int i){
+BaseVector &CMatrix::operator [] (int i){
 	return BaseMatrix::operator [] (i);
 }
 
-const BaseVector &TMatrix::operator [] (int i) const{
+// проверить, нужна ли здесь ссылка
+const BaseVector &CMatrix::operator [] (int i) const{
 	return BaseMatrix::operator [] (i);
 }
 
-TMatrix &TMatrix::operator = (const TMatrix &arg){
-	TMatrix Res(arg);
+CMatrix &CMatrix::operator = (const CMatrix &arg){
+	CMatrix Res(arg);
 	for (int i = 0; i < getRowCount(); i++)
 	{
 		(*this)[i] = Res[i];
@@ -44,15 +45,15 @@ TMatrix &TMatrix::operator = (const TMatrix &arg){
 
 
 /* * * * * * * * вектор * * * * * * * */
-TYPE TVector::getElement(int i) const{
+TYPE CVector::getElement(int i) const{
 	return (*this)[i];
 }
 
-int TVector::getSize() const{
+int CVector::getSize() const{
 	return size();
 }
 
-TYPE TVector::getLength() const{
+TYPE CVector::getLength() const{
 	TYPE res = 0;
 	for (int i = 0; i < getSize(); i++)
 		res += pow((*this)[i], 2);
@@ -60,35 +61,52 @@ TYPE TVector::getLength() const{
 	return res;
 }
 
-void TVector::setElement(int i, TYPE value){
+void CVector::setElement(int i, TYPE value){
 	(*this)[i] = value;
 }
 
-void TVector::setSize(int i){
+void CVector::setSize(int i){
 	this->resize(i, 0); // новые элементы заполняются 0
 }
 
-TVector TVector::operator + (const TVector &arg){
+CVector CVector::operator + (const CVector &arg){
 	// избыточно, добавить обработчки приёма значения
-	int s = std::min<int>
-		(getSize(), arg.getSize());
-	TVector Res(s);
+	/*int s = std::min<int>
+		(getSize(), arg.getSize());*/
+	int s = this->getSize();
+	CVector Res(s);
 	for (int i = 0; i < Res.getSize(); i++)
 		Res[i] = (*this)[i] + arg[i];
 	return Res;
 }
 
-TVector TVector::operator * (const TYPE num){
-	TVector Res(getSize());
+const CVector CVector::operator + (const CVector &arg) const{
+	int s = this->getSize();
+	CVector Res(s);
+	for (int i = 0; i < Res.getSize(); i++)
+		Res[i] = (*this)[i] + arg[i];
+	return Res;
+}
+
+CVector CVector::operator * (const TYPE num){
+	CVector Res(getSize());
+	for (int i = 0; i < getSize(); i++)
+		Res[i] = (*this)[i] * num;
+	return Res;
+}
+
+const CVector CVector::operator * (const TYPE num) const{
+	CVector Res(getSize());
 	for (int i = 0; i < getSize(); i++)
 		Res[i] = (*this)[i] * num;
 	return Res;
 }
 
 // скалярное произведение
-TYPE TVector::operator * (const TVector &arg){
-	int s = std::min<int>
-		(getSize(), arg.getSize());
+TYPE CVector::operator * (const CVector &arg){
+	/*int s = std::min<int>
+		(getSize(), arg.getSize());*/
+	int s = this->getSize();
 	TYPE sum = 0;
 	for (int i = 0; i < s; i++)
 		sum += (*this)[i] * arg[i];
@@ -100,12 +118,12 @@ TYPE TVector::operator * (const TVector &arg){
 	в результат уходит вектор-строка длиной 
 	по количеству колонок в матрице
 */
-TVector TVector::operator * (const TMatrix &arg){
+CVector CVector::operator * (const CMatrix &arg){
 	int size = this->getSize(), n = arg.getColCount();
 
 	if (arg.getRowCount() == size) // равна ли длина вектора высоте матрицы?
 	{
-		TVector Res(n);
+		CVector Res(n);
 		for (int i = 0; i < n; i++)
 		{
 			for (int j = 0; j < size; j++)
@@ -117,14 +135,14 @@ TVector TVector::operator * (const TMatrix &arg){
 	}
 	else // длина не равна высоте
 	{
-		return TVector(size); // в результат сбрасывается нулевой вектор
+		return CVector(size); // в результат сбрасывается нулевой вектор
 	}
 }
 
 // векторное произведение
-TVector TVector::crossProduct(const TVector &b){
+CVector CVector::crossProduct(const CVector &b){
 	int n = 3;
-	TVector Res(n), a = *this;
+	CVector Res(n), a = *this;
 	Res[0] = a[1] * b[2] - a[2] * b[1];
 	Res[1] = a[2] * b[0] - a[0] * b[2];
 	Res[2] = a[0] * b[1] - a[1] * b[0];
@@ -135,19 +153,19 @@ TVector TVector::crossProduct(const TVector &b){
 
 /* * * * * * * * матрица * * * * * * * */
 
-TYPE TMatrix::getElement(int i, int j) const{
+TYPE CMatrix::getElement(int i, int j) const{
 	return (*this)[i][j];
 }
 
-int TMatrix::getRowCount() const{
+int CMatrix::getRowCount() const{
 	return size();
 }
 
-int TMatrix::getColCount() const{
+int CMatrix::getColCount() const{
 	return (getRowCount() > 0) ? (*this)[0].size() : 0;
 }
 
-bool TMatrix::checkSymmetric() const{
+bool CMatrix::checkSymmetric() const{
 	int Col = getColCount(), Row = getRowCount();
 	bool flag = true;
 	if (Col == Row)
@@ -175,25 +193,25 @@ bool TMatrix::checkSymmetric() const{
 	return flag;
 }
 
-bool TMatrix::checkSquare() const{
+bool CMatrix::checkSquare() const{
 	bool Res;
 	(getColCount() == getRowCount()) ? Res = true : Res = false;
 	return Res;
 }
 
-void TMatrix::setSize(int n, int m){
+void CMatrix::setSize(int n, int m){
 	this->BaseMatrix::resize(n);
 	for (int i = 0; i < n; i++)
 		(*this)[i].resize(m);
 }
 
-void TMatrix::setElement(int n, int m, TYPE value){
+void CMatrix::setElement(int n, int m, TYPE value){
 	(*this)[n][m] = value;
 }
 
-TMatrix TMatrix::flip(){
+CMatrix CMatrix::flip(){
 	int Col = getColCount(), Row = getRowCount();
-	TMatrix Res(Row, Col);
+	CMatrix Res(Row, Col);
 	for (int i = 0; i < Row; i++)
 	{
 		for (int j = 0; j < Col; j++)
@@ -205,13 +223,13 @@ TMatrix TMatrix::flip(){
 }
 
 // обращение методом Гаусса
-TMatrix TMatrix::inverse(){
+CMatrix CMatrix::inverse(){
 	/*
 		закомментированы вспомогательные проверки промежуточных шагов
 
 	*/
 	int n = getRowCount(); // размерность квадратной матрицы
-	TMatrix Ed(n, n), Res(*this);
+	CMatrix Ed(n, n), Res(*this);
 
 	// заполняем единичную матрицу
 	for (int i = 0; i < n; i++)
@@ -241,7 +259,7 @@ TMatrix TMatrix::inverse(){
 
 					но это лишь означает, что det = 0. Мы собираемся 
 					это проверять снаружи, что исключает такую возможность.
-					но она есть,  это факт.
+					но она есть, это факт.
 					
 				*/
 				if (Res[k][i] != 0)
@@ -333,13 +351,13 @@ TMatrix TMatrix::inverse(){
 	} // конец
 
 	return Ed;
-} // конец TMatrix TMatrix::inverse()
+} // конец CMatrix CMatrix::inverse()
 
 // вычисление определителя матрицы по методу Гаусса
-TYPE TMatrix::detGauss() const{
+TYPE CMatrix::detGauss() const{
 	if (checkSquare())
 	{
-		TMatrix temp = *this;
+		CMatrix temp = *this;
 		
 		int n = getRowCount();
 		if (n == 1)
@@ -352,7 +370,10 @@ TYPE TMatrix::detGauss() const{
 			if (temp[i][i] == 0)
 			{
 				int k = i + 1;
-				while ((temp[k][i] == 0) && (k < n)) k++;
+				if (k >= n) return 0; // последний элемент оказался нулевым
+
+				while ((k < n) && (temp[k][i] == 0)) k++;
+
 				if (temp[k][i] != 0)
 				{
 					for (int p = i; p < n; p++)	temp[i][p] += temp[k][p];
@@ -384,14 +405,14 @@ TYPE TMatrix::detGauss() const{
 }
 
 // определение положительно определённой матрицы
-bool TMatrix::PositiveDef() const{
+bool CMatrix::PositiveDef() const{
 	bool flag = true;
 	if (checkSymmetric())
 	{
 		int n = getRowCount();
 		for (int i = 1; (i <= n) && (flag); i++)
 		{
-			TMatrix temp = *this;
+			CMatrix temp = *this;
 			temp.setSize(i, i);
 			if (temp.detGauss() <= 0) flag = false; // у нас неположительно определённая матрица
 		}
@@ -401,9 +422,9 @@ bool TMatrix::PositiveDef() const{
 	return flag;
 }
 
-TMatrix TMatrix::operator + (const TMatrix &arg){
+CMatrix CMatrix::operator + (const CMatrix &arg){
 	int n = arg.getRowCount(), m = arg.getColCount();
-	TMatrix Res(n, m);
+	CMatrix Res(n, m);
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; j++)
@@ -415,9 +436,9 @@ TMatrix TMatrix::operator + (const TMatrix &arg){
 	return Res;
 }
 
-TMatrix TMatrix::operator * (const TYPE num){
+CMatrix CMatrix::operator * (const TYPE num){
 	int n = getRowCount(), m = getColCount();
-	TMatrix Res(n, m);
+	CMatrix Res(n, m);
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
@@ -428,7 +449,7 @@ TMatrix TMatrix::operator * (const TYPE num){
 	return Res;
 }
 
-TMatrix TMatrix::operator * (const TMatrix &arg){
+CMatrix CMatrix::operator * (const CMatrix &arg){
 	int n = getRowCount(), m = arg.getColCount(),
 		p = getColCount(), // = RowCount у второй матрицы
 		p2 = arg.getRowCount();
@@ -436,7 +457,7 @@ TMatrix TMatrix::operator * (const TMatrix &arg){
 	/* избыточно, ввести обработчик */
 	if (p == p2) // ширина первой матрицы равна высоте второй?
 	{
-		TMatrix Res(n, m);
+		CMatrix Res(n, m);
 			for (int i = 0; i < n; i++)
 			{
 				for (int j = 0; j < m; j++)
@@ -451,7 +472,7 @@ TMatrix TMatrix::operator * (const TMatrix &arg){
 	}
 	else // не равна
 	{
-		return TMatrix(n, m); // возвращаем нулевую матрицу
+		return CMatrix(n, m); // возвращаем нулевую матрицу
 	}
 	
 }
@@ -461,12 +482,12 @@ TMatrix TMatrix::operator * (const TMatrix &arg){
 	произведение матрицы на вектор-столбец. (строка на столбец)
 	результат - вектор столбец.
 */
-TVector TMatrix::operator * (const TVector &arg){
+CVector CMatrix::operator * (const CVector &arg){
 	int n = getRowCount(), m = getColCount(),
 		size = arg.getSize(); // длина вектора
 	if (size == m) // ширина матрицы свпадает с длиной вектора-столбца?
 	{
-		TVector Res(n);
+		CVector Res(n);
 			for (int i = 0; i < n; i++)
 			{
 				for (int j = 0; j < m; j++)
@@ -478,7 +499,7 @@ TVector TMatrix::operator * (const TVector &arg){
 	}
 	else // не совпадает
 	{
-		return TVector(n); // возвращаем нулевой вектор
+		return CVector(n); // возвращаем нулевой вектор
 	}
 	
 }
@@ -486,9 +507,9 @@ TVector TMatrix::operator * (const TVector &arg){
 
 /* * * * * * * * Симметричная матрица * * * * * * * */
 
-TMatrix TSymmetricMatrix::inverse(){
+CMatrix CSymmetricMatrix::inverse(){
 	int n = getRowCount(); // размерность квадратной матрицы
-	TMatrix matrix_L(n, n);
+	CMatrix matrix_L(n, n);
 
 	matrix_L[0][0] = sqrt((*this)[0][0]);
 
@@ -526,7 +547,7 @@ TMatrix TSymmetricMatrix::inverse(){
 
 
 	/* вычисление элементов обратной матрицы */
-	TSymmetricMatrix Res(n);
+	CSymmetricMatrix Res(n);
 	for (int i = n - 1; i >= 0; i--)
 	{
 		// диагональные элементы
@@ -557,6 +578,6 @@ TMatrix TSymmetricMatrix::inverse(){
 	return Res;
 }
 
-void TSymmetricMatrix::setElement(int n, int m, TYPE value){
+void CSymmetricMatrix::setElement(int n, int m, TYPE value){
 	(*this)[n][m] = (*this)[m][n] = value;
 }

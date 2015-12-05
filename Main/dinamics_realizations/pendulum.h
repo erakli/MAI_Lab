@@ -2,7 +2,7 @@
 #include "Model.h"
 
 /*	Базовый класс для моделей маятников	*/
-class TPendulum : public TModel
+class CPendulum : public CModel
 {
 protected:
 	TYPE mass,
@@ -10,13 +10,13 @@ protected:
 public:
 	TYPE Period;
 
-	TPendulum();
-	bool Stop_Calculation(TYPE t, TYPE Step, TVector &PrevStep, TVector &CurStep);
+	CPendulum();
+	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep);
 };
 
 
 /*	Математический маятник	*/
-class TMathPendulum : public TPendulum
+class CMathPendulum : public CPendulum
 {
 private:
 	TYPE
@@ -24,14 +24,14 @@ private:
 		fading; // коэффициент затухания
 
 public:
-	TMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad = 0);
-	TVector getRight(TVector &X, TYPE t) const;
+	CMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad = 0);
+	CVector getRight(CVector &X, TYPE t) const;
 
 };
 
 
 /*	Пружинный маятник	*/
-class TSpringPendulum : public TPendulum
+class CSpringPendulum : public CPendulum
 {
 private:
 	TYPE
@@ -42,7 +42,7 @@ private:
 	bool bForceType; // тип трения
 
 public:
-	TSpringPendulum(TYPE StartPos, TYPE mass, TYPE k, TYPE coeff = 0, bool bForceType = false);
-	TVector getRight(TVector &X, TYPE t) const;
+	CSpringPendulum(TYPE StartPos, TYPE mass, TYPE k, TYPE coeff = 0, bool bForceType = false);
+	CVector getRight(CVector &X, TYPE t) const;
 
 };

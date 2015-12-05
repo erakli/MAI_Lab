@@ -2,15 +2,15 @@
 #include "Matrix_classes.h"
 #include "Types.h"
 
-class TModel
+class CModel
 {
 protected:
-	TVector StartValues;
+	CVector StartValues;
 	int s_size; // длина вектора StartValues
 	TYPE 
 		Interval, // должен ли быть интервал между знач. задан тут?
 		t0, t1;
-	TMatrix Result;
+	CMatrix Result;
 
 	// ќстановка интегрировани€ при малых изменени€х приращени€ координаты
 	TYPE stop_condition;
@@ -18,29 +18,29 @@ protected:
 	bool stop_flag;
 
 public:
-	TModel();
+	CModel();
 
-	virtual TVector getRight(TVector &X, TYPE t) const = 0;
+	virtual CVector getRight(CVector &X, TYPE t) const = 0;
 
-	void addResult(TVector &X, TYPE t);
+	void addResult(CVector &X, TYPE t);
 
 	// инкапсул€ци€ в чистом виде
-	TVector getStart() const;
+	CVector getStart() const;
 	TYPE getInterval() const;
 	TYPE get_t0() const;
 	TYPE get_t1() const;
-	TMatrix getResult() const;
+	CMatrix getResult() const;
 
-	void setStart(TVector &arg);
+	void setStart(CVector &arg);
 	void setInterval(const TYPE &arg);
 	void set_t0(const TYPE &arg);
 	void set_t1(const TYPE &arg);
 
-	virtual bool Stop_Calculation(TYPE t, TYPE Step, TVector &PrevStep, TVector &CurStep) = 0;
+	virtual bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) = 0;
 
 };
 
-class TArenstorfModel : public TModel
+class TArenstorfModel : public CModel
 {
 private:
 	TYPE m, M;
@@ -49,8 +49,8 @@ public:
 	int orbit; // ¬ыбор орбиты (мала€/больша€)
 
 	TArenstorfModel(int variant);
-	TVector getRight(TVector &X, TYPE t) const;
+	CVector getRight(CVector &X, TYPE t) const;
 
 	// заглушка
-	bool Stop_Calculation(TYPE t, TYPE Step, TVector &PrevStep, TVector &CurStep){ return false; };
+	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep){ return false; };
 };

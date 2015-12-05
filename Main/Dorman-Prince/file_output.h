@@ -12,4 +12,4 @@
 
 using namespace std;
 
-void Dorman_to_file(const TMatrix &Result, const TDormanPrince &Integrator, bool radians = true);
+void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator, bool radians = true);
