@@ -23,7 +23,8 @@ public:
 	CQuaternion(TYPE phi, const CVector &e_vec, const bool radians);
 
 	// конструктор копии
-	CQuaternion(const CQuaternion &orig){
+	CQuaternion(const CQuaternion &orig) : CQuaternion() {
+		*this = orig;
 	};
 
 	CQuaternion operator + (const CQuaternion &Quat);
@@ -37,7 +38,8 @@ public:
 
 	// Свойства для присвоения значений скалярной и векторной части
 	CQuaternion &operator = (const TYPE scalar);
-	CQuaternion &operator = (const CVector vector);
+	CQuaternion &operator = (const CVector &vector);
+	CQuaternion &operator = (const CQuaternion &Quat);
 
 	// "Свойства" для доступа к значениям
 	const TYPE getScalar() const;

@@ -3,6 +3,62 @@
 
 /* * * * * * * * CQuaternion * * * * * * * */
 
+TYPE &CQuaternion::operator [] (SINT i){
+	if (i == 0)
+	{
+		return scalar;
+	}
+	else if ((i > 0) && (i < QUAT_SIZE))
+	{
+		return vector[i];
+	}
+	else // вышли за диапазон
+	{
+		//TYPE res(-1);
+		//return 0;
+	}
+}
+
+// проверить, нужна ли здесь ссылка
+const TYPE &CQuaternion::operator [] (SINT i) const{
+	if (i == 0)
+	{
+		return scalar;
+	}
+	else if ((i > 0) && (i < QUAT_SIZE))
+	{
+		return vector[i];
+	}
+	else // вышли за диапазон
+	{
+		//TYPE res(-1);
+		//return 0;
+	}
+}
+
+
+// операторы присвоения
+
+CQuaternion &CQuaternion::operator = (const TYPE scalar){
+	this->scalar = scalar;
+
+	return *this;
+}
+
+CQuaternion &CQuaternion::operator = (const CVector &vector){
+	this->vector = vector;
+
+	return *this;
+}
+
+CQuaternion &CQuaternion::operator = (const CQuaternion &Quat){
+	scalar = Quat.getScalar();
+	vector = Quat.getVector();
+
+	return *this;
+}
+
+
 // конструкторы
 
 CQuaternion::CQuaternion(TYPE lam_0, TYPE lam_1, TYPE lam_2, TYPE lam_3){
@@ -94,54 +150,6 @@ CQuaternion CQuaternion::operator * (const CVector &vec){
 	Res.vector = vec * lamb_0 + lamb.crossProduct(vec);
 
 	return Res;
-}
-
-TYPE &CQuaternion::operator [] (SINT i){
-	if (i == 0)
-	{
-		return scalar;
-	}
-	else if ((i > 0) && (i < QUAT_SIZE))
-	{
-		return vector[i];
-	}
-	else // вышли за диапазон
-	{
-		//TYPE res(-1);
-		//return 0;
-	}
-}
-
-// проверить, нужна ли здесь ссылка
-const TYPE &CQuaternion::operator [] (SINT i) const{
-	if (i == 0)
-	{
-		return scalar;
-	}
-	else if ((i > 0) && (i < QUAT_SIZE))
-	{
-		return vector[i];
-	}
-	else // вышли за диапазон
-	{
-		//TYPE res(-1);
-		//return 0;
-	}
-}
-
-
-// операторы присвоения
-
-CQuaternion &CQuaternion::operator = (const TYPE scalar){
-	this->scalar = scalar;
-
-	return *this;
-}
-
-CQuaternion &CQuaternion::operator = (const CVector vector){
-	this->vector = vector;
-
-	return *this;
 }
 
 
