@@ -107,8 +107,8 @@ TYPE &CQuaternion::operator [] (SINT i){
 	}
 	else // вышли за диапазон
 	{
-		TYPE res(-1);
-		return res;
+		//TYPE res(-1);
+		//return 0;
 	}
 }
 
@@ -124,8 +124,8 @@ const TYPE &CQuaternion::operator [] (SINT i) const{
 	}
 	else // вышли за диапазон
 	{
-		TYPE res(-1);
-		return res;
+		//TYPE res(-1);
+		//return 0;
 	}
 }
 

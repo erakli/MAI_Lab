@@ -1,22 +1,7 @@
-#include "Matrix_classes.h"
+#include "Matrix_extended.h"
+#include "Quaternion.h"
 #include "Functions.h"
 #include <math.h>
-//#include <string>
-//#include <algorithm>
-//#include <iostream>
-//
-//using namespace std;
-//
-//void Show(const CMatrix &arg){
-//	cout << "\n";
-//	int Row = arg.getRowCount(), Col = arg.getColCount();
-//	for (int i = 0; i < Row; i++){
-//		for (int j = 0; j < Col; j++)
-//		{
-//			cout << "	" << arg[i][j];
-//		}
-//		cout << "\n";
-//	}
 
 /*
 
@@ -150,6 +135,83 @@ CVector CVector::crossProduct(const CVector &b){
 	return Res;
 }
 
+// реализация алгебры кватернионов
+
+// вектор на кватернион
+CQuaternion CVector::operator * (const CQuaternion &Quat){
+
+	CQuaternion Res;
+
+	TYPE
+		lamb_0 = Quat.getScalar();
+
+	CVector
+		lamb(Quat.getVector()),
+		a_vec(*this);
+
+	// скалярная часть
+	Res = -(lamb * a_vec); 
+	// векторная
+	Res = a_vec * lamb_0 + a_vec.crossProduct(lamb); 
+
+	return Res;
+}
+
+/* 
+	реализация конечного поворота вектора относительно оси 
+	с использованием формулы Родрига 
+*/
+CVector CVector::rotate(const CVector &e_vec, TYPE phi, const bool radians){
+
+	CVector 
+		Teta, // вектор конечного поворота
+		left_part, right_part; // составляющие векторного произведения
+
+	TYPE 
+		angle, // угол. если входной в градусах, то сюда перевод в радианы упадёт
+		tang; // заранее считаемое значение
+
+	// приводим входной угол к гарантированным радианам
+	if (radians)
+	{
+		angle = phi;
+	}
+	else
+	{
+		angle = deg2rad(phi);
+	};
+
+	tang = tan(angle / 2);
+
+	Teta = e_vec * 2 * tang;
+
+	left_part = Teta * (1 / ( 1 + pow2(tang) ));
+
+	right_part = (Teta * 0.5).crossProduct(*this);
+	right_part = right_part + *this;
+
+	CVector Main_Part;
+
+	Main_Part = left_part.crossProduct(right_part);
+
+	return *this + Main_Part;
+}
+
+/*
+	реализация конечного поворота вектора с явным
+	использованием параметров Родрига-Гамильтона - 
+	кватернионов
+*/
+CVector CVector::rotate(CQuaternion &Quat){
+
+	CQuaternion temp_part;
+	CVector a_vec(*this);
+
+	temp_part = Quat * a_vec * Quat.getAdjoint(); 
+
+	// проверить, чтобы скалярная часть была = 0
+	return temp_part.getVector();
+}
 
 /* * * * * * * * матрица * * * * * * * */
 

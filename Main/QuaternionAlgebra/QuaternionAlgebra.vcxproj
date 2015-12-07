@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Matrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Supporting files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -70,11 +70,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="..\Supporting files\Functions.cpp" />
+    <ClCompile Include="Matrix_extended.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="test_Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Functions.h" />
+    <ClInclude Include="..\Supporting files\Functions.h" />
+    <ClInclude Include="..\Supporting files\Types.h" />
+    <ClInclude Include="Matrix_extended.h" />
     <ClInclude Include="Quaternion.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

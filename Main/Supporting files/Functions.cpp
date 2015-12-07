@@ -1,6 +1,4 @@
-#include "Types.h"
-
-/* * * * * Вспомогательные функции * * * * */
+#include "Functions.h"
 
 // перевод из градусов в радианы
 TYPE deg2rad(const TYPE &angle){

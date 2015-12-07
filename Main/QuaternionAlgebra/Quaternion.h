@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Types.h"
-#include "Matrix_classes.h"
+#include "Matrix_extended.h"
 
 #define VEC_PART_SIZE 3
 #define QUAT_SIZE 4

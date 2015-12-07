@@ -56,7 +56,7 @@
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\Matrix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>..\Matrix\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Matrix\;..\Supporting files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="..\Supporting files\Functions.cpp" />
     <ClCompile Include="file_output.cpp" />
     <ClCompile Include="Integrator.cpp" />
     <ClCompile Include="Model.cpp" />

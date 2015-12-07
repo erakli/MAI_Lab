@@ -72,7 +72,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Matrix;..\Dorman-Prince;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Matrix;..\Dorman-Prince;..\Supporting files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,6 +123,7 @@
     <ClCompile Include="..\Dorman-Prince\Integrator.cpp" />
     <ClCompile Include="..\Dorman-Prince\Model.cpp" />
     <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="..\Supporting files\Functions.cpp" />
     <ClCompile Include="test_model.cpp" />
     <ClCompile Include="pendulum.cpp" />
   </ItemGroup>

@@ -11,9 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Supporting files\Functions.h" />
+    <ClInclude Include="..\Supporting files\Types.h" />
     <ClInclude Include="Matrix_classes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Supporting files\Functions.cpp" />
     <ClCompile Include="Matrix_classes.cpp" />
     <ClCompile Include="test_Matrix.cpp" />
   </ItemGroup>
@@ -60,6 +63,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Supporting files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

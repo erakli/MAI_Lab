@@ -24,9 +24,6 @@
     <ClCompile Include="test_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Dorman-Prince\file_output.cpp">
-      <Filter>Source Files\External</Filter>
-    </ClCompile>
     <ClCompile Include="..\Dorman-Prince\Integrator.cpp">
       <Filter>Source Files\External</Filter>
     </ClCompile>
@@ -34,6 +31,12 @@
       <Filter>Source Files\External</Filter>
     </ClCompile>
     <ClCompile Include="..\Dorman-Prince\Model.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dorman-Prince\file_output.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Supporting files\Functions.cpp">
       <Filter>Source Files\External</Filter>
     </ClCompile>
   </ItemGroup>
