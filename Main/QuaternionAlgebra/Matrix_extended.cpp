@@ -55,6 +55,11 @@ void CVector::setSize(int i){
 	this->resize(i, 0); // новые элементы заполняются 0
 }
 
+void CVector::Normalize(){
+	*this = *this * (1 / getLength());
+}
+
+// перегруженные операторы
 CVector CVector::operator + (const CVector &arg){
 	// избыточно, добавить обработчки приёма значения
 	/*int s = std::min<int>
@@ -164,6 +169,7 @@ CQuaternion CVector::operator * (const CQuaternion &Quat){
 CVector CVector::rotate(const CVector &e_vec, TYPE phi, const bool radians){
 
 	CVector 
+		axis(e_vec),
 		Teta, // вектор конечного поворота
 		left_part, right_part; // составляющие векторного произведения
 
@@ -183,7 +189,9 @@ CVector CVector::rotate(const CVector &e_vec, TYPE phi, const bool radians){
 
 	tang = tan(angle / 2);
 
-	Teta = e_vec * 2 * tang;
+	axis.Normalize(); // на всякий случай, нормализуем ось
+
+	Teta = axis * 2 * tang;
 
 	left_part = Teta * (1 / ( 1 + pow2(tang) ));
 

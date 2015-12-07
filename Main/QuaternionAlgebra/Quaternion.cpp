@@ -10,7 +10,7 @@ TYPE &CQuaternion::operator [] (SINT i){
 	}
 	else if ((i > 0) && (i < QUAT_SIZE))
 	{
-		return vector[i];
+		return vector[i - 1];
 	}
 	else // вышли за диапазон
 	{
@@ -27,7 +27,7 @@ const TYPE &CQuaternion::operator [] (SINT i) const{
 	}
 	else if ((i > 0) && (i < QUAT_SIZE))
 	{
-		return vector[i];
+		return vector[i - 1];
 	}
 	else // вышли за диапазон
 	{
@@ -63,21 +63,25 @@ CQuaternion &CQuaternion::operator = (const CQuaternion &Quat){
 
 CQuaternion::CQuaternion(TYPE lam_0, TYPE lam_1, TYPE lam_2, TYPE lam_3){
 
+	/* С этим конструктором вообще не понятно */
+
 	vector.setSize(VEC_PART_SIZE);
 	vector[0] = lam_1;
 	vector[1] = lam_2;
 	vector[2] = lam_3;
 
+	scalar = lam_0;
+
 	// lambda_0 выбирается из условия lam_0^2 + lam_1^2 + ... = 1
-	TYPE check;
-	check = vector.getLength();
+	//TYPE check;
+	//check = vector.getLength();
 
 	/* 
 		сделать проверку на check > 1
 		в принципе, нужно такое делать? 
 	*/
 
-	scalar = (1 == check + pow2(lam_1)) ? lam_0 : sqrt(1 - check);
+	//scalar = (1 == check + pow2(lam_1)) ? lam_0 : sqrt(1 - check);
 
 }
 
@@ -85,11 +89,14 @@ CQuaternion::CQuaternion(TYPE phi, const CVector &e_vec, const bool radians){
 
 	vector.setSize(VEC_PART_SIZE); // на всякий случай
 
+	CVector axis(e_vec);
+	axis.Normalize(); // обязательно нормализуем
+
 	if (radians)
 	{
 		// считаем в радианах
 		scalar = cos(phi / 2);
-		vector = e_vec * sin(phi / 2);
+		vector = axis * sin(phi / 2);
 	}
 	else
 	{
@@ -97,7 +104,7 @@ CQuaternion::CQuaternion(TYPE phi, const CVector &e_vec, const bool radians){
 		TYPE angle = deg2rad(phi);
 
 		scalar = cos(angle / 2);
-		vector = e_vec * sin(angle / 2);
+		vector = axis * sin(angle / 2);
 	};
 
 }
@@ -178,12 +185,18 @@ TYPE CQuaternion::getNorm(){
 	return Res;
 }
 
+TYPE CQuaternion::getLength(){
+	return sqrt(getNorm());
+}
+
 // вычисление сопряженного кватерниона
 CQuaternion CQuaternion::getAdjoint(){
 
 	CQuaternion Res(*this);
 
 	Res.vector = vector * -1;
+
+	Res.Normalize(); // на всякий случай нормализуем сразу же
 
 	return Res;
 }
@@ -195,7 +208,8 @@ CQuaternion CQuaternion::getAdjoint(){
 */
 void CQuaternion::Normalize(){
 
-	TYPE Norm = getNorm();
+	// делим не на норму а на модуль кватерниона (как с векторами)
+	TYPE Norm = getLength();
 
 	for (SINT i = 0; i < QUAT_SIZE; i++)
 	{

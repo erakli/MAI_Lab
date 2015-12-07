@@ -37,6 +37,8 @@ public:
 	void setElement(int i, TYPE value);
 	void setSize(int i);
 
+	void Normalize();
+
 	CVector operator + (const CVector &arg);
 	const CVector operator + (const CVector &arg) const;
 

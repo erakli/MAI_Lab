@@ -10,7 +10,7 @@ void Fill(CVector &vec);
 void Show(const CVector &vec);
 void Show(CQuaternion &Quat);
 
-void Quat_MainTest();
+void Quat_MainTest(short int Choice);
 void Quat_Algebra_Test(bool radians);
 void Quat_Rotation_Test(bool radians);
 
@@ -18,40 +18,57 @@ void Quat_Rotation_Test(bool radians);
 /* ќсновное тело программы */
 int main(){
 
-	cout << " * * * Quaternion test initialized\n\n\n";
+	cout << " * * * Quaternion test has been initialized * * *\n\n\n";
 
-	short int Continue_Decide;
+	short int Choice;
 
 	do
 	{
 
-		Quat_MainTest();
+		cout << "\n\nChoose action:\n" 
+			<< "	1. Quaternion Algebra\n" 
+			<< "	2. Vector rotation\n"
+			<< "	0. Exit\n"
+			<< "\n";
+		cin >> Choice;
 
-		cout << "Start again? ";
-		cin >> Continue_Decide;
+		Quat_MainTest(Choice);
 
-	} while (Continue_Decide);
+	} while (Choice);
 
 }
 
 /* ‘ункции тестировани€ */
-void Quat_MainTest(){
+void Quat_MainTest(short int Choice){
 
 	bool radians = false; // флаг на то, что углы в градусах
 
-	/* ѕроверка алгебры кватернионов */
-	Quat_Algebra_Test(radians);
+	switch (Choice)
+	{
+	case 1:
+		{
+			/* ѕроверка алгебры кватернионов */
+			Quat_Algebra_Test(radians);
+			break;
+		}
 
-	/* ќрганизаци€ поворота вектора */
-	Quat_Rotation_Test(radians);
+	case 2:
+		{
+			/* ќрганизаци€ поворота вектора */
+			Quat_Rotation_Test(radians);
+		}
 
+	default:
+		break;
+	}
+	
 }
 
 // “естирование алгебры кватернионов
 void Quat_Algebra_Test(bool radians){
 
-	cout << "Testing Quaternion Algebra.\n";
-	cout << "Fill in next parametrs:\n\n";
+	cout << " * * * Testing Quaternion Algebra.\n";
+	cout << "Fill in next parametrs:";
 
 	CVector
 		first_init(VEC_PART_SIZE), // параметры двух кватернионов
@@ -74,40 +91,40 @@ void Quat_Algebra_Test(bool radians){
 
 	// умножение кватернионов
 	Result = First * Second;
-	cout << "\nProduct:";
+	cout << "\n\nProduct:";
 	Show(Result);
 
 	// сложение
 	Result = First + Second;
-	cout << "\nAdd:";
+	cout << "\n\nAdd:";
 	Show(Result);
 
 	// сопр€жение
 	Result = First.getAdjoint();
-	cout << "\nAdjoint for First:";
+	cout << "\n\nAdjoint for First:";
 	Show(Result);
 
 	Result = Second.getAdjoint();
-	cout << "\nAdjoint for Second:";
+	cout << "\n\nAdjoint for Second:";
 	Show(Result);
 
 	// нормирование
 	Result = First;
 	Result.Normalize();
-	cout << "\nNormalize for First:";
+	cout << "\n\nNormalize for First:";
 	Show(Result);
 
 	Result = Second;
 	Result.Normalize();
-	cout << "\nNormalize for Second:";
+	cout << "\n\nNormalize for Second:";
 	Show(Result);
 }
 
 // “естирование поворота вектора с помощью кватерниона
 void Quat_Rotation_Test(bool radians){
 
-	cout << "\n\nTesting Quaternion rotation.\n";
-	cout << "Fill in next parametrs:\n\n";
+	cout << "\n\n\n * * * Testing Quaternion rotation.\n";
+	cout << "Fill in next parametrs:";
 
 	CVector
 		a_vec(VEC_PART_SIZE), // координаты оси вращени€
@@ -115,7 +132,7 @@ void Quat_Rotation_Test(bool radians){
 
 	TYPE angle;
 
-	cout << "Rotation angle (in degrees) "; cin >> angle;
+	cout << "\n\nRotation angle (in degrees) "; cin >> angle;
 
 	cout << "\nCoordinates of rotation axis\n"; Fill(a_vec);
 	cout << "\n\nCoordinates of rotated vector\n"; Fill(ro_vec);
@@ -123,10 +140,12 @@ void Quat_Rotation_Test(bool radians){
 	CVector res_vec(VEC_PART_SIZE);
 	CQuaternion Main_Quat(angle, a_vec, radians);
 
-	// вектор после осуществлени€ поворота (после нормировани€?)
+	// вектор после осуществлени€ поворота
 	res_vec = ro_vec.rotate(Main_Quat);
-
 	cout << "\nRotated vector:\n"; Show(res_vec);
+
+	res_vec = ro_vec.rotate(a_vec, angle, radians);
+	cout << "\nRotated vector (with Rodrig formula):\n"; Show(res_vec);
 }
 
 /* ¬спомогательные процедуры */
@@ -145,6 +164,6 @@ void Show(const CVector &vec){
 }
 
 void Show(CQuaternion &Quat){
-	cout << "\nScalar part = " << Quat.getScalar();
-	cout << "\nVector part: "; Show(Quat.getVector());
+	cout << "\nScalar	" << Quat.getScalar();
+	cout << "\nVector	"; Show(Quat.getVector());
 }

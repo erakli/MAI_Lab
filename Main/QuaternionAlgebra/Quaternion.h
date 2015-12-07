@@ -46,6 +46,7 @@ public:
 	const CVector getVector() const;
 
 	TYPE getNorm();  // вычисление нормы кватерниона
+	TYPE getLength(); // модуль кватерниона (так же как и у вектора)
 	CQuaternion getAdjoint(); // вычисление сопряженного кватерниона
 
 	void Normalize(); // нормирование квантериона
