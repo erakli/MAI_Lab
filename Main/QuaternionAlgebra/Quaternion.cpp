@@ -12,14 +12,14 @@ TYPE &CQuaternion::operator [] (SINT i){
 	{
 		return vector[i - 1];
 	}
-	else // вышли за диапазон
+	else // РІС‹С€Р»Рё Р·Р° РґРёР°РїР°Р·РѕРЅ
 	{
 		//TYPE res(-1);
 		//return 0;
 	}
 }
 
-// проверить, нужна ли здесь ссылка
+// РїСЂРѕРІРµСЂРёС‚СЊ, РЅСѓР¶РЅР° Р»Рё Р·РґРµСЃСЊ СЃСЃС‹Р»РєР°
 const TYPE &CQuaternion::operator [] (SINT i) const{
 	if (i == 0)
 	{
@@ -29,7 +29,7 @@ const TYPE &CQuaternion::operator [] (SINT i) const{
 	{
 		return vector[i - 1];
 	}
-	else // вышли за диапазон
+	else // РІС‹С€Р»Рё Р·Р° РґРёР°РїР°Р·РѕРЅ
 	{
 		//TYPE res(-1);
 		//return 0;
@@ -37,7 +37,7 @@ const TYPE &CQuaternion::operator [] (SINT i) const{
 }
 
 
-// операторы присвоения
+// РѕРїРµСЂР°С‚РѕСЂС‹ РїСЂРёСЃРІРѕРµРЅРёСЏ
 
 CQuaternion &CQuaternion::operator = (const TYPE scalar){
 	this->scalar = scalar;
@@ -59,11 +59,11 @@ CQuaternion &CQuaternion::operator = (const CQuaternion &Quat){
 }
 
 
-// конструкторы
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 
 CQuaternion::CQuaternion(TYPE lam_0, TYPE lam_1, TYPE lam_2, TYPE lam_3){
 
-	/* С этим конструктором вообще не понятно */
+	/* РЎ СЌС‚РёРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј РІРѕРѕР±С‰Рµ РЅРµ РїРѕРЅСЏС‚РЅРѕ */
 
 	vector.setSize(VEC_PART_SIZE);
 	vector[0] = lam_1;
@@ -72,13 +72,13 @@ CQuaternion::CQuaternion(TYPE lam_0, TYPE lam_1, TYPE lam_2, TYPE lam_3){
 
 	scalar = lam_0;
 
-	// lambda_0 выбирается из условия lam_0^2 + lam_1^2 + ... = 1
+	// lambda_0 РІС‹Р±РёСЂР°РµС‚СЃСЏ РёР· СѓСЃР»РѕРІРёСЏ lam_0^2 + lam_1^2 + ... = 1
 	//TYPE check;
 	//check = vector.getLength();
 
 	/* 
-		сделать проверку на check > 1
-		в принципе, нужно такое делать? 
+		СЃРґРµР»Р°С‚СЊ РїСЂРѕРІРµСЂРєСѓ РЅР° check > 1
+		РІ РїСЂРёРЅС†РёРїРµ, РЅСѓР¶РЅРѕ С‚Р°РєРѕРµ РґРµР»Р°С‚СЊ? 
 	*/
 
 	//scalar = (1 == check + pow2(lam_1)) ? lam_0 : sqrt(1 - check);
@@ -87,20 +87,20 @@ CQuaternion::CQuaternion(TYPE lam_0, TYPE lam_1, TYPE lam_2, TYPE lam_3){
 
 CQuaternion::CQuaternion(TYPE phi, const CVector &e_vec, const bool radians){
 
-	vector.setSize(VEC_PART_SIZE); // на всякий случай
+	vector.setSize(VEC_PART_SIZE); // РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№
 
 	CVector axis(e_vec);
-	axis.Normalize(); // обязательно нормализуем
+	axis.Normalize(); // РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РЅРѕСЂРјР°Р»РёР·СѓРµРј
 
 	if (radians)
 	{
-		// считаем в радианах
+		// СЃС‡РёС‚Р°РµРј РІ СЂР°РґРёР°РЅР°С…
 		scalar = cos(phi / 2);
 		vector = axis * sin(phi / 2);
 	}
 	else
 	{
-		// считаем, что входной угол в градусах. делаем перевод в радианы
+		// СЃС‡РёС‚Р°РµРј, С‡С‚Рѕ РІС…РѕРґРЅРѕР№ СѓРіРѕР» РІ РіСЂР°РґСѓСЃР°С…. РґРµР»Р°РµРј РїРµСЂРµРІРѕРґ РІ СЂР°РґРёР°РЅС‹
 		TYPE angle = deg2rad(phi);
 
 		scalar = cos(angle / 2);
@@ -110,7 +110,7 @@ CQuaternion::CQuaternion(TYPE phi, const CVector &e_vec, const bool radians){
 }
 
 
-// перегрузка операторов
+// РїРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С‚РѕСЂРѕРІ
 
 CQuaternion CQuaternion::operator + (const CQuaternion &Quat){
 
@@ -122,7 +122,7 @@ CQuaternion CQuaternion::operator + (const CQuaternion &Quat){
 	return Res;
 }
 
-// Кватернионное произведение кватернионов
+// РљРІР°С‚РµСЂРЅРёРѕРЅРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ РєРІР°С‚РµСЂРЅРёРѕРЅРѕРІ
 CQuaternion CQuaternion::operator * (const CQuaternion &Quat){
 
 	CQuaternion Res;
@@ -142,7 +142,7 @@ CQuaternion CQuaternion::operator * (const CQuaternion &Quat){
 	return Res;
 }
 
-// умножение кватерниона на вектор
+// СѓРјРЅРѕР¶РµРЅРёРµ РєРІР°С‚РµСЂРЅРёРѕРЅР° РЅР° РІРµРєС‚РѕСЂ
 CQuaternion CQuaternion::operator * (const CVector &vec){
 
 	CQuaternion Res;
@@ -160,7 +160,7 @@ CQuaternion CQuaternion::operator * (const CVector &vec){
 }
 
 
-// "Свойства" доступа
+// "РЎРІРѕР№СЃС‚РІР°" РґРѕСЃС‚СѓРїР°
 
 const TYPE CQuaternion::getScalar() const{
 	return scalar;
@@ -171,12 +171,12 @@ const CVector CQuaternion::getVector() const{
 }
 
 
-// Остальные функции кватерниона
+// РћСЃС‚Р°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё РєРІР°С‚РµСЂРЅРёРѕРЅР°
 
 TYPE CQuaternion::getNorm(){
 	TYPE Res = 0;
 
-	// проверить нижний индекс
+	// РїСЂРѕРІРµСЂРёС‚СЊ РЅРёР¶РЅРёР№ РёРЅРґРµРєСЃ
 	for (SINT i = 0; i < QUAT_SIZE; i++)
 	{
 		Res += pow2((*this)[i]);
@@ -189,26 +189,26 @@ TYPE CQuaternion::getLength(){
 	return sqrt(getNorm());
 }
 
-// вычисление сопряженного кватерниона
+// РІС‹С‡РёСЃР»РµРЅРёРµ СЃРѕРїСЂСЏР¶РµРЅРЅРѕРіРѕ РєРІР°С‚РµСЂРЅРёРѕРЅР°
 CQuaternion CQuaternion::getAdjoint(){
 
 	CQuaternion Res(*this);
 
 	Res.vector = vector * -1;
 
-	Res.Normalize(); // на всякий случай нормализуем сразу же
+	Res.Normalize(); // РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№ РЅРѕСЂРјР°Р»РёР·СѓРµРј СЃСЂР°Р·Сѓ Р¶Рµ
 
 	return Res;
 }
 
 /*
-	Нормализация кватерниона - деление каждого элемента на норму
+	РќРѕСЂРјР°Р»РёР·Р°С†РёСЏ РєРІР°С‚РµСЂРЅРёРѕРЅР° - РґРµР»РµРЅРёРµ РєР°Р¶РґРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РЅР° РЅРѕСЂРјСѓ
 
-	Аналогично нормализации вектора - деление каждого элемента на модуль
+	РђРЅР°Р»РѕРіРёС‡РЅРѕ РЅРѕСЂРјР°Р»РёР·Р°С†РёРё РІРµРєС‚РѕСЂР° - РґРµР»РµРЅРёРµ РєР°Р¶РґРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РЅР° РјРѕРґСѓР»СЊ
 */
 void CQuaternion::Normalize(){
 
-	// делим не на норму а на модуль кватерниона (как с векторами)
+	// РґРµР»РёРј РЅРµ РЅР° РЅРѕСЂРјСѓ Р° РЅР° РјРѕРґСѓР»СЊ РєРІР°С‚РµСЂРЅРёРѕРЅР° (РєР°Рє СЃ РІРµРєС‚РѕСЂР°РјРё)
 	TYPE Norm = getLength();
 
 	for (SINT i = 0; i < QUAT_SIZE; i++)

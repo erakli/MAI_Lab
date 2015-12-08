@@ -12,7 +12,7 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 
 	static short int FirstNum = 0, SecondNum = 0;
 
-	// ----------------- нумерация выходных файлов
+	// ----------------- РЅСѓРјРµСЂР°С†РёСЏ РІС‹С…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ
 	char cFNum[2], cSNum[2];
 
 	if (SecondNum > 9)
@@ -28,7 +28,7 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 	cSNum[1] = 0;
 
 
-	// ----------------- формирование имени выходного файла
+	// ----------------- С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ РёРјРµРЅРё РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
 	char FileName[14];
 
 	strcpy(FileName, FILE);
@@ -37,7 +37,7 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 	strcat(FileName, EXTENSION);
 
 
-	// ----------------- создание выходного файла
+	// ----------------- СЃРѕР·РґР°РЅРёРµ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
 	ofstream fout;
 	fout.open(FileName);
 	if (!fout.is_open())
@@ -49,21 +49,21 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 
 
 	/*
-		Множитель перевода радиан в градусы
+		РњРЅРѕР¶РёС‚РµР»СЊ РїРµСЂРµРІРѕРґР° СЂР°РґРёР°РЅ РІ РіСЂР°РґСѓСЃС‹
 
-			По умолчанию равен 1. Если результат вывода
-			выбран в градусах (radians = false), то результат
-			вывода будет в градусах
+			РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ СЂР°РІРµРЅ 1. Р•СЃР»Рё СЂРµР·СѓР»СЊС‚Р°С‚ РІС‹РІРѕРґР°
+			РІС‹Р±СЂР°РЅ РІ РіСЂР°РґСѓСЃР°С… (radians = false), С‚Рѕ СЂРµР·СѓР»СЊС‚Р°С‚
+			РІС‹РІРѕРґР° Р±СѓРґРµС‚ РІ РіСЂР°РґСѓСЃР°С…
 	*/
 	TYPE rad2deg;
 	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
 
 	
-	// ----------------- заполнение файла
+	// ----------------- Р·Р°РїРѕР»РЅРµРЅРёРµ С„Р°Р№Р»Р°
 	int ColCount = Result.getColCount();
 	for (int i = 0; i < Result.getRowCount(); i++)
 	{
-		fout << Result[i][0] << "	";	// время
+		fout << Result[i][0] << "	";	// РІСЂРµРјСЏ
 
 		for (int j = 1; j < ColCount - 1; j++)
 		{
@@ -76,13 +76,13 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 	fout.close();
 
 
-	// ------------------------------------------------------------ Интерфейс
+	// ------------------------------------------------------------ РРЅС‚РµСЂС„РµР№СЃ
 	cout << "\n\nProcess have been ended. \n	Number of iterations: "
 		<< Integrator.get_iter()
 		<< "\n	Global Eps: " << Integrator.getEps_Global()
 		<< "\n\nNow would be opened result file\n";
 	Sleep(DELAY);
-	// ------------------------------------------------------------ Интерфейс
+	// ------------------------------------------------------------ РРЅС‚РµСЂС„РµР№СЃ
 
 
 	ShellExecuteA(NULL, "open", FileName, NULL, NULL, SW_RESTORE);

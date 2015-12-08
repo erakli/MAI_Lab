@@ -20,7 +20,7 @@ int main(){
 		cout << "\n\nWhat pendulum are we testing? (Mathematical - 0/String - 1) ";
 		cin >> bMath; cout << "\n";
 
-		// выбор тестируемого маятника
+		// РІС‹Р±РѕСЂ С‚РµСЃС‚РёСЂСѓРµРјРѕРіРѕ РјР°СЏС‚РЅРёРєР°
 		(bMath) ? Spring(Integrator) : Mathematical(Integrator);
 
 		cout << "\nContinue? "; cin >> cont;
@@ -28,10 +28,10 @@ int main(){
 
 }	// end of main()
 
-// Тестирование математического маятника
+// РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ РјР°С‚РµРјР°С‚РёС‡РµСЃРєРѕРіРѕ РјР°СЏС‚РЅРёРєР°
 void Mathematical(CDormanPrince &Integrator){
 
-	TYPE num_of_rounds = 5; // количество периодов
+	TYPE num_of_rounds = 5; // РєРѕР»РёС‡РµСЃС‚РІРѕ РїРµСЂРёРѕРґРѕРІ
 
 	TYPE l, ang, m, fad;
 
@@ -57,10 +57,10 @@ void Mathematical(CDormanPrince &Integrator){
 
 }	// end of Mathematical(...)
 
-// Тестирование пружинного маятника
+// РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ РїСЂСѓР¶РёРЅРЅРѕРіРѕ РјР°СЏС‚РЅРёРєР°
 void Spring(CDormanPrince &Integrator){
 
-	TYPE num_of_rounds = 5; // количество периодов
+	TYPE num_of_rounds = 5; // РєРѕР»РёС‡РµСЃС‚РІРѕ РїРµСЂРёРѕРґРѕРІ
 
 	TYPE StartPos, mass, k, coeff(0);
 	bool bForceType(false), bFriction;
@@ -74,7 +74,7 @@ void Spring(CDormanPrince &Integrator){
 
 	cout << "\n	Is there friction force? "; cin >> bFriction;
 
-	// формируем коэффициент для одной из сил трения
+	// С„РѕСЂРјРёСЂСѓРµРј РєРѕСЌС„С„РёС†РёРµРЅС‚ РґР»СЏ РѕРґРЅРѕР№ РёР· СЃРёР» С‚СЂРµРЅРёСЏ
 	if (bFriction)
 	{
 		cout << "		Friction force type (slide - 0/viscous - 1): ";
@@ -101,7 +101,7 @@ void Spring(CDormanPrince &Integrator){
 
 }	// end of Spring(...)
 
-// Дополнительная функция для задания количества периодов
+// Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ Р·Р°РґР°РЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РїРµСЂРёРѕРґРѕРІ
 void Set_Periods(TYPE &num){
 	cout << "\n	Type number of pendulum's motion periods (0 - automaticaly): ";
 	cin >> num;

@@ -295,8 +295,8 @@ void Matrix(){
 			double Determinant = matr.detGauss();
 			if (Determinant != 0)
 			{
-				bool Positive = matr.PositiveDef(); // положительно определена?
-				if (matr.checkSymmetric() && Positive)	// симметричная матрица?
+				bool Positive = matr.PositiveDef(); // РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕ РѕРїСЂРµРґРµР»РµРЅР°?
+				if (matr.checkSymmetric() && Positive)	// СЃРёРјРјРµС‚СЂРёС‡РЅР°СЏ РјР°С‚СЂРёС†Р°?
 				{										
 					CSymmetricMatrix temp(matr);
 					CMatrix test_matrix(matr);
@@ -304,10 +304,10 @@ void Matrix(){
 					matr = temp.inverse();
 					inverseCheck(matr, test_matrix);
 				} 
-				else	// не симметричная
+				else	// РЅРµ СЃРёРјРјРµС‚СЂРёС‡РЅР°СЏ
 				{
 					cout << "I'll show you inverse matrix, boy\n\n";
-					if (!Positive) // определена отрицательно
+					if (!Positive) // РѕРїСЂРµРґРµР»РµРЅР° РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕ
 					{
 						cout << "But before we start, you should know that\n"
 							<< "it's not a legal (PositiveDef - false) symmetric\n"
@@ -344,7 +344,7 @@ void Matrix(){
 } // end of Matrix()
 
 
-// Вспомогательные функции -------------------------------------------------------
+// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё -------------------------------------------------------
 static double ClearZero(const double &arg){
 	if (abs(arg) > 1.0e-014) return arg;
 	else return 0;
@@ -439,7 +439,7 @@ void Second(CMatrix &arg){
 	Fill(arg);
 }
 
-// функции для проверки -----------------------------------
+// С„СѓРЅРєС†РёРё РґР»СЏ РїСЂРѕРІРµСЂРєРё -----------------------------------
 void Test(int n, CMatrix &arg){
 	const int size = 4;
 	int Res[size][size] =

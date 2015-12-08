@@ -6,13 +6,13 @@ class CModel
 {
 protected:
 	CVector StartValues;
-	int s_size; // длина вектора StartValues
+	int s_size; // РґР»РёРЅР° РІРµРєС‚РѕСЂР° StartValues
 	TYPE 
-		Interval, // должен ли быть интервал между знач. задан тут?
+		Interval, // РґРѕР»Р¶РµРЅ Р»Рё Р±С‹С‚СЊ РёРЅС‚РµСЂРІР°Р» РјРµР¶РґСѓ Р·РЅР°С‡. Р·Р°РґР°РЅ С‚СѓС‚?
 		t0, t1;
 	CMatrix Result;
 
-	// Остановка интегрирования при малых изменениях приращения координаты
+	// РћСЃС‚Р°РЅРѕРІРєР° РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ РїСЂРё РјР°Р»С‹С… РёР·РјРµРЅРµРЅРёСЏС… РїСЂРёСЂР°С‰РµРЅРёСЏ РєРѕРѕСЂРґРёРЅР°С‚С‹
 	TYPE stop_condition;
 	unsigned short int stop_count, stop_count_max;
 	bool stop_flag;
@@ -24,7 +24,7 @@ public:
 
 	void addResult(CVector &X, TYPE t);
 
-	// инкапсуляция в чистом виде
+	// РёРЅРєР°РїСЃСѓР»СЏС†РёСЏ РІ С‡РёСЃС‚РѕРј РІРёРґРµ
 	CVector getStart() const;
 	TYPE getInterval() const;
 	TYPE get_t0() const;
@@ -45,12 +45,12 @@ class TArenstorfModel : public CModel
 private:
 	TYPE m, M;
 public:
-	TYPE Period;  // Период обращения конкретной орбиты
-	int orbit; // Выбор орбиты (малая/большая)
+	TYPE Period;  // РџРµСЂРёРѕРґ РѕР±СЂР°С‰РµРЅРёСЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ РѕСЂР±РёС‚С‹
+	int orbit; // Р’С‹Р±РѕСЂ РѕСЂР±РёС‚С‹ (РјР°Р»Р°СЏ/Р±РѕР»СЊС€Р°СЏ)
 
 	TArenstorfModel(int variant);
 	CVector getRight(CVector &X, TYPE t) const;
 
-	// заглушка
+	// Р·Р°РіР»СѓС€РєР°
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep){ return false; };
 };

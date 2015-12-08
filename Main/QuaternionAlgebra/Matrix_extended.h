@@ -12,21 +12,21 @@ using namespace LinearAlgebra;
 class CMatrix;
 class CSymmetricMatrix;
 
-class CQuaternion; // подключили класс кватернионов (опережающая декларация)
+class CQuaternion; // РїРѕРґРєР»СЋС‡РёР»Рё РєР»Р°СЃСЃ РєРІР°С‚РµСЂРЅРёРѕРЅРѕРІ (РѕРїРµСЂРµР¶Р°СЋС‰Р°СЏ РґРµРєР»Р°СЂР°С†РёСЏ)
 
-// класс для вектора ----------------------------------
+// РєР»Р°СЃСЃ РґР»СЏ РІРµРєС‚РѕСЂР° ----------------------------------
 class CVector : public BaseVector
 {
 public:
-	// constructor пустой
+	// constructor РїСѓСЃС‚РѕР№
 	CVector() : BaseVector(){ 
 	} 
 
-	// создаём вектор заданной длины
+	// СЃРѕР·РґР°С‘Рј РІРµРєС‚РѕСЂ Р·Р°РґР°РЅРЅРѕР№ РґР»РёРЅС‹
 	CVector(int n) : BaseVector(n){ 
 	} 
 
-	// конструктор копии вектора arg
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёРё РІРµРєС‚РѕСЂР° arg
 	CVector(const BaseVector &arg) : BaseVector(arg){ 
 	} 
 
@@ -47,10 +47,10 @@ public:
 	TYPE operator * (const CVector &arg);
 	CVector operator * (const CMatrix &arg);
 
-	// векторное произведение
+	// РІРµРєС‚РѕСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ
 	CVector crossProduct(const CVector &b);
 
-	// реализация алгебры кватернионов
+	// СЂРµР°Р»РёР·Р°С†РёСЏ Р°Р»РіРµР±СЂС‹ РєРІР°С‚РµСЂРЅРёРѕРЅРѕРІ
 	CQuaternion operator * (const CQuaternion &Quat);
 
 	CVector rotate(const CVector &e_vec, TYPE phi, const bool radians);
@@ -58,11 +58,11 @@ public:
 };
 
 
-// класс для матрицы ----------------------------------
+// РєР»Р°СЃСЃ РґР»СЏ РјР°С‚СЂРёС†С‹ ----------------------------------
 class CMatrix : protected BaseMatrix
 {
 public:
-	// путсой конструктор
+	// РїСѓС‚СЃРѕР№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	CMatrix() : BaseMatrix(){ 
 	}
 
@@ -71,13 +71,13 @@ public:
 		this->setSize(n, m);
 	}
 
-	// конструктор копии
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёРё
 	CMatrix(const CMatrix &arg) : BaseMatrix(arg){ 	
 	} 
 
 	TYPE getElement(int i, int j) const;
-	int getRowCount() const; // количество строк
-	int getColCount() const; // количество столбцов
+	int getRowCount() const; // РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРє
+	int getColCount() const; // РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚РѕР»Р±С†РѕРІ
 
 	bool checkSymmetric() const;
 	bool checkSquare() const;
@@ -86,17 +86,17 @@ public:
 	void setElement(int n, int m, TYPE value);
 
 	CMatrix flip();
-	CMatrix inverse(); // обратная матрица методом Гаусса
+	CMatrix inverse(); // РѕР±СЂР°С‚РЅР°СЏ РјР°С‚СЂРёС†Р° РјРµС‚РѕРґРѕРј Р“Р°СѓСЃСЃР°
 
 	TYPE detGauss() const;
 	bool PositiveDef() const;
 
 	BaseVector &operator [] (int i);
-	const BaseVector &operator [] (int i) const;  // проверить, нужна ли здесь ссылка
+	const BaseVector &operator [] (int i) const;  // РїСЂРѕРІРµСЂРёС‚СЊ, РЅСѓР¶РЅР° Р»Рё Р·РґРµСЃСЊ СЃСЃС‹Р»РєР°
 
 	CMatrix operator + (const CMatrix &arg);
 
-	CMatrix operator * (const TYPE num); // матрица на число
+	CMatrix operator * (const TYPE num); // РјР°С‚СЂРёС†Р° РЅР° С‡РёСЃР»Рѕ
 	CVector operator * (const CVector &arg);
 	CMatrix operator * (const CMatrix &arg);
 
@@ -109,16 +109,16 @@ public:
 	CSymmetricMatrix() : CMatrix(){
 	}
 
-	// конструктор
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	CSymmetricMatrix(int n) : CMatrix(){
 		this->setSize(n, n);
 	}
 
-	// конструктор копии
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёРё
 	CSymmetricMatrix(const CMatrix &arg) : CMatrix(arg){
 	}
 
-	// обратная матрица методом Холецкого
+	// РѕР±СЂР°С‚РЅР°СЏ РјР°С‚СЂРёС†Р° РјРµС‚РѕРґРѕРј РҐРѕР»РµС†РєРѕРіРѕ
 	CMatrix inverse();
 
 	void setElement(int n, int m, TYPE value);

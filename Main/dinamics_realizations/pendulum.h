@@ -1,12 +1,12 @@
 #pragma once
 #include "Model.h"
 
-/*	Базовый класс для моделей маятников	*/
+/*	Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РјРѕРґРµР»РµР№ РјР°СЏС‚РЅРёРєРѕРІ	*/
 class CPendulum : public CModel
 {
 protected:
 	TYPE mass,
-		g; // гравитационная постоянная
+		g; // РіСЂР°РІРёС‚Р°С†РёРѕРЅРЅР°СЏ РїРѕСЃС‚РѕСЏРЅРЅР°СЏ
 public:
 	TYPE Period;
 
@@ -15,13 +15,13 @@ public:
 };
 
 
-/*	Математический маятник	*/
+/*	РњР°С‚РµРјР°С‚РёС‡РµСЃРєРёР№ РјР°СЏС‚РЅРёРє	*/
 class CMathPendulum : public CPendulum
 {
 private:
 	TYPE
-		Omega0,	// циклическая частота
-		fading; // коэффициент затухания
+		Omega0,	// С†РёРєР»РёС‡РµСЃРєР°СЏ С‡Р°СЃС‚РѕС‚Р°
+		fading; // РєРѕСЌС„С„РёС†РёРµРЅС‚ Р·Р°С‚СѓС…Р°РЅРёСЏ
 
 public:
 	CMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad = 0);
@@ -30,16 +30,16 @@ public:
 };
 
 
-/*	Пружинный маятник	*/
+/*	РџСЂСѓР¶РёРЅРЅС‹Р№ РјР°СЏС‚РЅРёРє	*/
 class CSpringPendulum : public CPendulum
 {
 private:
 	TYPE
-		Omega,	// коэффициент в силе упругости, соотнесённый с массой (k / m)
-		k,		// коэффициент упругости
-		coeff;	// коэффициент в силе трения, соотн. с массой (mu / m)
+		Omega,	// РєРѕСЌС„С„РёС†РёРµРЅС‚ РІ СЃРёР»Рµ СѓРїСЂСѓРіРѕСЃС‚Рё, СЃРѕРѕС‚РЅРµСЃС‘РЅРЅС‹Р№ СЃ РјР°СЃСЃРѕР№ (k / m)
+		k,		// РєРѕСЌС„С„РёС†РёРµРЅС‚ СѓРїСЂСѓРіРѕСЃС‚Рё
+		coeff;	// РєРѕСЌС„С„РёС†РёРµРЅС‚ РІ СЃРёР»Рµ С‚СЂРµРЅРёСЏ, СЃРѕРѕС‚РЅ. СЃ РјР°СЃСЃРѕР№ (mu / m)
 		
-	bool bForceType; // тип трения
+	bool bForceType; // С‚РёРї С‚СЂРµРЅРёСЏ
 
 public:
 	CSpringPendulum(TYPE StartPos, TYPE mass, TYPE k, TYPE coeff = 0, bool bForceType = false);
