@@ -33,25 +33,25 @@ TDate JD2Date(const double JD){
 	TDate Result;
 
 	// the integer part of JD + 0.5
-	ulong Z = trunc(JD + 0.5);
+	ulong Z = (ulong)trunc(JD + 0.5);
 
 	// the fractional (decimal) part of JD + 0.5
-	double F = frac(JD); 
+	double F = frac(JD + 0.5); 
 
 	ushort alpha, A;
 	if (Z < 2299161)
 		A = Z;
 	else
 	{
-		alpha = trunc((Z - 1867216.25) / 36524.25);
-		A = Z + 1 + alpha - trunc(alpha / 4.0);
+		alpha = (int)trunc((Z - 1867216.25) / 36524.25);
+		A = Z + 1 + alpha - (int)trunc(alpha / 4.0);
 	}
 
 	ushort B, C, D, E;
 	B = A + 1524;
-	C = trunc((B - 122.1) / 365.25);
-	D = trunc(365.25 * C);
-	E = trunc((B - D) / 30.6001);
+	C = (int)trunc((B - 122.1) / 365.25);
+	D = (int)trunc(365.25 * C);
+	E = (int)trunc((B - D) / 30.6001);
 
 	// day of the month (with decimals)
 	Result.Day = B - D - trunc(30.6001 * E) + F;
@@ -74,6 +74,8 @@ TDate JD2Date(const double JD){
 
 	Result.Month = m;
 	Result.Year = Year;
+
+	return Result;
 
 }
 
@@ -112,12 +114,12 @@ ushort DayNumber(const TDate &Date){
 		vis = 2; // для обычного
 
 	// Количество дней, прошедших с начала года
-	ushort Day;
-	Day =	trunc((275.0 * Month) / 9.0)
-			- vis * trunc((Month + 9.0) / 12.0)
-			+ trunc(Day) - 30;
+	ushort resDay;
+	resDay =	trunc((275.0 * Month) / 9.0)
+				- vis * trunc((Month + 9.0) / 12.0)
+				+ trunc(Day) - 30;
 
-	return Day;
+	return resDay;
 
 }
 

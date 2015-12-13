@@ -1,6 +1,6 @@
 ﻿#include "Earth.h"
+
 #include "Time.h"
-#include "Functions.h"
 
 /*
 	положение Земли относительно Солнца
@@ -36,22 +36,4 @@ coord EarthPos(const double JD){
 	coord Pos = Spher2Fix(AU, 0, deg2rad(alpha));
 
 	return Pos;
-}
-
-
-/*
-	Перевод из Гелицентрического положения в Геоцентрическое
-
-	время в Юлианских днях
-*/
-coord GeoPos(const double Time, coord Pos){
-
-	coord Earth = EarthPos(Time);
-
-	coord NewPos = new double[VECSIZE];
-
-	for (ushort i = 0; i < VECSIZE; i++)
-		*(NewPos + i) = *(Pos + i) - *(Earth + i);
-
-	return NewPos;
 }

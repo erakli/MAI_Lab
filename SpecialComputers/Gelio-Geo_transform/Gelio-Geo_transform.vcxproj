@@ -78,17 +78,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Coord_Transformation.cpp" />
     <ClCompile Include="Earth.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="MainForm.cpp" />
+    <ClCompile Include="Matrix_Operations.cpp" />
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Coord_Transformation.h" />
     <ClInclude Include="Earth.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Matrix_Operations.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>

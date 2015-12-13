@@ -1,23 +1,4 @@
-﻿#include <math.h>
-
-#include "Functions.h"
-
-// перевод из градусов в радианы
-double deg2rad(const double &angle){
-	return angle * PI / 180;
-}
-
-// дробная часть числа
-ulong frac(const double X){
-
-	return (X >= 0) ? X - trunc(X) : -(X - trunc(X));
-
-}
-
-// функции возведения в степень
-double pow2(const double &arg){
-	return arg * arg;
-}
+﻿#include "Functions.h"
 
 // модуль вектора известной длины
 double module(double* X, ushort size){
@@ -79,33 +60,17 @@ coord Fix2Spher(coord FixCoord){
 
 	// ещё проверка на равенство проекции ro на XoY 0
 
-	double 
-		SqrSum = pow2(*ptr_x) + pow2(*ptr_y),
+	double 		
+		fi = asin( *ptr_z / ro ),
 		
-		fi = atan( *ptr_z / sqrt(SqrSum) ),
-		
-		lambda = atan( *ptr_y / *ptr_x ); // проверить, чтобы здесь был дробный результат
-
-	if ((*ptr_x > 0) && (*ptr_y >= 0))
-	{
-		
-	}
-	else
-	{
-		if (*ptr_x <= 0)
-			lambda += PI;
-
-		else
-			if ((*ptr_x >= 0) && (*ptr_y < 0))
-				lambda += 2 * PI;
-			
-			// финальное ИНАЧЕ с выходом сюда
-	}
+		lambda = atan2( *ptr_y, *ptr_x ); // проверить правильность
 
 	coord Result = new double[VECSIZE];
 
 	Result[0] = ro;
 	Result[1] = fi;
 	Result[2] = lambda;
+
+	return Result;
 
 }
