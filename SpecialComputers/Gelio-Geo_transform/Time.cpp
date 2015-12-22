@@ -15,14 +15,14 @@ double Date2JD(const TDate &Date){
 		month += 12;
 	}
 
-	ushort A, B;
+	int A, B;
 
 	A = (int)trunc(year / 100.0);
 	B = 2 - A + (int)trunc(A / 4.0);
 
 	double
 		JD = trunc(365.25 * (year + 4716)) 
-			+ trunc(30.6001 * (month + 1) + day + B - 1524.5);
+			+ trunc(30.6001 * (month + 1)) + day + B - 1524.5;
 
 	return JD;
 
@@ -38,7 +38,7 @@ TDate JD2Date(const double JD){
 	// the fractional (decimal) part of JD + 0.5
 	double F = frac(JD + 0.5); 
 
-	ushort alpha, A;
+	int alpha, A;
 	if (Z < 2299161)
 		A = Z;
 	else
@@ -47,7 +47,7 @@ TDate JD2Date(const double JD){
 		A = Z + 1 + alpha - (int)trunc(alpha / 4.0);
 	}
 
-	ushort B, C, D, E;
+	int B, C, D, E;
 	B = A + 1524;
 	C = (int)trunc((B - 122.1) / 365.25);
 	D = (int)trunc(365.25 * C);
@@ -61,7 +61,7 @@ TDate JD2Date(const double JD){
 	if (E < 14) 
 		m = E - 1;
 	else
-		if ((E = 14) || (E = 15))
+		if ((E == 14) || (E == 15))
 			m = E - 13;
 
 	// year
@@ -69,7 +69,7 @@ TDate JD2Date(const double JD){
 	if (m > 2)
 		Year = C - 4716;
 	else 
-		if ((m = 1) || (m = 2))
+		if ((m == 1) || (m == 2))
 			Year = C - 4715;
 
 	Result.Month = m;

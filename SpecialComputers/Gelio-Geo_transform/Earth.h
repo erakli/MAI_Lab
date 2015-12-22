@@ -18,5 +18,5 @@ coord EarthPos(const double JD); // понять с началом отсчёт�
 	Время в Юлианских днях
 */
 inline double EarthRotAngle(const double Time){
-	return 4 * PI * frac(Time);
+	return 2 * PI * frac(Time);
 }
