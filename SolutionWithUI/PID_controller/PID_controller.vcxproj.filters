@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="PID_model.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Main\Matrix\Matrix_classes.cpp">
+      <Filter>Source files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Main\Dorman-Prince\Integrator.cpp">
+      <Filter>Source files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Main\Dorman-Prince\Model.cpp">
+      <Filter>Source files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="MyForm.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PID_model.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyForm.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MyForm.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{6f7e9d1e-2045-4c29-9853-9f32fe941a7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{bf08d5fe-5287-488f-ba0a-f3d280ee84c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\External">
+      <UniqueIdentifier>{8aa658d7-1aa9-4f0a-a511-6e55aa148dbf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
