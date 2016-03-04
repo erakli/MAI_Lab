@@ -110,7 +110,7 @@ namespace PID_controller {
 			this->button_Modelling->Name = L"button_Modelling";
 			this->button_Modelling->Size = System::Drawing::Size(122, 26);
 			this->button_Modelling->TabIndex = 1;
-			this->button_Modelling->Text = L"Моделирование";
+			this->button_Modelling->Text = L"РњРѕРґРµР»РёСЂРѕРІР°РЅРёРµ";
 			this->button_Modelling->UseVisualStyleBackColor = true;
 			this->button_Modelling->Click += gcnew System::EventHandler(this, &MyForm::button_Modelling_Click);
 			// 
@@ -129,7 +129,7 @@ namespace PID_controller {
 			this->label_Time->Name = L"label_Time";
 			this->label_Time->Size = System::Drawing::Size(125, 13);
 			this->label_Time->TabIndex = 3;
-			this->label_Time->Text = L"Время интегрирования";
+			this->label_Time->Text = L"Р’СЂРµРјСЏ РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ";
 			// 
 			// label_ProgressStatus
 			// 
@@ -140,7 +140,7 @@ namespace PID_controller {
 			this->label_ProgressStatus->Name = L"label_ProgressStatus";
 			this->label_ProgressStatus->Size = System::Drawing::Size(182, 24);
 			this->label_ProgressStatus->TabIndex = 4;
-			this->label_ProgressStatus->Text = L"Процесс запущен...";
+			this->label_ProgressStatus->Text = L"РџСЂРѕС†РµСЃСЃ Р·Р°РїСѓС‰РµРЅ...";
 			this->label_ProgressStatus->Visible = false;
 			// 
 			// MyForm
@@ -153,27 +153,27 @@ namespace PID_controller {
 			this->Controls->Add(this->chart1);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Name = L"MyForm";
-			this->Text = L"Моделирование САУ с ПИД-контроллером";
+			this->Text = L"РњРѕРґРµР»РёСЂРѕРІР°РЅРёРµ РЎРђРЈ СЃ РџРР”-РєРѕРЅС‚СЂРѕР»Р»РµСЂРѕРј";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
-		// создание нового графика
+		// СЃРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ РіСЂР°С„РёРєР°
 		private: DataVisualization::Charting::Series^ CreateSeries(DataVisualization::Charting::Chart^ chart){
 
-			// задание случайного цвета графика
+			// Р·Р°РґР°РЅРёРµ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С†РІРµС‚Р° РіСЂР°С„РёРєР°
 			Random r;
 			Color NewColor = Color::FromArgb(r.Next(255), r.Next(255), r.Next(255));
 
-			// создание нового графика
+			// СЃРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ РіСЂР°С„РёРєР°
 			System::Windows::Forms::DataVisualization::Charting::Series^  series = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());;
 
 			//series->ChartArea = L"ChartArea1";
 			series->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Spline;
 			//series->Legend = L"Legend1";
-			//series->Name = L"Выходное\nвоздействие";
+			//series->Name = L"Р’С‹С…РѕРґРЅРѕРµ\nРІРѕР·РґРµР№СЃС‚РІРёРµ";
 			series->Color = NewColor;
 			series->BorderWidth = 2;
 			chart->Series->Add(series);
@@ -191,8 +191,8 @@ namespace PID_controller {
 				if ((Time <= 0) || (Time > 40000))
 				{
 					MessageBox::Show(
-						"Время интегрирования выбрано\nвне допустимого диапазона",
-						"Неверный ввод",
+						"Р’СЂРµРјСЏ РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ РІС‹Р±СЂР°РЅРѕ\nРІРЅРµ РґРѕРїСѓСЃС‚РёРјРѕРіРѕ РґРёР°РїР°Р·РѕРЅР°",
+						"РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ",
 						MessageBoxButtons::OK,
 						MessageBoxIcon::Asterisk);
 					return;
@@ -201,8 +201,8 @@ namespace PID_controller {
 			else
 			{
 				MessageBox::Show(
-					"Время интегрирования не может\nбыть оставлено пустым", 
-					"Неверный ввод",
+					"Р’СЂРµРјСЏ РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ РЅРµ РјРѕР¶РµС‚\nР±С‹С‚СЊ РѕСЃС‚Р°РІР»РµРЅРѕ РїСѓСЃС‚С‹Рј", 
+					"РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ",
 					MessageBoxButtons::OK,
 					MessageBoxIcon::Asterisk);
 				return;
