@@ -48,12 +48,20 @@ CVector CPID_controller::getRight(CVector &X, TYPE t) const{
 	Y[0] = z1;
 	Y[1] = z2;
 	Y[2] = (delta * K - z2 * a[1] - z1 * a[0] - beta) / a[3];
-	Y[4] = k_coeff[1] * tau;
+	Y[3] = k_coeff[1] * tau;
 
 	return Y;
 }
 
 bool CPID_controller::Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep){
-	/* TO-DO: Найти варианты для остановки */
-	return false;
+	
+	double delta = abs(PrevStep[0] - CurStep[0]);
+
+	if ((delta < 1.0e-10) && (t != 0))
+		stop_count++;
+		
+	if (stop_count >= stop_count_max) 
+		return true;
+	else 
+		return false;
 }

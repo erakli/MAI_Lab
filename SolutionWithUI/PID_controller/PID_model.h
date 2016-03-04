@@ -1,8 +1,10 @@
+#pragma once
+
 #include "Model.h"
 #include "Matrix_classes.h"
 #include "Types.h"
 
-class CPID_controller : CModel
+class CPID_controller : public CModel
 {
 private:
 	double 
@@ -10,6 +12,7 @@ private:
 		extU,		// внешнее воздействие u(t) = 1.7
 		a[3],
 		k_coeff[3]; // gain, integrate, differentiate
+
 
 public:
 	double randProcess;

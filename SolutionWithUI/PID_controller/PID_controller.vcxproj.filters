@@ -16,15 +16,21 @@
     <ClCompile Include="MyForm.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="modeling.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Main\Supporting files\Functions.cpp">
+      <Filter>Source files\External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PID_model.h">
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="MyForm.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MyForm.resx" />
+    <ClInclude Include="modelling.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header files">
@@ -36,5 +42,8 @@
     <Filter Include="Source files\External">
       <UniqueIdentifier>{8aa658d7-1aa9-4f0a-a511-6e55aa148dbf}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MyForm.resx" />
   </ItemGroup>
 </Project>

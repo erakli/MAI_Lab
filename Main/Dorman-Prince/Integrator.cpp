@@ -67,7 +67,7 @@ void CDormanPrince::Run(CModel &Mod){
 	/*
 		основной цикл вычисления
 	*/
-	while (t < Model->get_t1())
+	while (t <= Model->get_t1())
 	{
 		// необходим контроль количества итераций
 		if (iter < 50000) iter++;
@@ -113,7 +113,7 @@ void CDormanPrince::Run(CModel &Mod){
 		*/
 		TYPE Teta;
 		CVector Xout; // сюда записываются значения с учётом коэф. плотной выдачи
-		while ((tout < t + PrevStep) && (tout < Model->get_t1()))
+		while ((tout < t + PrevStep) && (tout <= Model->get_t1()))
 		{
 			Teta = (tout - t) / PrevStep;
 			Xout = thick_extradition(Teta, PrevStep);
