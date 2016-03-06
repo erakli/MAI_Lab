@@ -61,6 +61,8 @@ namespace PID_controller {
 	private: System::Windows::Forms::TextBox^  textBox_Time;
 	private: System::Windows::Forms::Label^  label_Time;
 	private: System::Windows::Forms::Label^  label_ProgressStatus;
+	private: System::Windows::Forms::Label^  label_Greeting;
+
 
 
 	private:
@@ -83,11 +85,15 @@ namespace PID_controller {
 			this->textBox_Time = (gcnew System::Windows::Forms::TextBox());
 			this->label_Time = (gcnew System::Windows::Forms::Label());
 			this->label_ProgressStatus = (gcnew System::Windows::Forms::Label());
+			this->label_Greeting = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// chart1
 			// 
+			chartArea1->AxisX->IntervalAutoMode = System::Windows::Forms::DataVisualization::Charting::IntervalAutoMode::VariableCount;
+			chartArea1->AxisX->IsMarginVisible = false;
+			chartArea1->AxisY->IntervalAutoMode = System::Windows::Forms::DataVisualization::Charting::IntervalAutoMode::VariableCount;
 			chartArea1->CursorX->Interval = 0.01;
 			chartArea1->CursorX->IsUserEnabled = true;
 			chartArea1->CursorX->IsUserSelectionEnabled = true;
@@ -109,8 +115,8 @@ namespace PID_controller {
 			this->button_Modelling->Location = System::Drawing::Point(744, 54);
 			this->button_Modelling->Name = L"button_Modelling";
 			this->button_Modelling->Size = System::Drawing::Size(122, 26);
-			this->button_Modelling->TabIndex = 1;
-			this->button_Modelling->Text = L"РњРѕРґРµР»РёСЂРѕРІР°РЅРёРµ";
+			this->button_Modelling->TabIndex = 0;
+			this->button_Modelling->Text = L"Моделирование";
 			this->button_Modelling->UseVisualStyleBackColor = true;
 			this->button_Modelling->Click += gcnew System::EventHandler(this, &MyForm::button_Modelling_Click);
 			// 
@@ -129,7 +135,7 @@ namespace PID_controller {
 			this->label_Time->Name = L"label_Time";
 			this->label_Time->Size = System::Drawing::Size(125, 13);
 			this->label_Time->TabIndex = 3;
-			this->label_Time->Text = L"Р’СЂРµРјСЏ РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ";
+			this->label_Time->Text = L"Время интегрирования";
 			// 
 			// label_ProgressStatus
 			// 
@@ -140,12 +146,24 @@ namespace PID_controller {
 			this->label_ProgressStatus->Name = L"label_ProgressStatus";
 			this->label_ProgressStatus->Size = System::Drawing::Size(182, 24);
 			this->label_ProgressStatus->TabIndex = 4;
-			this->label_ProgressStatus->Text = L"РџСЂРѕС†РµСЃСЃ Р·Р°РїСѓС‰РµРЅ...";
+			this->label_ProgressStatus->Text = L"Процесс запущен...";
 			this->label_ProgressStatus->Visible = false;
+			// 
+			// label_Greeting
+			// 
+			this->label_Greeting->AutoSize = true;
+			this->label_Greeting->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->label_Greeting->Location = System::Drawing::Point(114, 242);
+			this->label_Greeting->Name = L"label_Greeting";
+			this->label_Greeting->Size = System::Drawing::Size(427, 20);
+			this->label_Greeting->TabIndex = 5;
+			this->label_Greeting->Text = L"Для запуска моделирования нажмите Моделирование\r\n";
 			// 
 			// MyForm
 			// 
 			this->ClientSize = System::Drawing::Size(878, 523);
+			this->Controls->Add(this->label_Greeting);
 			this->Controls->Add(this->label_ProgressStatus);
 			this->Controls->Add(this->label_Time);
 			this->Controls->Add(this->textBox_Time);
@@ -153,27 +171,27 @@ namespace PID_controller {
 			this->Controls->Add(this->chart1);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Name = L"MyForm";
-			this->Text = L"РњРѕРґРµР»РёСЂРѕРІР°РЅРёРµ РЎРђРЈ СЃ РџРР”-РєРѕРЅС‚СЂРѕР»Р»РµСЂРѕРј";
+			this->Text = L"Моделирование САУ с ПИД-контроллером";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
-		// СЃРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ РіСЂР°С„РёРєР°
+		// создание нового графика
 		private: DataVisualization::Charting::Series^ CreateSeries(DataVisualization::Charting::Chart^ chart){
 
-			// Р·Р°РґР°РЅРёРµ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С†РІРµС‚Р° РіСЂР°С„РёРєР°
+			// задание случайного цвета графика
 			Random r;
 			Color NewColor = Color::FromArgb(r.Next(255), r.Next(255), r.Next(255));
 
-			// СЃРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ РіСЂР°С„РёРєР°
+			// создание нового графика
 			System::Windows::Forms::DataVisualization::Charting::Series^  series = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());;
 
 			//series->ChartArea = L"ChartArea1";
 			series->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Spline;
 			//series->Legend = L"Legend1";
-			//series->Name = L"Р’С‹С…РѕРґРЅРѕРµ\nРІРѕР·РґРµР№СЃС‚РІРёРµ";
+			//series->Name = L"Выходное\nвоздействие";
 			series->Color = NewColor;
 			series->BorderWidth = 2;
 			chart->Series->Add(series);
@@ -183,7 +201,7 @@ namespace PID_controller {
 
 		private: System::Void button_Modelling_Click(System::Object^  sender, System::EventArgs^  e) {
 
-			double Time = 0;
+			TYPE Time = 0;
 
 			if (!String::IsNullOrEmpty(textBox_Time->Text))
 			{
@@ -191,8 +209,8 @@ namespace PID_controller {
 				if ((Time <= 0) || (Time > 40000))
 				{
 					MessageBox::Show(
-						"Р’СЂРµРјСЏ РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ РІС‹Р±СЂР°РЅРѕ\nРІРЅРµ РґРѕРїСѓСЃС‚РёРјРѕРіРѕ РґРёР°РїР°Р·РѕРЅР°",
-						"РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ",
+						"Время интегрирования выбрано\nвне допустимого диапазона",
+						"Неверный ввод",
 						MessageBoxButtons::OK,
 						MessageBoxIcon::Asterisk);
 					return;
@@ -201,12 +219,15 @@ namespace PID_controller {
 			else
 			{
 				MessageBox::Show(
-					"Р’СЂРµРјСЏ РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ РЅРµ РјРѕР¶РµС‚\nР±С‹С‚СЊ РѕСЃС‚Р°РІР»РµРЅРѕ РїСѓСЃС‚С‹Рј", 
-					"РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ",
+					"Время интегрирования не может\nбыть оставлено пустым", 
+					"Неверный ввод",
 					MessageBoxButtons::OK,
 					MessageBoxIcon::Asterisk);
 				return;
 			}
+
+			if (label_Greeting->Visible) 
+				label_Greeting->Visible = false;
 
 			label_ProgressStatus->Visible = true;
 			MyForm::Refresh();

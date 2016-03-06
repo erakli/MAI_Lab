@@ -1,6 +1,6 @@
 #include "modelling.h"
 
-CMatrix PIDModelling(const double t){
+CMatrix PIDModelling(const TYPE t){
 
 	CDormanPrince Integrator;
 

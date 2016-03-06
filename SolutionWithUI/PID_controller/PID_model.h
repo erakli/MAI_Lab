@@ -7,15 +7,25 @@
 class CPID_controller : public CModel
 {
 private:
-	double 
+	TYPE 
 		K,			// коэффициент в числителе апериодического звена (Агрегат)
 		extU,		// внешнее воздействие u(t) = 1.7
+
+		s,			// показатель в нелинейном звене
+
+		T,			// коэффициент в знаменателе колебательного звена
+		xi,			// показатель колебательности
+
 		a[3],
 		k_coeff[3]; // gain, integrate, differentiate
 
+	TYPE NonLinearElement(TYPE delta1) const;
+
+	CVector AperiodicElement(TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const;
+	CVector OscilElement(TYPE beta, TYPE z1, TYPE alpha) const;
 
 public:
-	double randProcess;
+	TYPE randProcess;
 
 	CPID_controller();
 	CVector getRight(CVector &X, TYPE t) const;

@@ -4,4 +4,4 @@
 #include "Integrator.h"
 #include "PID_model.h"
 
-CMatrix PIDModelling(const double t);
+CMatrix PIDModelling(const TYPE t);
