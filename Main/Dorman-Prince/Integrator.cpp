@@ -70,7 +70,7 @@ void CDormanPrince::Run(CModel &Mod){
 	while (t <= Model->get_t1())
 	{
 		// необходим контроль количества итераций
-		if (iter < 50000) iter++;
+		if (iter < 1000) iter++;
 		else
 			break;
 
@@ -103,6 +103,8 @@ void CDormanPrince::Run(CModel &Mod){
 		if (Eps > Eps_Max)	continue; // ------------------- основной перевалочный пункт
 
 		Eps_Global += Eps; // считаем глобальную погрешность как сумму локальных
+
+		iter = 0; // обнуляем счётчик количества итераций при успехе шага
 
 		// если приращение координаты менее заданного условия прерываем процесс
 		if (Model->Stop_Calculation(t, PrevStep, x0, x1)) break;
@@ -234,7 +236,7 @@ void CDormanPrince::getEps(){
 	}
 
 	// воспользовались нахождением длины вектора
-	Eps = fraction.getLength() / sqrt((double)x_size);	
+	Eps = fraction.getLength() / sqrt((TYPE)x_size);	
 	
 }
 
