@@ -16,9 +16,6 @@
     <Filter Include="Source Files\External">
       <UniqueIdentifier>{0e879c8a-e99b-4c39-95c7-8948749d0e98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External">
-      <UniqueIdentifier>{644547ae-5bdb-40c0-8d6e-9c953eb0bdf8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Quaternion.cpp">
@@ -40,12 +37,6 @@
     </ClInclude>
     <ClInclude Include="Matrix_extended.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Supporting files\Functions.h">
-      <Filter>Header Files\External</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Supporting files\Types.h">
-      <Filter>Header Files\External</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

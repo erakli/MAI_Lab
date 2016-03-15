@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "Quaternion.h"
 #include "Matrix_extended.h"
+#include "Quaternion.h"
 
 
 using namespace std;
@@ -126,7 +126,7 @@ void Quat_Rotation_Test(bool radians){
 	cout << "\n\n\n * * * Testing Quaternion rotation.\n";
 	cout << "Fill in next parametrs:";
 
-	CVector
+	CVectorExtend
 		a_vec(VEC_PART_SIZE), // координаты оси вращения
 		ro_vec(VEC_PART_SIZE); //координаты вектора, поворот которого будет совершаться 
 
@@ -137,7 +137,7 @@ void Quat_Rotation_Test(bool radians){
 	cout << "\nCoordinates of rotation axis\n"; Fill(a_vec);
 	cout << "\n\nCoordinates of rotated vector\n"; Fill(ro_vec);
 
-	CVector res_vec(VEC_PART_SIZE);
+	CVectorExtend res_vec(VEC_PART_SIZE);
 	CQuaternion Main_Quat(angle, a_vec, radians);
 
 	// вектор после осуществления поворота

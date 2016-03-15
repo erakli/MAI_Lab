@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Supporting files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Matrix\;..\Supporting files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -76,8 +76,6 @@
     <ClCompile Include="test_Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Supporting files\Functions.h" />
-    <ClInclude Include="..\Supporting files\Types.h" />
     <ClInclude Include="Matrix_extended.h" />
     <ClInclude Include="Quaternion.h" />
   </ItemGroup>
