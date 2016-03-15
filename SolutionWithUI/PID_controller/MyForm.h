@@ -1,7 +1,7 @@
 #pragma once
 #include "modelling.h"
 
-namespace PID_controller {
+namespace Project1 {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -10,34 +10,34 @@ namespace PID_controller {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
+	ref class MyNativeWindowListener;
+
 	/// <summary>
 	/// Summary for MyForm
 	/// </summary>
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
+	private:
+		//static MyForm^ myMainForm;
+		MyNativeWindowListener^ nwl;
+		static HWND hWndMain;
+
+		UINT counter, limit;
+	private: System::Windows::Forms::Label^  label_Ready;
+
+
 	public:
-		MyForm(void)
-		{
-			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+		MyForm(void);
 
-			//this->chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			//this->legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
-			//this->series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
-			//// 
-			//// chart1
-			//// 
-			//chartArea1->AxisX->MajorGrid->LineColor = System::Drawing::Color::DimGray;
-			//chartArea1->AxisY->MajorGrid->LineColor = System::Drawing::Color::DimGray;
-			//chartArea1->BorderColor = System::Drawing::Color::DimGray;
-
-			//chartArea1->Name = L"ChartArea1";
-			//this->chart1->ChartAreas->Add(chartArea1);
-
-			//legend1->Name = L"Legend1";
-			//this->chart1->Legends->Add(legend1);
+		void AddPoint(TYPE xPoint, TYPE yPoint){
+			currentSeries->Points->AddXY(xPoint, yPoint);
+			counter++;
+			if (counter >= 100)
+			{
+				chart1->Refresh();
+				//Refresh();
+				counter = 0;
+			}
 		}
 
 	protected:
@@ -53,6 +53,7 @@ namespace PID_controller {
 		}
 	private: 
 		System::Windows::Forms::DataVisualization::Charting::Chart^  chart1;
+		DataVisualization::Charting::Series^ currentSeries;
 		//DataVisualization::Charting::Series^  series1;
 		//DataVisualization::Charting::ChartArea^  chartArea1;
 		//DataVisualization::Charting::Legend^  legend1;
@@ -86,6 +87,7 @@ namespace PID_controller {
 			this->label_Time = (gcnew System::Windows::Forms::Label());
 			this->label_ProgressStatus = (gcnew System::Windows::Forms::Label());
 			this->label_Greeting = (gcnew System::Windows::Forms::Label());
+			this->label_Ready = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -160,14 +162,27 @@ namespace PID_controller {
 			this->label_Greeting->TabIndex = 5;
 			this->label_Greeting->Text = L"Для запуска моделирования нажмите Моделирование\r\n";
 			// 
+			// label_Ready
+			// 
+			this->label_Ready->AutoSize = true;
+			this->label_Ready->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->label_Ready->Location = System::Drawing::Point(827, 498);
+			this->label_Ready->Name = L"label_Ready";
+			this->label_Ready->Size = System::Drawing::Size(39, 13);
+			this->label_Ready->TabIndex = 6;
+			this->label_Ready->Text = L"Готов.";
+			this->label_Ready->Visible = false;
+			// 
 			// MyForm
 			// 
 			this->ClientSize = System::Drawing::Size(878, 523);
-			this->Controls->Add(this->label_Greeting);
+			this->Controls->Add(this->label_Ready);
 			this->Controls->Add(this->label_ProgressStatus);
 			this->Controls->Add(this->label_Time);
 			this->Controls->Add(this->textBox_Time);
 			this->Controls->Add(this->button_Modelling);
+			this->Controls->Add(this->label_Greeting);
 			this->Controls->Add(this->chart1);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Name = L"MyForm";
@@ -178,6 +193,7 @@ namespace PID_controller {
 
 		}
 #pragma endregion
+
 		// создание нового графика
 		private: DataVisualization::Charting::Series^ CreateSeries(DataVisualization::Charting::Chart^ chart){
 
@@ -229,20 +245,145 @@ namespace PID_controller {
 			if (label_Greeting->Visible) 
 				label_Greeting->Visible = false;
 
-			label_ProgressStatus->Visible = true;
+			label_Ready->Visible = false;
+			//label_ProgressStatus->Visible = true;
 			MyForm::Refresh();
 
-			DataVisualization::Charting::Series^ newSeries = CreateSeries(this->chart1);
+			currentSeries = CreateSeries(this->chart1);
+			
+			limit = 10; //(UINT)(Time);
 
-			CMatrix Result(PIDModelling(Time));
-			for (int i = 0; i < Result.getRowCount(); i++)
+			CMatrix Result(PIDModelling(Time, hWndMain));
+			/*for (int i = 0; i < Result.getRowCount(); i++)
 			{
-				newSeries->Points->AddXY(Result[i][0], Result[i][1]);
-			}
+				currentSeries->Points->AddXY(Result[i][0], Result[i][1]);
+			}*/
 
-			label_ProgressStatus->Visible = false;
+			//label_ProgressStatus->Visible = false;
+			label_Ready->Visible = true;
 
 		}
 
-};
+	};
+
+	// Creates a  message filter.
+	//ref class MyMessageFilter : public System::Windows::Forms::IMessageFilter
+	//{
+	//public:
+	//	[SecurityPermission(SecurityAction::LinkDemand, Flags = SecurityPermissionFlag::UnmanagedCode)]
+	//	virtual bool PreFilterMessage(Message % m)
+	//	{
+
+	//		// Blocks all the messages relating to the left mouse button.
+	//		/*if (m.Msg >= 513 && m.Msg <= 515)
+	//		{
+	//		Console::WriteLine("Processing the messages : {0}", m.Msg);
+	//		return true;
+	//		}*/
+
+	//		if (m.Msg == WM_ADDPOINT)
+	//		{
+	//			TYPE
+	//				x = *((double *)&(m.WParam)),
+	//				y = *((double *)&(m.LParam));
+
+	//			MyForm::myMainForm->AddPoint(x, y);
+	//		}
+
+	//		return false;
+	//	}
+	
+	//};
+
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* NativeWindow class to listen to operating system messages.  */
+	/* Осталось нерешённой оптимизация скорости                    */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	ref class MyNativeWindowListener : public NativeWindow
+	{
+	private:
+
+		// Constant value was found in the S"windows.h" header file.
+		//literal int WM_ACTIVATEAPP = 0x001C;
+		MyForm^ parent;
+
+	public:
+		MyNativeWindowListener(MyForm^ parent)
+		{
+			parent->HandleCreated += gcnew EventHandler(this, &MyNativeWindowListener::OnHandleCreated);
+			parent->HandleDestroyed += gcnew EventHandler(this, &MyNativeWindowListener::OnHandleDestroyed);
+			this->parent = parent;
+		}
+
+	internal:
+
+		// Listen for the control's window creation and then hook into it.
+		void OnHandleCreated(Object^ sender, EventArgs^ /*e*/)
+		{
+			// Window is now created, assign handle to NativeWindow.
+			AssignHandle((dynamic_cast<MyForm^>(sender))->Handle);
+		}
+
+		void OnHandleDestroyed(Object^ /*sender*/, EventArgs^ /*e*/)
+		{
+			// Window was destroyed, release hook.
+			ReleaseHandle();
+		}
+
+	protected:
+
+		virtual void WndProc(Message %m) override
+		{
+			// Listen for operating system messages
+			switch (m.Msg)
+			{
+			case WM_ADDPOINT:
+
+				// Notify the form that this message was received.
+				// Application is activated or deactivated,
+				// based upon the WParam parameter.
+				PosXY *pStruct = (PosXY *)m.LParam.ToPointer();
+				parent->AddPoint(pStruct->posX, pStruct->posY);
+
+				if (pStruct) delete pStruct;
+
+				break;
+			}
+			NativeWindow::WndProc(m);
+		}
+
+	};
+
+	MyForm::MyForm(void)
+	{
+		InitializeComponent();
+		//
+		//TODO: Add the constructor code here
+		//
+		//myMainForm = this;
+		AcceptButton = button_Modelling;
+
+		nwl = gcnew MyNativeWindowListener(this);
+
+		hWndMain = (HWND)this->Handle.ToInt32();
+
+		counter = 0;
+		//this->chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+		//this->legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+		//this->series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+		//// 
+		//// chart1
+		//// 
+		//chartArea1->AxisX->MajorGrid->LineColor = System::Drawing::Color::DimGray;
+		//chartArea1->AxisY->MajorGrid->LineColor = System::Drawing::Color::DimGray;
+		//chartArea1->BorderColor = System::Drawing::Color::DimGray;
+
+		//chartArea1->Name = L"ChartArea1";
+		//this->chart1->ChartAreas->Add(chartArea1);
+
+		//legend1->Name = L"Legend1";
+		//this->chart1->Legends->Add(legend1);
+	}
+
 }

@@ -8,6 +8,8 @@ void main(array<String^>^ arg) {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
-	PID_controller::MyForm form;
-	Application::Run(%form);
+	//Project1::MyMessageFilter^ NewFilter;
+	//Application::AddMessageFilter(NewFilter);
+
+	Application::Run(gcnew Project1::MyForm);
 }

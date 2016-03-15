@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Matrix_classes.h"
-#include "Integrator.h"
 #include "PID_model.h"
+#include "Integrator.h"
 
-CMatrix PIDModelling(const TYPE t);
+CMatrix PIDModelling(const TYPE t, HWND hWnd);

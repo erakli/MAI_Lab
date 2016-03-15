@@ -7,7 +7,6 @@ CPID_controller::CPID_controller(){
 	StartValues.setSize(4);
 	s_size = StartValues.getSize();
 
-	/* TO-DO: Какие стартовые значения? */
 	StartValues[0] = 0;		// beta
 	StartValues[1] = 0;		// z1
 	StartValues[2] = 0;		// z2
@@ -109,4 +108,14 @@ bool CPID_controller::Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVe
 		return true;
 	else 
 		return false;
+}
+
+void CPID_controller::addResult(CVector &X, TYPE t){
+	CModel::addResult(X, t);
+
+	PosXY *pStruct = new PosXY;
+	pStruct->posX = t;
+	pStruct->posY = X[0];
+
+	PostMessage(hWnd, WM_ADDPOINT, 0, (LPARAM)pStruct);
 }

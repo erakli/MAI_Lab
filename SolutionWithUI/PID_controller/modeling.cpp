@@ -1,6 +1,6 @@
 #include "modelling.h"
 
-CMatrix PIDModelling(const TYPE t){
+CMatrix PIDModelling(const TYPE t, HWND hWnd){
 
 	CDormanPrince Integrator;
 
@@ -9,7 +9,7 @@ CMatrix PIDModelling(const TYPE t){
 	Integrator.setEps(1.0e-5); // задали начальную погрешность
 
 	// инициализировали модель (в скобках тип орбиты)
-	CPID_controller Model;
+	CPID_controller Model(hWnd);
 	//TTestModel Model;
 
 	Model.set_t1(t);
