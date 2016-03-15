@@ -1,4 +1,5 @@
 #include "Matrix_classes.h"
+#include "Functions.h"
 #include <math.h>
 //#include <string>
 //#include <algorithm>
@@ -56,7 +57,7 @@ int CVector::getSize() const{
 TYPE CVector::getLength() const{
 	TYPE res = 0;
 	for (int i = 0; i < getSize(); i++)
-		res += MyFunc::Numbers::pow2((*this)[i]);
+		res += pow2((*this)[i]);
 	res = sqrt(res);
 	return res;
 }
@@ -80,6 +81,14 @@ CVector CVector::operator + (const CVector &arg){
 	return Res;
 }
 
+const CVector CVector::operator + (const CVector &arg) const{
+	int s = this->getSize();
+	CVector Res(s);
+	for (int i = 0; i < Res.getSize(); i++)
+		Res[i] = (*this)[i] + arg[i];
+	return Res;
+}
+
 CVector CVector::operator * (const TYPE num){
 	CVector Res(getSize());
 	for (int i = 0; i < getSize(); i++)
@@ -87,8 +96,11 @@ CVector CVector::operator * (const TYPE num){
 	return Res;
 }
 
-CVector CVector::operator * (const TYPE num) const{
-	return operator*(num);
+const CVector CVector::operator * (const TYPE num) const{
+	CVector Res(getSize());
+	for (int i = 0; i < getSize(); i++)
+		Res[i] = (*this)[i] * num;
+	return Res;
 }
 
 // скалярное произведение
@@ -100,10 +112,6 @@ TYPE CVector::operator * (const CVector &arg){
 	for (int i = 0; i < s; i++)
 		sum += (*this)[i] * arg[i];
 	return sum;
-}
-
-TYPE CVector::operator * (const CVector &arg) const{
-	return operator*(arg);
 }
 
 /*
@@ -133,7 +141,7 @@ CVector CVector::operator * (const CMatrix &arg){
 }
 
 // векторное произведение
-CVector CVector::crossProduct(const CVector &b) const{
+CVector CVector::crossProduct(const CVector &b){
 	int n = 3;
 	CVector Res(n), a = *this;
 	Res[0] = a[1] * b[2] - a[2] * b[1];
@@ -215,7 +223,7 @@ CMatrix CMatrix::flip(){
 }
 
 // обращение методом Гаусса
-CMatrix CMatrix::inverse() const{
+CMatrix CMatrix::inverse(){
 	/*
 		закомментированы вспомогательные проверки промежуточных шагов
 
@@ -532,7 +540,7 @@ CMatrix CSymmetricMatrix::inverse(){
 
 		for (int p = 0; p < i; p++)
 		{
-			sum -= MyFunc::Numbers::pow2(matrix_L[i][p]);
+			sum -= pow2(matrix_L[i][p]);
 		}
 		matrix_L[i][i] = sqrt(sum);	// вычислили диагональные элементы
 		//cout << "\n - matrix_L"; Show(matrix_L);

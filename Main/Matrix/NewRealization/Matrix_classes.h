@@ -1,80 +1,94 @@
 #pragma once
-#include <vector>
+//#include <vector>
+
+//#include <exception>
+#include <math.h>
 #include "Types.h"
-#include "Functions.h"
 
-namespace LinearAlgebra{
-	typedef std::vector<TYPE> BaseVector;
-	typedef std::vector<BaseVector> BaseMatrix;
-}
-
-using namespace LinearAlgebra;
+//namespace LinearAlgebra{
+//	typedef std::vector<TYPE> BaseVector;
+//	typedef std::vector<BaseVector> BaseMatrix;
+//}
+//
+//using namespace LinearAlgebra;
 
 class CMatrix;
 class CSymmetricMatrix;
 
 // класс для вектора ----------------------------------
-class CVector : public BaseVector
+class CVector
 {
+private:
+	pTYPE elements;
+	UINT size;
+
 public:
 	// constructor пустой
-	CVector() : BaseVector(){ 
-	} 
+	CVector();
 
 	// создаём вектор заданной длины
-	CVector(int n) : BaseVector(n){ 
-	} 
+	CVector(UINT n);
 
 	// конструктор копии вектора arg
-	CVector(const BaseVector &arg) : BaseVector(arg){ 
-	} 
+	CVector(const CVector &arg);
 
-	TYPE getElement(int i) const;
-	int getSize() const;
+	~CVector();
+
+	TYPE &operator [] (UINT i);
+	const TYPE &operator [] (UINT i) const;  // проверить, нужна ли здесь ссылка
+
+	TYPE getElement(UINT i) const;
+	UINT getSize() const;
 	TYPE getLength() const;
 
-	void setElement(int i, TYPE value);
-	void setSize(int i);
+	void setElement(UINT i, TYPE value);
+	void setSize(UINT newSize);
 
 	CVector operator + (const CVector &arg);
+	//const CVector operator + (const CVector &arg) const;
 
 	CVector operator * (const TYPE num);
-	CVector operator * (const TYPE num) const;
+	//const CVector operator * (const TYPE num) const;
 	TYPE operator * (const CVector &arg);
-	TYPE operator * (const CVector &arg) const;
 	CVector operator * (const CMatrix &arg);
+
+	CVector &operator = (const CVector &right);
 
 	// векторное произведение
 	CVector crossProduct(const CVector &b) const;
 };
 
 
+typedef CVector* pVector;
+
 // класс для матрицы ----------------------------------
-class CMatrix : protected BaseMatrix
+class CMatrix
 {
+private:
+	pVector elements;
+	UINT rowCount, colCount;
+
 public:
 	// путсой конструктор
-	CMatrix() : BaseMatrix(){ 
-	}
+	CMatrix();
 
 	// constructor
-	CMatrix(int n, int m) : BaseMatrix(){ 
-		this->setSize(n, m);
-	}
+	CMatrix(UINT n, UINT m);
 
 	// конструктор копии
-	CMatrix(const CMatrix &arg) : BaseMatrix(arg){ 	
-	} 
+	CMatrix(const CMatrix &arg); // проверить
 
-	TYPE getElement(int i, int j) const;
-	int getRowCount() const; // количество строк
-	int getColCount() const; // количество столбцов
+	~CMatrix();
+
+	TYPE getElement(UINT i, UINT j) const;
+	UINT getRowCount() const; // количество строк
+	UINT getColCount() const; // количество столбцов
 
 	bool checkSymmetric() const;
 	bool checkSquare() const;
 
-	void setSize(int n, int m);
-	void setElement(int n, int m, TYPE value);
+	void setSize(UINT n, UINT m); // закончить
+	void setElement(UINT n, UINT m, TYPE value);
 
 	CMatrix flip();
 	CMatrix inverse() const; // обратная матрица методом Гаусса
@@ -82,8 +96,9 @@ public:
 	TYPE detGauss() const;
 	bool PositiveDef() const;
 
-	BaseVector &operator [] (int i);
-	const BaseVector &operator [] (int i) const;  // проверить, нужна ли здесь ссылка
+	// проверить
+	CVector &operator [] (UINT i);
+	const CVector &operator [] (UINT i) const; 
 
 	CMatrix operator + (const CMatrix &arg);
 
@@ -91,7 +106,7 @@ public:
 	CVector operator * (const CVector &arg);
 	CMatrix operator * (const CMatrix &arg);
 
-	CMatrix &operator = (const CMatrix &arg);
+	CMatrix &operator = (const CMatrix &right);
 };
 
 class CSymmetricMatrix : public CMatrix

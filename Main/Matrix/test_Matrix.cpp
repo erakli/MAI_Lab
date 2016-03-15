@@ -26,24 +26,30 @@ int main(){
 
 	cout << " * * * Vector and Matrix operations test * * *";
 	
-	bool cont;
-	do
+	try{
+		bool cont;
+		do
+		{
+			cout << "\n\nWhat do we have now? (vector/matrix) ";
+			int bVector;
+			cin >> bVector; cout << "\n";
+
+			if (bVector)
+			{
+				Matrix();
+			}
+			else
+			{
+				Vector();
+			}
+
+			cout << "\nContinue? "; cin >> cont;
+		} while (cont);
+	}
+	catch(exception &e)
 	{
-		cout << "\n\nWhat do we have now? (vector/matrix) ";
-		int bVector;
-		cin >> bVector; cout << "\n";
-
-		if (bVector)
-		{
-			Matrix();
-		}
-		else
-		{
-			Vector(); 
-		}
-
-		cout << "\nContinue? "; cin >> cont;
-	} while (cont);
+		cerr << "\n	" << e.what() << "\n";
+	}
 	
 
 } // end of main
@@ -444,10 +450,10 @@ void Test(int n, CMatrix &arg){
 	const int size = 4;
 	int Res[size][size] =
 	{
-		{ 1, 0, -1, 4 },
-		{ 0, 4, 4, 4 -1 }, 
-		{ -1, 4, 14, 1 }, 
-		{ 4, 4, 1, 21 -1 }
+		{ 1,	0,		-1,		4 },
+		{ 0,	4,		4,		4 -1 }, 
+		{ -1,	4,		14,		1 }, 
+		{ 4,	4,		1,		21 -1 }
 	};
 
 	arg.setSize(n, n);

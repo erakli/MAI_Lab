@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Types.h"
-#include "Functions.h"
 
 namespace LinearAlgebra{
 	typedef std::vector<TYPE> BaseVector;
@@ -37,15 +36,15 @@ public:
 	void setSize(int i);
 
 	CVector operator + (const CVector &arg);
+	const CVector operator + (const CVector &arg) const;
 
 	CVector operator * (const TYPE num);
-	CVector operator * (const TYPE num) const;
+	const CVector operator * (const TYPE num) const;
 	TYPE operator * (const CVector &arg);
-	TYPE operator * (const CVector &arg) const;
 	CVector operator * (const CMatrix &arg);
 
 	// векторное произведение
-	CVector crossProduct(const CVector &b) const;
+	CVector crossProduct(const CVector &b);
 };
 
 
@@ -77,7 +76,7 @@ public:
 	void setElement(int n, int m, TYPE value);
 
 	CMatrix flip();
-	CMatrix inverse() const; // обратная матрица методом Гаусса
+	CMatrix inverse(); // обратная матрица методом Гаусса
 
 	TYPE detGauss() const;
 	bool PositiveDef() const;
