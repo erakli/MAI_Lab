@@ -2,10 +2,15 @@
 
 /* * * * * * * * * * CModel * * * * * * * * * */
 
-CModel::CModel(){
+CModel::CModel()
+{
+	s_size = 0;
+
 	Interval = 0.1; // перенести на ручной ввод
 	t0 = 0;
 	t1 = 5;
+
+	stop_condition = 1.0e-5;
 
 	stop_count = 0;
 	stop_count_max = 5;

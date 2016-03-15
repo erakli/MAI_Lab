@@ -29,8 +29,15 @@ int main(){
 	cout << "\n\nProcess started";
 	// ------------------------------------------------------------ Интерфейс
 
-	// запускаем интегрирование
-	Dorman.Run(Model); 
+	try
+	{
+		// запускаем интегрирование
+		Dorman.Run(Model);
+	}
+	catch (exception &e)
+	{
+		cerr << "\n	" << e.what() << "\n";
+	}
 
 	// делаем вывод результатов в файл
 	CMatrix Result(Model.getResult());

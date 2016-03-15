@@ -1,8 +1,13 @@
 #include "file_output.h"
 
+#include <windows.h>
+#include <ShellAPI.h>
+
 #include <fstream>
-#include <cstring>
-#include <algorithm>
+//#include <cstring>
+//#include <algorithm>
+
+#include <iostream>
 
 #define FILE "output"
 #define EXTENSION ".txt"
@@ -85,7 +90,7 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 	// ------------------------------------------------------------ Интерфейс
 
 
-	ShellExecuteA(NULL, "open", FileName, NULL, NULL, SW_RESTORE);
+	ShellExecuteA(nullptr, "open", FileName, nullptr, nullptr, SW_RESTORE);
 
 	SecondNum++;
 }

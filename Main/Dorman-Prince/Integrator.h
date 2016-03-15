@@ -1,6 +1,5 @@
 #pragma once
 #include "Model.h"
-#include "Types.h"
 
 #define SIZE 7
 
@@ -9,6 +8,8 @@ protected:
 	TYPE Step, t;
 	CModel *Model;
 public:
+	virtual ~TIntegrator(){}
+
 	TIntegrator();
 
 	TYPE getStep() const;
@@ -55,7 +56,7 @@ private:
 public:
 
 	CDormanPrince();
-	void Run(CModel &Mod);
+	void Run(CModel &Mod) override;
 
 	void setEps_Max(const TYPE &arg);
 	void setEps(const TYPE &arg);

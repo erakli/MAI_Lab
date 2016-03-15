@@ -44,7 +44,6 @@ CDormanPrince::CDormanPrince(){
 	Eps_Global = 0;
 
 	iter = 0; // количество итераций
-
 }
 
 /*
@@ -64,13 +63,19 @@ void CDormanPrince::Run(CModel &Mod){
 	TYPE tout = t; // Для плотной выдачи
 	TYPE PrevStep; // храним знание о предыдущем шаге
 
+	UINT local_iter(0);
+
 	/*
 		основной цикл вычисления
 	*/
 	while (t <= Model->get_t1())
 	{
 		// необходим контроль количества итераций
-		if (iter < 1000) iter++;
+		if (local_iter < 1000)
+		{
+			iter++;
+			local_iter++;
+		}
 		else
 			break;
 
@@ -104,7 +109,7 @@ void CDormanPrince::Run(CModel &Mod){
 
 		Eps_Global += Eps; // считаем глобальную погрешность как сумму локальных
 
-		iter = 0; // обнуляем счётчик количества итераций при успехе шага
+		local_iter = 0; // обнуляем счётчик количества итераций при успехе шага
 
 		// если приращение координаты менее заданного условия прерываем процесс
 		if (Model->Stop_Calculation(t, PrevStep, x0, x1)) break;
@@ -241,7 +246,7 @@ void CDormanPrince::getEps(){
 }
 
 TYPE CDormanPrince::RoundingError(){
-	TYPE v(1), u;
+	TYPE v(1), u(1);
 
 	while (1 + v > 1)
 	{

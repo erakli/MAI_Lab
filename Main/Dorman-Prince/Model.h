@@ -1,6 +1,5 @@
 #pragma once
 #include "Matrix_classes.h"
-#include "Types.h"
 
 class CModel
 {
@@ -18,11 +17,13 @@ protected:
 	bool stop_flag;
 
 public:
+	virtual ~CModel(){}
+
 	CModel();
 
 	virtual CVector getRight(CVector &X, TYPE t) const = 0;
 
-	void addResult(CVector &X, TYPE t);
+	virtual void addResult(CVector &X, TYPE t);
 
 	// инкапсуляция в чистом виде
 	CVector getStart() const;
@@ -49,8 +50,9 @@ public:
 	int orbit; // Выбор орбиты (малая/большая)
 
 	TArenstorfModel(int variant);
-	CVector getRight(CVector &X, TYPE t) const;
+	CVector getRight(CVector &X, TYPE t) const override;
 
 	// заглушка
-	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep){ return false; };
+	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override
+	{ return false; };
 };
