@@ -101,7 +101,7 @@ CQuaternion::CQuaternion(TYPE phi, const CVector &e_vec, const bool radians){
 	else
 	{
 		// считаем, что входной угол в градусах. делаем перевод в радианы
-		TYPE angle = deg2rad(phi);
+		TYPE angle = MyFunc::Numbers::deg2rad(phi);
 
 		scalar = cos(angle / 2);
 		vector = axis * sin(angle / 2);
@@ -179,7 +179,7 @@ TYPE CQuaternion::getNorm(){
 	// проверить нижний индекс
 	for (SINT i = 0; i < QUAT_SIZE; i++)
 	{
-		Res += pow2((*this)[i]);
+		Res += MyFunc::Numbers::pow2((*this)[i]);
 	}
 
 	return Res;

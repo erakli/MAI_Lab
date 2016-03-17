@@ -126,7 +126,7 @@ void Quat_Rotation_Test(bool radians){
 	cout << "\n\n\n * * * Testing Quaternion rotation.\n";
 	cout << "Fill in next parametrs:";
 
-	CVectorExtend
+	CVector
 		a_vec(VEC_PART_SIZE), // координаты оси вращения
 		ro_vec(VEC_PART_SIZE); //координаты вектора, поворот которого будет совершаться 
 
@@ -137,7 +137,7 @@ void Quat_Rotation_Test(bool radians){
 	cout << "\nCoordinates of rotation axis\n"; Fill(a_vec);
 	cout << "\n\nCoordinates of rotated vector\n"; Fill(ro_vec);
 
-	CVectorExtend res_vec(VEC_PART_SIZE);
+	CVector res_vec(VEC_PART_SIZE);
 	CQuaternion Main_Quat(angle, a_vec, radians);
 
 	// вектор после осуществления поворота

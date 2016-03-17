@@ -7,6 +7,8 @@ void Spring(CDormanPrince &Integrator);
 
 void Set_Periods(TYPE &num);
 
+using namespace std;
+
 int main(){
 
 	CDormanPrince Integrator;

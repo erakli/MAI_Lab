@@ -42,7 +42,7 @@ int CVector::getSize() const{
 TYPE CVector::getLength() const{
 	TYPE res = 0;
 	for (int i = 0; i < getSize(); i++)
-		res += pow2((*this)[i]);
+		res += MyFunc::Numbers::pow2((*this)[i]);
 	res = sqrt(res);
 	return res;
 }
@@ -184,7 +184,7 @@ CVector CVector::rotate(const CVector &e_vec, TYPE phi, const bool radians){
 	}
 	else
 	{
-		angle = deg2rad(phi);
+		angle = MyFunc::Numbers::deg2rad(phi);
 	};
 
 	tang = tan(angle / 2);
@@ -193,7 +193,7 @@ CVector CVector::rotate(const CVector &e_vec, TYPE phi, const bool radians){
 
 	Teta = axis * 2 * tang;
 
-	left_part = Teta * (1 / ( 1 + pow2(tang) ));
+	left_part = Teta * (1 / ( 1 + MyFunc::Numbers::pow2(tang) ));
 
 	right_part = (Teta * 0.5).crossProduct(*this);
 	right_part = right_part + *this;
@@ -610,7 +610,7 @@ CMatrix CSymmetricMatrix::inverse(){
 
 		for (int p = 0; p < i; p++)
 		{
-			sum -= pow2(matrix_L[i][p]);
+			sum -= MyFunc::Numbers::pow2(matrix_L[i][p]);
 		}
 		matrix_L[i][i] = sqrt(sum);	// вычислили диагональные элементы
 		//cout << "\n - matrix_L"; Show(matrix_L);
