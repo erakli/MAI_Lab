@@ -1,6 +1,7 @@
-#include "Integrator.h"
 #include <algorithm>
 #include <math.h>
+
+#include "Integrator.h"
 
 CVector SetValues(TYPE *values){
 	CVector Res(SIZE);
@@ -145,22 +146,22 @@ void CDormanPrince::set_k(int size){
 		// инициализируем элементы-векторы вектора вспомогательных коэфф.
 		k[s].setSize(size);
 
-		CVector sum(size);
+		CVector set_k_sum(size);
 
 		for (int i = 0; i < s; i++) // проходим по строкам A, складывая их
 		{
 			/* 
 				гуляем по вектор функциям.
-				sum - сумма (та, что в скобках) произведений коэффициентов для каждой 
+				set_k_sum - сумма (та, что в скобках) произведений коэффициентов для каждой 
 				вектор-функции (которые вычисляются под k)
 			*/
 			for (int j = 0; j < size; j++)
 			{
-				sum[j] += A[s][i] * k[i][j];
+				set_k_sum[j] += A[s][i] * k[i][j];
 			}
 		}
 
-		k[s] = Model->getRight(x0 + sum * Step, t + c[s] * Step);
+		k[s] = Model->getRight(x0 + set_k_sum * Step, t + c[s] * Step);
 	}
 }
 
@@ -241,11 +242,11 @@ void CDormanPrince::getEps(){
 	}
 
 	// воспользовались нахождением длины вектора
-	Eps = fraction.getLength() / sqrt((TYPE)x_size);	
+	Eps = fraction.getLength() / sqrt(TYPE(x_size));	
 	
 }
 
-TYPE CDormanPrince::RoundingError(){
+TYPE CDormanPrince::RoundingError() const{
 	TYPE v(1), u(1);
 
 	while (1 + v > 1)

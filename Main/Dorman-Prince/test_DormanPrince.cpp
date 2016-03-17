@@ -1,4 +1,8 @@
+
 #include "file_output.h"
+#include <iostream>
+
+using namespace std;
 
 int main(){
 	// ------------------------------------------------------------ Интерфейс
@@ -18,14 +22,14 @@ int main(){
 	TArenstorfModel Model(orbit);
 	//TTestModel Model;
 	
-	Model.set_t1(Model.Period * 5); // проверяем устойчивость на 5 периодов
+	Model.set_t1(Model.Period * 6); // проверяем устойчивость на 5 периодов
 	Model.setInterval(0.1); // интервал выдачи
 
 	// ------------------------------------------------------------ Интерфейс
 	cout << "Starting values:\n" << "	Eps_Max = " << Dorman.getEps_Max() <<
 		"\n	orbit type (small/big) = " << orbit << 
 		"\n	t1 = " << Model.get_t1() << "\n";
-	Sleep(DELAY);
+	//Sleep(DELAY);
 	cout << "\n\nProcess started";
 	// ------------------------------------------------------------ Интерфейс
 

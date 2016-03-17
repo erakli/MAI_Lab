@@ -40,7 +40,7 @@ private:
 
 	void StepCorrection(); // управление длиной шага интегрирования
 	void getEps(); 
-	TYPE RoundingError();
+	TYPE RoundingError() const;
 
 	void set_k(int size);
 

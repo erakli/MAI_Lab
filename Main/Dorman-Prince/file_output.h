@@ -6,6 +6,4 @@
 
 #define DELAY 2000
 
-using namespace std;
-
 void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator, bool radians = true);

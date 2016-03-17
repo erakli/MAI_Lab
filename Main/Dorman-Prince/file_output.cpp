@@ -1,16 +1,15 @@
-#include "file_output.h"
-
-#include <windows.h>
+#include <Windows.h>
 #include <ShellAPI.h>
 
 #include <fstream>
-//#include <cstring>
-//#include <algorithm>
-
 #include <iostream>
+
+#include "file_output.h"
 
 #define FILE "output"
 #define EXTENSION ".txt"
+
+using namespace std;
 
 void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 					bool radians){
@@ -63,7 +62,8 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 	TYPE rad2deg;
 	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
 
-	
+	fout.precision(20);
+
 	// ----------------- заполнение файла
 	int ColCount = Result.getColCount();
 	for (int i = 0; i < Result.getRowCount(); i++)

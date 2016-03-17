@@ -1,3 +1,5 @@
+#include <iterator>
+#include "Functions.h"
 #include "Model.h"
 
 /* * * * * * * * * * CModel * * * * * * * * * */
@@ -18,23 +20,10 @@ CModel::CModel()
 }
 
 void CModel::addResult(CVector &X, TYPE t){
-	int Row = Result.getRowCount();
-	CVector compile(s_size + 1); // вектор результата + время
+	CVector compile(X); // вектор результата + время
+	compile.insert(0, t);
 
-	/*
-		по хорошему, стоит ввести обработчик, 
-		который будет добавлять строки в матрицу, 
-		не переписывая её с нуля
-	*/
-	Result.setSize(Row + 1, s_size + 1);
-
-	compile[0] = t; // первым элементом идёт время - для удобства выборки
-	for (int i = 1; i < s_size + 1; i++)
-	{
-		compile[i] = X[i - 1];
-	}
-
-	Result[Row] = compile; // последней строке должен быть назначен итоговый вектор
+	Result.push_back(compile);
 }
 
 // ----- свойства
@@ -55,7 +44,11 @@ TYPE CModel::get_t1() const{
 }
 
 CMatrix CModel::getResult() const{
-	return Result;
+	CMatrix Output;
+
+	std::copy(Result.begin(), Result.end(), std::back_inserter(Output));
+	
+	return Output;
 }
 
 void CModel::setStart(CVector &arg){
@@ -103,13 +96,15 @@ TArenstorfModel::TArenstorfModel(int variant){
 	}
 }
 
+using namespace MyFunc;
+
 CVector TArenstorfModel::getRight(CVector &X, TYPE t) const{
 	CVector Y(s_size);
 	TYPE
 		R[2] = 
 		{
-			pow(pow(X[0] + m, 2) + pow(X[1], 2), 1.5),
-			pow(pow(X[0] - M, 2) + pow(X[1], 2), 1.5)
+			pow(Numbers::pow2(X[0] + m) + Numbers::pow2(X[1]), 1.5),
+			pow(Numbers::pow2(X[0] - M) + Numbers::pow2(X[1]), 1.5)
 		};
 
 	Y[0] = X[2]; // v1 = y1' - замена переменной. После интегрирования получим y1

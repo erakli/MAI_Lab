@@ -1,15 +1,27 @@
 #pragma once
 #include "Matrix_classes.h"
+#include <list>
+
+namespace ResultArray
+{
+	typedef std::list<CVector> List;
+}
+
+using namespace ResultArray;
 
 class CModel
 {
 protected:
 	CVector StartValues;
-	int s_size; // длина вектора StartValues
+
+	int
+		s_size; // длина вектора StartValues
+
 	TYPE 
 		Interval, // должен ли быть интервал между знач. задан тут?
 		t0, t1;
-	CMatrix Result;
+
+	List Result;	// двунаправленный список
 
 	// Остановка интегрирования при малых изменениях приращения координаты
 	TYPE stop_condition;
