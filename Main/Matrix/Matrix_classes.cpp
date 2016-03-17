@@ -1,5 +1,7 @@
 #include "Matrix_classes.h"
 #include <math.h>
+#include "Functions.h"
+
 //#include <string>
 //#include <algorithm>
 //#include <iostream>
@@ -45,6 +47,16 @@ CMatrix &CMatrix::operator = (const CMatrix &arg){
 
 
 /* * * * * * * * вектор * * * * * * * */
+CVector CVector::copyPart(const CVector& orig, const int position)
+{
+	CVector Res(position + 1);
+
+	for (int i = 0; i < position + 1; i++)
+		Res[i] = orig[i];
+
+	return Res;
+}
+
 TYPE CVector::getElement(int i) const{
 	return (*this)[i];
 }
@@ -88,7 +100,10 @@ CVector CVector::operator * (const TYPE num){
 }
 
 CVector CVector::operator * (const TYPE num) const{
-	return operator*(num);
+	CVector Res(getSize());
+	for (int i = 0; i < getSize(); i++)
+		Res[i] = (*this)[i] * num;
+	return Res;
 }
 
 // скалярное произведение
@@ -103,7 +118,11 @@ TYPE CVector::operator * (const CVector &arg){
 }
 
 TYPE CVector::operator * (const CVector &arg) const{
-	return operator*(arg);
+	int s = this->getSize();
+	TYPE sum = 0;
+	for (int i = 0; i < s; i++)
+		sum += (*this)[i] * arg[i];
+	return sum;
 }
 
 /*

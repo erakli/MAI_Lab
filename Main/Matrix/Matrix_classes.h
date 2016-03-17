@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Types.h"
-#include "Functions.h"
 
 namespace LinearAlgebra{
 	typedef std::vector<TYPE> BaseVector;
@@ -27,11 +26,18 @@ public:
 
 	// конструктор копии вектора arg
 	CVector(const BaseVector &arg) : BaseVector(arg){ 
-	} 
+	}
+
+	static CVector copyPart(const CVector &orig, const int position);
 
 	TYPE getElement(int i) const;
 	int getSize() const;
 	TYPE getLength() const;
+
+	void insert(const int position, const TYPE value)
+	{
+		this->BaseVector::insert(this->begin() + position, value);
+	}
 
 	void setElement(int i, TYPE value);
 	void setSize(int i);
@@ -50,7 +56,7 @@ public:
 
 
 // класс для матрицы ----------------------------------
-class CMatrix : protected BaseMatrix
+class CMatrix : public BaseMatrix
 {
 public:
 	// путсой конструктор
