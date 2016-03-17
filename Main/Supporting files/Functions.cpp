@@ -1,29 +1,32 @@
-#include "Functions.h"
 #include <cstring>
+
+#include "Functions.h"
 
 /* Numbers */
 
+/*
 // перевод из градусов в радианы
-TYPE MyFunc::Numbers::deg2rad(const TYPE &angle){
+inline TYPE MyFunc::Numbers::deg2rad(const TYPE &angle){
 	return angle * PI / 180;
 }
 
 // функции возведения в степень
-TYPE MyFunc::Numbers::pow2(const TYPE &arg){
+inline TYPE MyFunc::Numbers::pow2(const TYPE &arg){
 	return arg * arg;
 }
 
-TYPE MyFunc::Numbers::pow3(const TYPE &arg){
+inline TYPE MyFunc::Numbers::pow3(const TYPE &arg){
 	return arg * arg * arg;
 }
 
-UINT MyFunc::Numbers::min(const UINT &first, const UINT &second){
+inline int MyFunc::Numbers::min(const int &first, const int &second){
 	return (first > second) ? second : first;
 }
 
-UINT MyFunc::Numbers::max(const UINT &first, const UINT &second){
+inline int MyFunc::Numbers::max(const int &first, const int &second){
 	return (first > second) ? first : second;
 }
+*/
 
 /* Pointers */
 pTYPE MyFunc::Pointers::Resize(pTYPE pOldArray, const UINT &oldSize, const UINT &newSize){

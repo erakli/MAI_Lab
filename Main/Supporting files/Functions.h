@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "Types.h"
 
 /* * * * * Вспомогательные функции * * * * */
@@ -8,14 +9,34 @@ namespace MyFunc
 	namespace Numbers
 	{
 		// перевод из градусов в радианы
-		TYPE deg2rad(const TYPE &angle);
+		inline TYPE deg2rad(const TYPE &angle){
+			return angle * PI / 180;
+		};
+
+
+		// дробная часть числа
+		inline TYPE frac(const TYPE &X){
+			return (X >= 0) ? X - trunc(X) : -(X - trunc(X));
+		}
+
 
 		// функции возведения в степень
-		TYPE pow2(const TYPE &arg);
-		TYPE pow3(const TYPE &arg);
+		inline TYPE pow2(const TYPE &arg){
+			return arg * arg;
+		};
 
-		UINT min(const UINT &first, const UINT &second);
-		UINT max(const UINT &first, const UINT &second);
+		inline TYPE pow3(const TYPE &arg){
+			return arg * arg * arg;
+		};
+
+
+		inline int min(const int &first, const int &second){
+			return (first > second) ? second : first;
+		};
+
+		inline int max(const int &first, const int &second){
+			return (first > second) ? first : second;
+		};
 	}
 
 	namespace Pointers
