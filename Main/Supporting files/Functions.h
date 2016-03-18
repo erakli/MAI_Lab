@@ -22,11 +22,11 @@ namespace MyFunc
 
 		// функции возведения в степень
 		inline TYPE pow2(const TYPE &arg){
-			return arg * arg;
+			return std::pow(arg, 2);
 		};
 
 		inline TYPE pow3(const TYPE &arg){
-			return arg * arg * arg;
+			return std::pow(arg, 3);
 		};
 
 

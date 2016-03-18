@@ -16,7 +16,7 @@ int main()
 	}
 
 	CDormanPrince Integrator;
-	Earth::CEarth Model(2457744.5);
+	Earth::CEarth Model;
 
 	Integrator.setEps_Max(1.0e-12);
 	Model.setInterval(SECINDAY);

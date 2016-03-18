@@ -20,12 +20,12 @@ CEarth::CEarth()
 {
 	StartValues.setSize(6);	// гелиоцентрическое положение + скорость
 	s_size = StartValues.getSize();
-
+	
 	StartValues[0] = -2.439276441307208e+7;
 	StartValues[1] = 1.332124993767647e+8;
 	StartValues[2] = 5.772281789058973e+7;
 
-	StartValues[3] = -2.984063142864898;
+	StartValues[3] = -2.984063142864898e+1;
 	StartValues[4] = -4.727555397178124;
 	StartValues[5] = -2.049346856618893;
 
@@ -48,7 +48,7 @@ CEarth::CEarth(const TYPE JD)
 		StartValues[1] = 1.332124993767647e+8;
 		StartValues[2] = 5.772281789058973e+7;
 
-		StartValues[3] = -2.984063142864898;
+		StartValues[3] = -2.984063142864898e+1;
 		StartValues[4] = -4.727555397178124;
 		StartValues[5] = -2.049346856618893;
 	}
@@ -60,8 +60,8 @@ CEarth::CEarth(const TYPE JD)
 		StartValues[2] = -5.101193558950569e+5;
 
 		StartValues[3] = -1.813507346095267e-1;
-		StartValues[4] = -2.742106189673085;
-		StartValues[5] = -1.188731012157166;
+		StartValues[4] = -2.742106189673085e+1;
+		StartValues[5] = -1.188731012157166e+1;
 	}
 	else
 	if (JD == 2457561.5)
@@ -70,7 +70,7 @@ CEarth::CEarth(const TYPE JD)
 		StartValues[1] = -1.391168307821974e+8;
 		StartValues[2] = -6.033492142652344e+7;
 
-		StartValues[3] = 2.929880927153534;
+		StartValues[3] = 2.929880927153534e+1;
 		StartValues[4] = 2.845999982294178e-1;
 		StartValues[5] = 1.232505993914231e-1;
 	}
@@ -82,8 +82,8 @@ CEarth::CEarth(const TYPE JD)
 		StartValues[2] = 3.462104807619269e+5;
 
 		StartValues[3] = -5.758350444110057e-1;
-		StartValues[4] = 2.724025582030263;
-		StartValues[5] = 1.180895196291067;
+		StartValues[4] = 2.724025582030263e+1;
+		StartValues[5] = 1.180895196291067e+1;
 	}
 	else
 	if (JD == 2457744.5)
@@ -92,7 +92,7 @@ CEarth::CEarth(const TYPE JD)
 		StartValues[1] = 1.355541180476501e+8;
 		StartValues[2] = 5.873831689579538e+7;
 
-		StartValues[3] = -3.027784098174831;
+		StartValues[3] = -3.027784098174831e+1;
 		StartValues[4] = -2.507359785692029e-1;
 		StartValues[5] = 1.084393412860461e-1;
 	}
