@@ -12,6 +12,9 @@ CModel::CModel()
 	t0 = 0;
 	t1 = 5;
 
+	result_matrix_position = 0;
+	large_result_flag = false;
+
 	stop_condition = 1.0e-5;
 
 	stop_count = 0;
@@ -23,7 +26,15 @@ void CModel::addResult(CVector &X, TYPE t){
 	CVector compile(X); // вектор результата + время
 	compile.insert(0, t);
 
-	Result.push_back(compile);
+	if (! large_result_flag)
+	{	// если ожидается менее 1 млн. результатов, пишем в матрицу
+		Result_Matrix[result_matrix_position] = compile;
+		result_matrix_position++;
+	}
+	else
+	{	// иначе заносим результаты в List
+		Result.push_back(compile);
+	}
 }
 
 // ----- свойства
@@ -43,12 +54,59 @@ TYPE CModel::get_t1() const{
 	return t1;
 }
 
-CMatrix CModel::getResult() const{
-	CMatrix Output;
+CMatrix CModel::getResult(){
+	if (! large_result_flag)
+	{
+		if (Result_Matrix.getRowCount() != result_matrix_position)
+			Result_Matrix.setSize(result_matrix_position, s_size);
 
-	std::copy(Result.begin(), Result.end(), std::back_inserter(Output));
-	
-	return Output;
+		return Result_Matrix;
+	}
+	else
+	{
+		CMatrix Output;
+
+		std::copy(Result.begin(), Result.end(), std::back_inserter(Output));
+
+		return Output;
+	}
+}
+
+CVector CModel::getLastResult()
+{
+	if (!large_result_flag)
+	{
+		return Result_Matrix[result_matrix_position - 1];
+	}
+	else
+	{
+		List::iterator it = Result.end();
+
+		return *(--it);
+	}
+}
+
+void CModel::clearResult()
+{
+	Result_Matrix.clear();	// надеюсь он вызовет все деструкторы
+	Result.clear();
+	result_matrix_position = 0;
+}
+
+
+void CModel::setResultType()
+{
+	int num_of_results = int((t1 - t0) / Interval) + 1;	
+
+	// если ожидается более LISTLIMIT результатов, производим запись в List
+	if (num_of_results >= LISTLIMIT)
+		large_result_flag = true;
+	else
+	{
+		// иначе создадим сразу большую матрицу результатов и будем её заполнять
+		Result_Matrix.setSize(num_of_results, 0);
+		large_result_flag = false;
+	}
 }
 
 void CModel::setStart(CVector &arg){
@@ -103,8 +161,8 @@ CVector TArenstorfModel::getRight(CVector &X, TYPE t) const{
 	TYPE
 		R[2] = 
 		{
-			pow(Numbers::pow2(X[0] + m) + Numbers::pow2(X[1]), 1.5),
-			pow(Numbers::pow2(X[0] - M) + Numbers::pow2(X[1]), 1.5)
+			pow(pow(X[0] + m, 2) + pow(X[1], 2), 1.5),
+			pow(pow(X[0] - M, 2) + pow(X[1], 2), 1.5)
 		};
 
 	Y[0] = X[2]; // v1 = y1' - замена переменной. После интегрирования получим y1

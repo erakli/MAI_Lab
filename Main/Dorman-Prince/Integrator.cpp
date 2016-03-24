@@ -53,6 +53,7 @@ CDormanPrince::CDormanPrince(){
 void CDormanPrince::Run(CModel &Mod){
 
 	Model = &Mod; // Храним адрес модели для внутренних нужд
+	Model->setResultType();	// задаём тип контейнера для хранения результатов
 
 	// инициализируем время начальным его значением из модели
 	t = Model->get_t0(); 

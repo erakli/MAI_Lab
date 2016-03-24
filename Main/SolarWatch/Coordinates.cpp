@@ -8,55 +8,172 @@ using namespace Earth;
 using namespace MyFunc;
 
 /*
-	Звёздным временем называется часовой угол точки весеннего
-	равноденствия (ТВР). Вычисление текущего гринвичского
-	звёздного времени в секундах (часовой угол ТВР на гринвичском
-	меридиане):
+	Р—РІС‘Р·РґРЅС‹Рј РІСЂРµРјРµРЅРµРј РЅР°Р·С‹РІР°РµС‚СЃСЏ С‡Р°СЃРѕРІРѕР№ СѓРіРѕР» С‚РѕС‡РєРё РІРµСЃРµРЅРЅРµРіРѕ
+	СЂР°РІРЅРѕРґРµРЅСЃС‚РІРёСЏ (РўР’Р ). Р’С‹С‡РёСЃР»РµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ РіСЂРёРЅРІРёС‡СЃРєРѕРіРѕ
+	Р·РІС‘Р·РґРЅРѕРіРѕ РІСЂРµРјРµРЅРё РІ СЃРµРєСѓРЅРґР°С… (С‡Р°СЃРѕРІРѕР№ СѓРіРѕР» РўР’Р  РЅР° РіСЂРёРЅРІРёС‡СЃРєРѕРј
+	РјРµСЂРёРґРёР°РЅРµ):
 		TYPE s
 
-	Результат:
-		Угол ориентации гринвичского меридиана, соответствующего
-		периоду 0 - 2Pi, по отношению к направлению в ТВР в радианах.
+	Р РµР·СѓР»СЊС‚Р°С‚:
+		РЈРіРѕР» РѕСЂРёРµРЅС‚Р°С†РёРё РіСЂРёРЅРІРёС‡СЃРєРѕРіРѕ РјРµСЂРёРґРёР°РЅР°, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРіРѕ
+		РїРµСЂРёРѕРґСѓ 0 - 2Pi, РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє РЅР°РїСЂР°РІР»РµРЅРёСЋ РІ РўР’Р  РІ СЂР°РґРёР°РЅР°С….
 */
-TYPE StarTime(const TYPE& JD)
+TYPE StarTime(const TYPE JD)
 {
 	TYPE
-		d = JD - J2000,			// количество дней с 01.01.2000
-		centuries = d / 36525;	// количество столетий, прошедших с 01.01.2000 г.
+		d = JD - J2000,			// РєРѕР»РёС‡РµСЃС‚РІРѕ РґРЅРµР№ СЃ 01.01.2000
+		centuries = d / 36525.0;	// РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚РѕР»РµС‚РёР№, РїСЂРѕС€РµРґС€РёС… СЃ 01.01.2000 Рі.
 
 	TYPE s =
-		67310.54841
+		67310.54841 - 43200	// -12 С‡Р°СЃРѕРІ
 		+ 8640184.812866 * centuries
-		+ 0.093104 * Numbers::pow2(centuries)
-		- 6.2e-6 * Numbers::pow3(centuries);
+		+ 0.093104 * pow(centuries, 2)
+		- 6.2e-6 * pow(centuries, 3);
 
-	return
-		2 * PI / SECINDAY * fmod(s, SECINDAY);
+	TYPE
+		res = 2 * PI / SECINDAY * fmod(s, SECINDAY);
+
+	return res;
 }
 
 
 /*
-	Прямой расчёт текущего звёздного времени места s
+	РџСЂСЏРјРѕР№ СЂР°СЃС‡С‘С‚ С‚РµРєСѓС‰РµРіРѕ Р·РІС‘Р·РґРЅРѕРіРѕ РІСЂРµРјРµРЅРё РјРµСЃС‚Р° s
 
-	результат в радианах
+	СЂРµР·СѓР»СЊС‚Р°С‚ РІ СЂР°РґРёР°РЅР°С…
 */
-TYPE StarTime(const TYPE& JD, const TYPE& lambda)
+TYPE StarTime(const TYPE starTime, const TYPE t)
+//TYPE StarTime(const TYPE JD, const TYPE lambda)
 {
-	TYPE 
-		t = (Numbers::frac(JD) + 0.5) * SECINDAY;	// t – время по шкале UTC в сек
+//	TYPE
+//		midNight = MyTime::getMidnight(JD),			// РїРѕР»РЅРѕС‡СЊ С‚РµРєСѓС‰РµРіРѕ РґРЅСЏ
+//		t = (JD - midNight) * SECINDAY;	// t вЂ“ РІСЂРµРјСЏ РїРѕ С€РєР°Р»Рµ UTC РІ СЃРµРє
 
 	return 
-		StarTime(JD) + CEarth::angularVeloc * t + lambda;
+		starTime + CEarth::angularVeloc * t;
+		//StarTime(midNight) + CEarth::angularVeloc * t + lambda;
+}
+
+/*
+	РЎРѕР·РґР°РЅРёРµ РјР°С‚СЂРёС†С‹ РїРѕРІРѕСЂРѕС‚Р° РІРѕРєСЂСѓРі РѕСЃРµР№ РЅР° СѓРіРѕР»
+
+	СѓРіРѕР» - РІ СЂР°РґРёР°РЅР°С…
+*/
+CMatrix Transform::RotMatrix(const BYTE axis, const TYPE angle)
+{
+	TYPE
+		cos_t = cos(angle),
+		sin_t = sin(angle);
+
+	// СЃРѕР·РґР°РµРј РјР°С‚СЂРёС†Сѓ РїРѕРІРѕСЂРѕС‚Р°
+	CMatrix R(3, 3);
+
+	switch (axis)
+	{
+	case 1:
+		// РњР°С‚СЂРёС†Р° РїРѕРІРѕСЂРѕС‚Р° РІРѕРєСЂСѓРі РћРҐ
+
+		R[0][0] = 1;	R[0][1] = 0;		R[0][2] = 0;
+
+		R[1][0] = 0;	R[1][1] = cos_t;	R[1][2] = sin_t;
+
+		R[2][0] = 0;	R[2][1] = -sin_t;	R[2][2] = cos_t;
+
+		break;
+
+	case 2:
+		// РњР°С‚СЂРёС†Р° РїРѕРІРѕСЂРѕС‚Р° РІРѕРєСЂСѓРі РћY
+
+		R[0][0] = cos_t;	R[0][1] = 0;	R[0][2] = -sin_t;
+
+		R[1][0] = 0;		R[1][1] = 1;	R[1][2] = 0;
+
+		R[2][0] = sin_t;	R[2][1] = 0;	R[2][2] = cos_t;
+
+		break;
+
+	case 3:
+		// РњР°С‚СЂРёС†Р° РїРѕРІРѕСЂРѕС‚Р° РІРѕРєСЂСѓРі РћZ
+
+		R[0][0] = cos_t;	R[0][1] = sin_t;	R[0][2] = 0;
+
+		R[1][0] = -sin_t;	R[1][1] = cos_t;	R[1][2] = 0;
+
+		R[2][0] = 0;		R[2][1] = 0;		R[2][2] = 1;
+
+		break;
+
+	default:
+		//Р·РґРµСЃСЊ РЅСѓР¶РµРЅ throw exeption
+		break;
+
+	}
+
+	return R;
+}
+
+/*
+	РџРµСЂРµРІРѕРґ РёР· РіРµРѕС†РµРЅС‚СЂРёС‡РµСЃРєРѕР№ РЎРљ РІ С‚РѕРїРѕС†РµРЅС‚СЂРёС‡РµСЃРєСѓСЋ СЃ РіРµРѕРєРѕРѕСЂРґРёРЅР°С‚Р°РјРё С†РµРЅС‚СЂР°
+	(H, fi, lambda).
+
+	Р”РѕР»Р¶РЅРѕ СЂР°Р±РѕС‚Р°С‚СЊ С‚РѕР»СЊРєРѕ РґР»СЏ СЃС„РµСЂРёС‡РµСЃРєРѕР№ Р—РµРјР»Рё
+
+	Р РµР·СѓР»СЊС‚Р°С‚ РІ С‚РѕРїРѕС†РµРЅС‚СЂРёС‡РµСЃРєРёС… РѕСЃСЏС… - [z, x, y], 
+	РіРґРµ 
+		z - РЅР°РїСЂР°РІР»РµРЅ РїРѕ РїР°СЂР°Р»Р»РµР»Рё РЅР° Р’РѕСЃС‚РѕРє,
+		x - РЅР° РЎРµРІРµСЂ РїРѕ РґРѕР»РіРѕС‚Рµ
+		y - РїРѕ РјРµСЃС‚РЅРѕР№ РЅРѕСЂРјР°Р»Рё
+*/
+CVector Transform::Fix2Topo(const CVector& fix_vector, const CVector &center_SpherPos)
+{
+	TYPE
+		H(center_SpherPos[0]), fi(center_SpherPos[1]), lambda(center_SpherPos[2]);
+		//x(fix_vector[0]), y(fix_vector[1]), z(fix_vector[2]);
+
+	/*TYPE
+		sin_fi = sin(fi),			cos_fi = cos(fi),
+		sin_lambda = sin(lambda),	cos_lambda = cos(lambda);*/
+
+	CVector Topo;
+	CMatrix temp;
+
+	//Topo[0] = x * sin_lambda - y * cos_lambda;
+	//Topo[1] = 
+	//	x * cos_lambda * cos_fi 
+	//	+ y * sin_lambda * cos_fi 
+	//	+ z * sin_fi 
+	//	- CEarth::meanRadius - H;
+	//Topo[2] = -x * cos_lambda * sin_fi - y * sin_lambda * sin_fi + z * cos_fi;
+
+	temp = RotMatrix(1, PI / 2.0 - fi) * RotMatrix(3, PI / 2.0 + lambda);
+	//temp = RotMatrix(2, -PI / 2.0) * RotMatrix(1, lambda - PI / 2.0);
+	//temp = temp * RotMatrix(3, -fi);
+
+	Topo = temp * fix_vector;
+	Topo[2] -= H;
+
+	return Topo;
 }
 
 
 /*
-	перевод из сферических в декартовы координаты
+	РїРµСЂРµРІРѕРґ РёР· СЃС„РµСЂРёС‡РµСЃРєРёС… РІ РґРµРєР°СЂС‚РѕРІС‹ РєРѕРѕСЂРґРёРЅР°С‚С‹
 
-	углы в радианах
+	СѓРіР»С‹ РІ СЂР°РґРёР°РЅР°С…
 
-	[h, fi, lambda] - высота, широтаб долгота
+	[h, fi, lambda] - РІС‹СЃРѕС‚Р°, С€РёСЂРѕС‚Р°, РґРѕР»РіРѕС‚Р°
 */
+CVector Transform::Geographic2Fix(const TYPE h, const TYPE fi, const TYPE lambda)
+{
+	CVector Result(3);
+	Result[0] = (h + CEarth::meanRadius) * cos(fi) * cos(lambda);
+	Result[1] = (h + CEarth::meanRadius) * cos(fi) * sin(lambda);
+	Result[2] = (h + CEarth::meanRadius) * sin(fi);
+
+	return Result;
+}
+
+/* РџРµСЂРµРіСЂСѓР·РєР° СЃ CVector РЅР° РїСЂРёС‘Рј */
 CVector Transform::Geographic2Fix(const CVector &geographic)
 {
 	auto 

@@ -1,6 +1,5 @@
-#include "Matrix_classes.h"
+﻿#include "Matrix_classes.h"
 #include <math.h>
-#include "Functions.h"
 
 //#include <string>
 //#include <algorithm>
@@ -36,11 +35,18 @@ const BaseVector &CMatrix::operator [] (int i) const{
 	return BaseMatrix::operator [] (i);
 }
 
-CMatrix &CMatrix::operator = (const CMatrix &arg){
-	CMatrix Res(arg);
+CMatrix &CMatrix::operator = (const CMatrix &arg)
+{
+	int 
+		oldSize = getRowCount(), 
+		newSize = arg.getRowCount();
+
+	if (oldSize != newSize)
+		setSize(newSize, 0);
+
 	for (int i = 0; i < getRowCount(); i++)
 	{
-		(*this)[i] = Res[i];
+		(*this)[i] = arg[i];
 	}
 	return *this;
 }
@@ -57,6 +63,43 @@ CVector CVector::copyPart(const CVector& orig, const int position)
 	return Res;
 }
 
+/* 
+	direction - направление копирования от position:
+		true - в конец
+		false - в начало
+*/
+CVector CVector::copyPart(const CVector& orig, const int First, const int Second)
+{
+	if (First == Second)
+	{
+		CVector Res(1);
+		Res[0] = orig[First];
+
+		return Res;
+	}
+
+	if (Second >= First)
+	{
+		CVector Res(Second - First);
+
+		for (int i = 0; i < Res.getSize(); i++)
+			Res[i] = orig[i + First];
+
+		return Res;
+	}
+	else
+	{
+		CVector Res(First - Second);
+
+		for (int i = 0; i < Res.getSize(); i++)
+			Res[i] = orig[i + Second];
+
+		return Res;
+	}
+	
+	
+}
+
 TYPE CVector::getElement(int i) const{
 	return (*this)[i];
 }
@@ -68,7 +111,7 @@ int CVector::getSize() const{
 TYPE CVector::getLength() const{
 	TYPE res = 0;
 	for (int i = 0; i < getSize(); i++)
-		res += MyFunc::Numbers::pow2((*this)[i]);
+		res += pow((*this)[i], 2);
 	res = sqrt(res);
 	return res;
 }
@@ -212,12 +255,27 @@ bool CMatrix::checkSquare() const{
 
 void CMatrix::setSize(int n, int m){
 	this->BaseMatrix::resize(n);
-	for (int i = 0; i < n; i++)
-		(*this)[i].resize(m);
+	if (n * m != 0 && m != getColCount())
+	{
+		for (int i = 0; i < n; i++)
+			(*this)[i].resize(m);
+	}
 }
 
 void CMatrix::setElement(int n, int m, TYPE value){
 	(*this)[n][m] = value;
+}
+
+void CMatrix::add_toEnd(const CMatrix& additional)
+{
+	int
+		old_size = getRowCount(), 
+		new_size = old_size + additional.getRowCount();
+
+	setSize(new_size, getColCount());
+
+	for (int i = old_size; i < new_size; i++)
+		(*this)[i] = additional[i - old_size];
 }
 
 CMatrix CMatrix::flip(){
@@ -551,7 +609,7 @@ CMatrix CSymmetricMatrix::inverse(){
 
 		for (int p = 0; p < i; p++)
 		{
-			sum -= MyFunc::Numbers::pow2(matrix_L[i][p]);
+			sum -= pow(matrix_L[i][p], 2);
 		}
 		matrix_L[i][i] = sqrt(sum);	// вычислили диагональные элементы
 		//cout << "\n - matrix_L"; Show(matrix_L);

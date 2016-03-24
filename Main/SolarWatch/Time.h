@@ -2,12 +2,16 @@
 
 #include "Types.h"
 
-#define J2000 2451544.5 // юлианская дата на 0:00 01.01.2000
+#define J2000 2451544.5 // СЋР»РёР°РЅСЃРєР°СЏ РґР°С‚Р° РЅР° 0:00 01.01.2000
+
+#define SECINMIN 60
 #define  SECINDAY 86400
+#define MININDAY 1440
+
 
 namespace MyTime
 {
-	// календарная дата
+	// РєР°Р»РµРЅРґР°СЂРЅР°СЏ РґР°С‚Р°
 	struct Date
 	{
 		SINT year;
@@ -16,9 +20,11 @@ namespace MyTime
 			hour, minute, second;
 	};
 
+	TYPE getMidnight(const TYPE JD);
+
 	namespace Transformation
 	{
-		// перевод из календарной Даты в Юлианские дни
+		// РїРµСЂРµРІРѕРґ РёР· РєР°Р»РµРЅРґР°СЂРЅРѕР№ Р”Р°С‚С‹ РІ Р®Р»РёР°РЅСЃРєРёРµ РґРЅРё
 		TYPE DateToJD(const Date &date);
 	}
 

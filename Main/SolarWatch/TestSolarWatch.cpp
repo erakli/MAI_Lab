@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "file_output.h"
+
 #include "Functions.h"
 
 #include "Coordinates.h"
@@ -11,8 +13,9 @@
 using namespace std;
 using namespace Tests;
 using namespace Earth;
+using namespace MyFunc;
 
-/* Показ данных */
+/* РџРѕРєР°Р· РґР°РЅРЅС‹С… */
 
 void Show(const MyTime::Date &date)
 {
@@ -30,7 +33,7 @@ void Show(const CVector &vec){
 }
 
 
-/* Вспомогательные функции */
+/* Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё */
 
 void Tests::Init(const char* Name)
 {
@@ -52,26 +55,37 @@ void Tests::TestCoordinates()
 {
 	Init("TestCoordinates");
 
-	TYPE
-		JD = J2000 + 0.5,
-		lambda = MyFunc::Numbers::deg2rad(30);
+	MyTime::Date date = { 2016, 6, 22, 0, 0, 0 };
+	TYPE 
+		JD = MyTime::Transformation::DateToJD(date),
+		lambda = Numbers::deg2rad(0);
 
 	TYPE s = StarTime(JD, lambda);
 
 	cout << "\nJD = " << fixed << JD;
 	cout << "\nlambda = " << fixed << lambda << endl;
-
 	cout << "\nStarTime = " << fixed << s << endl;
 
 	CVector vec(3);
-	vec[0] = 0;
-	vec[1] = 0;
-	vec[2] = s;
+	vec[0] = 1;
+	vec[1] = Numbers::deg2rad(90);
+	vec[2] = Numbers::deg2rad(90);
 
 	CVector result(Transform::Geographic2Fix(vec));
 
 	cout << "\nOriginal:	"; Show(vec);
 	cout << "\nGeographic2Fix:	"; Show(result);
+
+	cout << "\n\nFix2Topo" << endl;
+
+	CVector dot(3);
+	dot[0] = 1;
+	dot[1] = 0;
+	dot[2] = 1;
+
+	result = Transform::Fix2Topo(dot, vec);
+
+	cout << "\nFix2Topo:	"; Show(result);
 
 	Final();
 }
@@ -94,7 +108,6 @@ void Tests::SolarSystem()
 	Init("SolarSystem");
 
 	cout 
-		<< "\nmuEarth		=	" << scientific << CEarth::muEarth
 		<< "\nangularVeloc	=	" << scientific << CEarth::angularVeloc
 		<< "\nmeanRadius	=	" << fixed << CEarth::meanRadius;
 

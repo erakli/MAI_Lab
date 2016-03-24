@@ -1,3 +1,5 @@
+#include <iterator>
+
 #include  "Functions.h"
 #include "Time.h"
 
@@ -10,17 +12,19 @@ using namespace Earth;
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 const TYPE
-	CEarth::muEarth = 3.9860044e+14,	// гравитационная постоянная Земли, m^3/s^2
-	CEarth::angularVeloc = 7.292115e-5,	// угловая скорость вращения, рад/с
-	CEarth::meanRadius = 6371.3;		// средний радиус для сферической земли, км
+	CEarth::angularVeloc = 7.292115e-5,	// СѓРіР»РѕРІР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ РІСЂР°С‰РµРЅРёСЏ, СЂР°Рґ/СЃ
+	CEarth::meanRadius = 6371.3;		// СЃСЂРµРґРЅРёР№ СЂР°РґРёСѓСЃ РґР»СЏ СЃС„РµСЂРёС‡РµСЃРєРѕР№ Р·РµРјР»Рё, РєРј
 
-/* Господа конструкторы (+ по дате и позиции) */
+/* Р“РѕСЃРїРѕРґР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹ (+ РїРѕ РґР°С‚Рµ Рё РїРѕР·РёС†РёРё) */
 
 CEarth::CEarth()
 {
-	StartValues.setSize(6);	// гелиоцентрическое положение + скорость
+	StartValues.setSize(6);	// РіРµР»РёРѕС†РµРЅС‚СЂРёС‡РµСЃРєРѕРµ РїРѕР»РѕР¶РµРЅРёРµ + СЃРєРѕСЂРѕСЃС‚СЊ
 	s_size = StartValues.getSize();
 	
+	/*
+		1.1.2016
+	*/
 	StartValues[0] = -2.439276441307208e+7;
 	StartValues[1] = 1.332124993767647e+8;
 	StartValues[2] = 5.772281789058973e+7;
@@ -29,20 +33,20 @@ CEarth::CEarth()
 	StartValues[4] = -4.727555397178124;
 	StartValues[5] = -2.049346856618893;
 
-	t0 = 2457388.5 * SECINDAY;
-	t1 = t0 + 365 * SECINDAY;
+	t0 = JD2016 * SECINDAY;
+	t1 = t0 + DAYS_IN_CURRENT_YEAR * SECINDAY;
 }
 
 CEarth::CEarth(const TYPE JD)
 {
-	StartValues.setSize(6);	// гелиоцентрическое положение + скорость
+	StartValues.setSize(6);	// РіРµР»РёРѕС†РµРЅС‚СЂРёС‡РµСЃРєРѕРµ РїРѕР»РѕР¶РµРЅРёРµ + СЃРєРѕСЂРѕСЃС‚СЊ
 	s_size = StartValues.getSize();
 
 	/*
-		Положение и скорость в экваториальной гелиоцентрической СК
-		В км и км/с соответственно
+		РџРѕР»РѕР¶РµРЅРёРµ Рё СЃРєРѕСЂРѕСЃС‚СЊ РІ СЌРєРІР°С‚РѕСЂРёР°Р»СЊРЅРѕР№ РіРµР»РёРѕС†РµРЅС‚СЂРёС‡РµСЃРєРѕР№ РЎРљ
+		Р’ РєРј Рё РєРј/СЃ СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ
 	*/
-	if (JD == 2457388.5)
+	if (JD == JD2016)
 	{
 		StartValues[0] = -2.439276441307208e+7;
 		StartValues[1] = 1.332124993767647e+8;
@@ -96,14 +100,12 @@ CEarth::CEarth(const TYPE JD)
 		StartValues[4] = -2.507359785692029e-1;
 		StartValues[5] = 1.084393412860461e-1;
 	}
-
-	/* Можно дописать для известных дат */
 		
 	t0 = JD * SECINDAY;
 	t1 = t0 + 365 * SECINDAY;
 }
 
-CEarth::CEarth(const CVector &stateVector, const TYPE &start)
+CEarth::CEarth(const CVector &stateVector, const TYPE start)
 {
 	StartValues = stateVector;
 	s_size = StartValues.getSize();
@@ -121,37 +123,54 @@ CEarth::CEarth(const CEarth &copy_earth)
 	t1 = copy_earth.get_t1();
 }
 
-void CEarth::set_t0(const TYPE& arg, const bool days)
+void CEarth::set_t0(const TYPE arg, const bool days)
 {
 	if (days)
 		t0 = arg * SECINDAY;
 	else CModel::set_t0(arg);
 }
 
-void CEarth::set_t1(const TYPE& arg, const bool days)
+void CEarth::set_t1(const TYPE arg, const bool days)
 {
 	if (days)
 		t1 = arg * SECINDAY;
 	else CModel::set_t0(arg);
 }
 
+/*
+	РҐСЂР°РЅРёРј РІСЂРµРјСЏ РІ РєРѕРЅС†Рµ РІРµРєС‚РѕСЂР°
+*/
+void CEarth::addResult(CVector& X, double t)
+{
+	CVector compile(X); // РІРµРєС‚РѕСЂ СЂРµР·СѓР»СЊС‚Р°С‚Р° + РІСЂРµРјСЏ
+	compile.push_back(t);
+
+	if (!large_result_flag)
+	{	// РµСЃР»Рё РѕР¶РёРґР°РµС‚СЃСЏ РјРµРЅРµРµ 1 РјР»РЅ. СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ, РїРёС€РµРј РІ РјР°С‚СЂРёС†Сѓ
+		Result_Matrix[result_matrix_position] = compile;
+		result_matrix_position++;
+	}
+	else
+	{	// РёРЅР°С‡Рµ Р·Р°РЅРѕСЃРёРј СЂРµР·СѓР»СЊС‚Р°С‚С‹ РІ List
+		Result.push_back(compile);
+	}
+}
 
 /*
-	Правая часть ДУ невозмущённого кеплеровского движения
-	Земли вокруг Солнца
+	РџСЂР°РІР°СЏ С‡Р°СЃС‚СЊ Р”РЈ РЅРµРІРѕР·РјСѓС‰С‘РЅРЅРѕРіРѕ РєРµРїР»РµСЂРѕРІСЃРєРѕРіРѕ РґРІРёР¶РµРЅРёСЏ
+	Р—РµРјР»Рё РІРѕРєСЂСѓРі РЎРѕР»РЅС†Р°
 */
-// проверять!
 CVector CEarth::getRight(CVector& X, TYPE t) const
 {
 	CVector Res(s_size);
 
 	TYPE 
 		module = CVector::copyPart(X, 2).getLength(),
-		moduleX3 = MyFunc::Numbers::pow3(module);
+		moduleX3 = pow(module, 3);
 
 	/* 
-		Замена переменной, интегрируем второй
-		раз проинтегрированную 2 производную
+		Р—Р°РјРµРЅР° РїРµСЂРµРјРµРЅРЅРѕР№, РёРЅС‚РµРіСЂРёСЂСѓРµРј РІС‚РѕСЂРѕР№
+		СЂР°Р· РїСЂРѕРёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРЅСѓСЋ 2 РїСЂРѕРёР·РІРѕРґРЅСѓСЋ
 	*/
 	Res[0] = X[3];
 	Res[1] = X[4];

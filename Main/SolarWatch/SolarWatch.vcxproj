@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Coordinates.h" />
+    <ClInclude Include="Gnomon.h" />
     <ClInclude Include="SolarSystem.h" />
     <ClInclude Include="TestSolarWatch.h" />
     <ClInclude Include="Time.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
     <ClCompile Include="..\Supporting files\Functions.cpp" />
     <ClCompile Include="Coordinates.cpp" />
+    <ClCompile Include="Gnomon.cpp" />
     <ClCompile Include="SolarSystem.cpp" />
     <ClCompile Include="TestSolarWatch.cpp" />
     <ClCompile Include="test_SolarWatch.cpp" />

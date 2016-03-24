@@ -2,9 +2,11 @@
 #include <vector>
 #include "Types.h"
 
+class CVector;	// проверить на счёт вектора векторов против вектора BaseVector
+
 namespace LinearAlgebra{
 	typedef std::vector<TYPE> BaseVector;
-	typedef std::vector<BaseVector> BaseMatrix;
+	typedef std::vector<CVector> BaseMatrix;	
 }
 
 using namespace LinearAlgebra;
@@ -29,6 +31,7 @@ public:
 	}
 
 	static CVector copyPart(const CVector &orig, const int position);
+	static CVector copyPart(const CVector &orig, const int First, const int Second);
 
 	TYPE getElement(int i) const;
 	int getSize() const;
@@ -81,6 +84,8 @@ public:
 
 	void setSize(int n, int m);
 	void setElement(int n, int m, TYPE value);
+
+	void add_toEnd(const CMatrix &additional);
 
 	CMatrix flip();
 	CMatrix inverse() const; // обратная матрица методом Гаусса

@@ -1,6 +1,9 @@
 #pragma once
-#include "Matrix_classes.h"
 #include <list>
+#include "Matrix_classes.h"
+
+// граница количества результатов, с которой начинаем записывать в List
+#define LISTLIMIT 1.0e+6
 
 namespace ResultArray
 {
@@ -22,6 +25,13 @@ protected:
 		t0, t1;
 
 	List Result;	// двунаправленный список
+	CMatrix Result_Matrix;	// вектор векторов
+
+	/* 
+		если используем для хранения результатов матрицу, то считаем последнюю 
+		заполненную позицию (на случай преждевременного завершения интегрирования) */
+	int result_matrix_position;
+	bool large_result_flag;	// если ожидается более 1 млн. позиций результатов, используем List
 
 	// Остановка интегрирования при малых изменениях приращения координаты
 	TYPE stop_condition;
@@ -42,7 +52,16 @@ public:
 	TYPE getInterval() const;
 	TYPE get_t0() const;
 	TYPE get_t1() const;
-	CMatrix getResult() const;
+	CMatrix getResult();
+
+	CVector getLastResult();
+
+	void clearResult();
+
+	/* 
+		использовать после задания времени интегрирования и интервала выдачи. 
+		определяет, куда будет производиться запись результатов: в List или матрицу */
+	void setResultType();
 
 	void setStart(CVector &arg);
 	void setInterval(const TYPE &arg);

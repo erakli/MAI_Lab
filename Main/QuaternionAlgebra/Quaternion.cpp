@@ -81,7 +81,7 @@ CQuaternion::CQuaternion(TYPE lam_0, TYPE lam_1, TYPE lam_2, TYPE lam_3){
 		в принципе, нужно такое делать? 
 	*/
 
-	//scalar = (1 == check + pow2(lam_1)) ? lam_0 : sqrt(1 - check);
+	//scalar = (1 == check + pow(lam_1, 2)) ? lam_0 : sqrt(1 - check);
 
 }
 
@@ -179,7 +179,7 @@ TYPE CQuaternion::getNorm(){
 	// проверить нижний индекс
 	for (SINT i = 0; i < QUAT_SIZE; i++)
 	{
-		Res += MyFunc::Numbers::pow2((*this)[i]);
+		Res += pow((*this)[i], 2);
 	}
 
 	return Res;

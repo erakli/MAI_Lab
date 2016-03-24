@@ -3,7 +3,22 @@
 #include "Time.h"
 
 /*
-	������� ����������� ���� � ��������� ���
+	Получение полуночи текущего дня
+*/
+TYPE MyTime::getMidnight(const TYPE JD)
+{
+	TYPE 
+		intPart,
+		fracPart = modf(JD, &intPart);	// проверить работоспособность
+
+	if (fracPart == 0.5)
+		return JD;
+
+	return (fracPart > 0.5) ? intPart + 0.5 : intPart - 0.5;
+}
+
+/*
+	Перевод календарной даты в Юлианские дни
 */
 TYPE MyTime::Transformation::DateToJD(const Date &date)
 {

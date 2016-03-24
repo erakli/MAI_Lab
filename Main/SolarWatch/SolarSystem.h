@@ -4,31 +4,33 @@
 #include "Matrix_classes.h"
 #include "Model.h"
 
+#define JD2016 2457388.5
+#define DAYS_IN_CURRENT_YEAR 366
+
 namespace Earth
 {
 	class CEarth : public CModel
 	{
 	public:
 		static const TYPE
-			muEarth,	// гравитационная постоянная Земли, m^3/s^2
-			angularVeloc,	// угловая скорость вращения, рад/с
-			meanRadius;		// средний радиус для сферической земли, км
+			angularVeloc,	// СѓРіР»РѕРІР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ РІСЂР°С‰РµРЅРёСЏ, СЂР°Рґ/СЃ
+			meanRadius;		// СЃСЂРµРґРЅРёР№ СЂР°РґРёСѓСЃ РґР»СЏ СЃС„РµСЂРёС‡РµСЃРєРѕР№ Р·РµРјР»Рё, РєРј
 
-		/* Господа конструкторы (+ по дате и позиции) */
+		/* Р“РѕСЃРїРѕРґР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹ (+ РїРѕ РґР°С‚Рµ Рё РїРѕР·РёС†РёРё) */
 		CEarth();
 		CEarth(const TYPE JD);
-		CEarth(const CVector &stateVector, const TYPE &start);
+		CEarth(const CVector &stateVector, const TYPE start);
 		CEarth(const CEarth &copy_earth);
 
-		void set_t0(const TYPE &arg, const bool days);
-		void set_t1(const TYPE &arg, const bool days);
+		void set_t0(const TYPE arg, const bool days);
+		void set_t1(const TYPE arg, const bool days);
+
+		void addResult(CVector &X, TYPE t) override;
 
 		CVector getRight(CVector &X, TYPE t) const override;
 
-		bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override 
-		{
-			return false;
-		};
+		bool Stop_Calculation(TYPE , TYPE , CVector &, CVector &) override 
+		{ return false; };
 	};
 
 }
@@ -36,5 +38,5 @@ namespace Earth
 namespace Sun
 {
 	const TYPE
-		muSun = 132712438e+3;	// гравитационная постоянная Солнца, km^3/s^2
+		muSun = 132712439.94e+3;	// РіСЂР°РІРёС‚Р°С†РёРѕРЅРЅР°СЏ РїРѕСЃС‚РѕСЏРЅРЅР°СЏ РЎРѕР»РЅС†Р°, km^3/s^2
 }
