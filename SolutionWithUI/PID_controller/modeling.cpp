@@ -8,7 +8,7 @@ CMatrix PIDModelling(const TYPE t, HWND hWnd){
 	Integrator.setEps_Max(1.0e-17); // задали максимально допустимую погрешность
 	Integrator.setEps(1.0e-5); // задали начальную погрешность
 
-	// инициализировали модель (в скобках тип орбиты)
+	// инициализировали модель
 	CPID_controller Model(hWnd);
 	//TTestModel Model;
 

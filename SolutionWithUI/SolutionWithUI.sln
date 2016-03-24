@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PID_controller", "PID_controller\PID_controller.vcxproj", "{4195103B-815B-4D24-8CEE-7E870420596F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GnomonUI", "GnomonUI\GnomonUI.vcxproj", "{870F88D8-8D62-4BC5-B473-6AB16AC086ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,8 +17,15 @@ Global
 		{4195103B-815B-4D24-8CEE-7E870420596F}.Debug|Win32.Build.0 = Debug|Win32
 		{4195103B-815B-4D24-8CEE-7E870420596F}.Release|Win32.ActiveCfg = Release|Win32
 		{4195103B-815B-4D24-8CEE-7E870420596F}.Release|Win32.Build.0 = Release|Win32
+		{870F88D8-8D62-4BC5-B473-6AB16AC086ED}.Debug|Win32.ActiveCfg = Debug|Win32
+		{870F88D8-8D62-4BC5-B473-6AB16AC086ED}.Debug|Win32.Build.0 = Debug|Win32
+		{870F88D8-8D62-4BC5-B473-6AB16AC086ED}.Release|Win32.ActiveCfg = Release|Win32
+		{870F88D8-8D62-4BC5-B473-6AB16AC086ED}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

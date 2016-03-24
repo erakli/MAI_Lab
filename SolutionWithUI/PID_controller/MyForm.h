@@ -10,7 +10,7 @@ namespace Project1 {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	ref class MyNativeWindowListener;
+	//ref class MyNativeWindowListener;
 
 	/// <summary>
 	/// Summary for MyForm
@@ -95,6 +95,7 @@ namespace Project1 {
 			// 
 			chartArea1->AxisX->IntervalAutoMode = System::Windows::Forms::DataVisualization::Charting::IntervalAutoMode::VariableCount;
 			chartArea1->AxisX->IsMarginVisible = false;
+			chartArea1->AxisX->MajorGrid->Interval = 0;
 			chartArea1->AxisY->IntervalAutoMode = System::Windows::Forms::DataVisualization::Charting::IntervalAutoMode::VariableCount;
 			chartArea1->CursorX->Interval = 0.01;
 			chartArea1->CursorX->IsUserEnabled = true;
