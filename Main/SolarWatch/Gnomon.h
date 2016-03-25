@@ -28,6 +28,13 @@ private:
 
 	bool DoWeHaveThisDate(const TYPE theDate, Earth::CEarth &Mod);
 
+	/* 
+		сделать последнее вычисленное значение начальными условиями нового
+		интегрирования */
+	void MakeNewStartConditions(Earth::CEarth &Mod, const bool for_Midnight_flag);
+	void MakeNewStartConditions_forTimeZone(
+		Earth::CEarth &Mod, CDormanPrince &Integrator, const TYPE timeMoment);
+
 	// вычисляем положение Земли на искомую дату (на основе эфемерид)
 	void getEarthPosition(const TYPE JD, const bool day = true);
 

@@ -34,20 +34,20 @@ bool CGnomon::DoWeHaveThisDate(const TYPE theDate, Earth::CEarth &Mod)
 		else
 		{
 			/*
-			Нет, искомой даты среди посчитанных нет. Начнём интегрировать
-			от последней известной даты
+				Нет, искомой даты среди посчитанных нет. Начнём интегрировать
+				от последней известной даты
 			*/
 			CVector
 				knownPosition(
-				earthPosition_Day[earthPosition_Day.getRowCount() - 1]
+					earthPosition_Day[earthPosition_Day.getRowCount() - 1]
 				);
 			knownPosition.pop_back(); // отсекли время
 
 			Mod.setStart(knownPosition);
 
 			/*
-			Первый этап пропускать нельзя. Начальным врменем будет последняя
-			известная дата
+				Первый этап пропускать нельзя. Начальным врменем будет последняя
+				известная дата
 			*/
 			Mod.set_t0(lastActual_JD, true);
 
@@ -61,6 +61,32 @@ bool CGnomon::DoWeHaveThisDate(const TYPE theDate, Earth::CEarth &Mod)
 	return false;
 }
 
+
+void CGnomon::MakeNewStartConditions(Earth::CEarth &Mod, const bool for_Midnight_flag)
+{
+	// храним посчитанную часть года на будущее
+	earthPosition_Day.add_toEnd(Mod.getResult());
+
+	// Подготовка второго этапа
+	CVector forStart;
+	forStart = Mod.getLastResult();
+	forStart.pop_back();	// вырезали время из вектора
+	Mod.clearResult();	// очистили контейнер результатов перед вторым этапом
+
+	Mod.setStart(forStart);
+	Mod.set_t0(Mod.get_t1(), false);
+}
+
+void CGnomon::MakeNewStartConditions_forTimeZone(
+	Earth::CEarth &Mod, CDormanPrince &Integrator, const TYPE timeMoment)
+{
+	Mod.setInterval(SECINDAY / 24.0);
+	Mod.set_t1(timeMoment, true);
+
+	Integrator.Run(Mod);
+
+	MakeNewStartConditions(Mod, false);
+}
 
 /*
 	Интегрируем до полуночи искомой даты, начиная с полуночи 
@@ -86,28 +112,38 @@ void CGnomon::getEarthPosition(const TYPE JD, const bool day)
 		if (!WeAlsoKnowIt)
 		{
 			Model.setInterval(SECINDAY);
-			Model.set_t1(midNight, true);
+
+			/*
+				Рассматриваем случай часовых поясов (ЧП).
+
+				Если ЧП отличен от Гринвича, то сначала интегрируем до предыдущего
+				дня с интервалом в сутки, а затем до момента интересующего нас
+				дня минус timeZone с интервалом в час. Полученный момент и станет
+				новыми начальными условиями для интегрирования на интересующий
+				день.
+			*/
+			if (timeZone <= 0)
+				Model.set_t1(midNight, true);
+			else
+				Model.set_t1(midNight - 1, true);
 
 			Integrator.Run(Model);
+			MakeNewStartConditions(Model, true);	// задаём новые НУ на основании вычислений
 
-			// храним посчитанную часть года на будущее
-			earthPosition_Day.add_toEnd(Model.getResult());
-
-			// Подготовка второго этапа
-			CVector forStart;
-			forStart = Model.getLastResult();
-			forStart.pop_back();	// вырезали время из вектора
-			Model.clearResult();	// очистили контейнер результатов перед вторым этапом
-
-			Model.setStart(forStart);
 		}
 
 	/* Второй этап, на целый день с интервалом в минуту */
 		Model.setInterval(SECINMIN * interval);
-		Model.set_t0(midNight - timeZone / 24.0, true);
-		// до след. полночи (без включения самой полуночи)
-		Model.set_t1(
-			midNight + 1 - timeZone / 24.0 - interval / TYPE(MININDAY), true);
+		//Model.set_t0(midNight - timeZone / 24.0, true);
+
+		if (timeZone == 0)
+			// до след. полночи (без включения самой полуночи)
+			Model.set_t1(
+				Model.get_t0() + 1 - interval / TYPE(MININDAY), true);
+		else
+			// иначе на 2 суток вперёд, чтобы покрыть часовые пояса
+			Model.set_t1(
+				Model.get_t0() + 2, true);
 
 		Integrator.Run(Model);
 
@@ -175,7 +211,9 @@ CMatrix CGnomon::SimulateShadow(const TYPE JD, const bool days)
 /* 
 	Вектор тени может быть определен как сумма векторов: 
 */
-	for (int i = 0; i < earthPosition_Minute.getRowCount(); i++)
+	int midNight_onPlace = (!timeZone) ? MININDAY / interval - timeZone * 60 : 0;
+
+	for (int i = midNight_onPlace; i < midNight_onPlace + MININDAY / interval; i++)
 	{
 
 	/* 
