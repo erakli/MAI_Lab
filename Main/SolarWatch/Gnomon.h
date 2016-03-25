@@ -22,7 +22,7 @@ private:
 
 	TYPE lastActual_JD;	// последняя дата с известной позицией Земли
 
-	UINT interval; // интервал получаемых положений Земли (кол-во минут)
+	//UINT interval; // интервал получаемых положений Земли (кол-во минут)
 
 	SINT timeZone;
 
@@ -31,9 +31,9 @@ private:
 	/* 
 		сделать последнее вычисленное значение начальными условиями нового
 		интегрирования */
-	void MakeNewStartConditions(Earth::CEarth &Mod, const bool for_Midnight_flag);
-	void MakeNewStartConditions_forTimeZone(
-		Earth::CEarth &Mod, CDormanPrince &Integrator, const TYPE timeMoment);
+	void MakeNewStartConditions(Earth::CEarth &Mod);
+	//void MakeNewStartConditions_forTimeZone(
+	//	Earth::CEarth &Mod, CDormanPrince &Integrator, const TYPE timeMoment);
 
 	// вычисляем положение Земли на искомую дату (на основе эфемерид)
 	void getEarthPosition(const TYPE JD, const bool day = true);
@@ -41,7 +41,12 @@ private:
 	// вычисляем положение гномона на текущий момент
 	CVector getPosition(const TYPE t);
 
-	CMatrix SimulateShadow(const TYPE JD, const bool days = true);
+	void CountTimeInDay(
+		const bool WorkTime,
+		CMatrix &days_of_year, UINT &day_number, bool &SunriseGot, 
+		const TYPE scalarProd, const TYPE delta, const int i);
+
+	CMatrix SimulateShadow(const bool WorkTime = false, const bool days = true);
 
 	List Result;	// храним значения вектора тени
 	int Result_size;
@@ -52,7 +57,7 @@ private:
 public:
 	CGnomon() : 
 		height(1.0e-3), starTimeAtStart(0), lastActual_JD(0), 
-		interval(1), timeZone(0), Result_size(0)
+		timeZone(0), Result_size(0)
 	{
 		position.setSize(3);
 	};
@@ -62,7 +67,7 @@ public:
 	void setParam(const TYPE fi, const TYPE lambda, const SINT timeZone = 0,
 				  const TYPE height = 1.0e-3);
 
-	CMatrix GetShadowForDate(const TYPE JD, const UINT newInterval = 1);
-	CVector GetLightTimeForYear(const UINT newInterval = 1);
+	CMatrix GetShadowForDate(const TYPE JD);
+	CVector GetLightTimeForYear();
 
 };

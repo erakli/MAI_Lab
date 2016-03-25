@@ -123,19 +123,6 @@ CEarth::CEarth(const CEarth &copy_earth)
 	t1 = copy_earth.get_t1();
 }
 
-void CEarth::set_t0(const TYPE arg, const bool days)
-{
-	if (days)
-		t0 = arg * SECINDAY;
-	else CModel::set_t0(arg);
-}
-
-void CEarth::set_t1(const TYPE arg, const bool days)
-{
-	if (days)
-		t1 = arg * SECINDAY;
-	else CModel::set_t0(arg);
-}
 
 /*
 	Храним время в конце вектора
