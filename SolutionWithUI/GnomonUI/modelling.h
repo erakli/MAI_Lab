@@ -10,4 +10,10 @@ struct Coordinates
 
 
 
-CMatrix GenerateShadow(const MyTime::Date &date, const Coordinates &coord, const TYPE height);
+CMatrix GenerateShadow(
+	const MyTime::Date &date, const Coordinates &coord, 
+	const SINT timeZone, const TYPE height);
+
+CVector GetLightTime(
+	const Coordinates &coord, const SINT timeZone, 
+	const bool WorkTime, const bool Switch);
