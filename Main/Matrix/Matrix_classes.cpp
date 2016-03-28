@@ -52,7 +52,14 @@ CMatrix &CMatrix::operator = (const CMatrix &arg)
 }
 
 
+
 /* * * * * * * * вектор * * * * * * * */
+void CVector::copyPart(CVector& target, const CVector& orig, const int position)
+{
+	for (int i = 0; i < position + 1; i++)
+		target[i] = orig[i];
+}
+
 CVector CVector::copyPart(const CVector& orig, const int position)
 {
 	CVector Res(position + 1);

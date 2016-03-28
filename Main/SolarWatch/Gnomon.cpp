@@ -1,5 +1,5 @@
 #include <iterator>
-//#include  "file_output.h"
+#include  "file_output.h"
 
 #include "Coordinates.h"
 #include "Time.h"
@@ -11,9 +11,11 @@
 
 #define START_OF_THIS_YEAR JD2016
 
+#define FILE_WITH_POSITIONS "C:\\EarthPositions_2016.txt"
+
 using namespace MyTime;
 
-/* private */
+/* * * * * * * * * * * * * * * * * * private * * * * * * * * * * * * * * * * * * */
 
 /*
 	А есть ли у нас данная дата среди посчитанных?
@@ -58,6 +60,9 @@ bool CGnomon::DoWeHaveThisDate(const TYPE theDate, Earth::CEarth &Mod)
 	else
 		// нет, посчитанной даты нет, теперь эта дата будет последней посчитанной
 		lastActual_JD = theDate;
+
+	// если мы считаем с часовым поясом, то последней посчитанной позицией будет из предыдущего дня
+	if (timeZone != 0) lastActual_JD--;
 
 	return false;
 }
@@ -168,6 +173,8 @@ void CGnomon::getEarthPosition(const TYPE JD, const bool day)
 			минуту
 		*/
 		earthPosition_Minute = Model.getResult();
+
+		WeGotPositionsForYear = true;
 	}
 }
 
@@ -178,60 +185,108 @@ void CGnomon::getEarthPosition(const TYPE JD, const bool day)
 CVector CGnomon::getPosition(const TYPE t)
 {
 	curPosition[2] = StarTime(starTimeAtStart, t);
-	//curPosition[2] = StarTime(t, position[2]);
 
 	return Transform::Geographic2Fix(curPosition);
 }
 
 
 /*
-	Считаем время до рассвета и заката
+	Считаем время до рассвета и заката.
+
+	Время до рассвета считается с предыдущего заката
+
+	Ограничение: алгоритм работает только в месте, где присутствует 
+	явное разделение дня и ночи в течении суток
 */
 void CGnomon::CountTimeInDay(
-	const bool WorkTime,
-	CMatrix& days_of_year, UINT &day_number, bool& SunriseGot, 
-	const TYPE scalarProd, const TYPE delta, const int i)
+	CMatrix& days_of_year, const TYPE scalarProd, const TYPE delta, const int i)
 {
-	if (scalarProd > 0)
+	static UINT day_number(0);
+	static bool SunriseGot(false);	// рассчитали ли мы для текущего дня рассвет и закат
+	
+	// на случай повторного вычисления будем на начальной итерации сбрасывать статические переменные
+	if (i == 0)
+	{
+		day_number = 0;
+		SunriseGot = false;
+	}
+
+	/* Перевод часов */
+	if (SummerWinterTime_switch)
+		switch (day_number)
+		{
+			case LASTSUNDAY_march:
+				if (i == SWITCH2SUMMER)
+					timeZone++;
+				break;
+
+			case LASTSUNDAY_october:
+				if (i == SWITCH2WINTER)
+					timeZone--;
+				break;
+
+			default:
+				break;
+		}
+
+	// если мы начинаем в светлое время, то дожидаемся начала местной ночи
+	if (scalarProd < 0 && days_of_year[0][day_number] == 0)
+	{
+		if (!SunriseGot) SunriseGot = true; // до первой полуночи время не считаем
+		return;
+	}
+
+	
+	if (scalarProd > 0) // - - - - - - - - - -  на дворе ночь?
 	{
 		if (!SunriseGot)
 			// увеличиваем счётчик до рассвета на смещение delta
 			days_of_year[0][day_number] += delta;
 	}
-	else
+	else				// - - - - - - - - - - неа, это день
 	{
-		// как только наступил рассвет ставим флаг, чтобы больше не считать тёмное время
+		/* 
+			как только наступил рассвет ставим флаг, чтобы больше не считать 
+			тёмное время */
 		if (!SunriseGot) SunriseGot = true;
+
 		// считаем время до заката
 		days_of_year[1][day_number] += delta;
 	}
 
-	/*
-		если количество итераций дошло до кратного полуночи числа,
-		увеличиваем номер дня */
-	if (i % (MININDAY) == 0 && i != 0)
+
+	/* 
+		в местную полночь производим смену суток (таким образом,
+		ведя подсчёт времени от местной полуночи, мы учитываем влияние часового
+		пояса) */
+	if ((i + timeZone * MININHOUR) % MININDAY == 0)
 	{
 		// учитываем часовой пояс
-		days_of_year[0][day_number] += timeZone * SECINHOUR;
+		//days_of_year[0][day_number] += timeZone * SECINHOUR;
 
 		/*
-			в конце дня прибавляем к счётчику заката время до рассвета,
-			чтобы получить реальное время заката */
+		в конце дня прибавляем к счётчику заката время до рассвета,
+		чтобы получить реальное время заката */
 		days_of_year[1][day_number] += days_of_year[0][day_number];
 
 		// учёт рабочего светлого времени от 8 до 20 часов. Если истина, то обрезаем
 		if (WorkTime)
 		{
-			if (days_of_year[0][day_number] < 8 * SECINHOUR)
-				days_of_year[0][day_number] = 8 * SECINHOUR;
+			// если у нас посчитан этот день, то можно делать обрезку
+			if (days_of_year[0][day_number] > 0)
+			{
+				if (days_of_year[0][day_number] < 8 * SECINHOUR)
+					days_of_year[0][day_number] = 8 * SECINHOUR;
 
-			if (days_of_year[1][day_number] > 20 * SECINHOUR)
-				days_of_year[1][day_number] = 20 * SECINHOUR;
+				if (days_of_year[1][day_number] > 20 * SECINHOUR)
+					days_of_year[1][day_number] = 20 * SECINHOUR;
+			}
 		}
 
 		SunriseGot = false;
 		day_number++;
 	}
+	
 }
 
 
@@ -242,7 +297,7 @@ void CGnomon::CountTimeInDay(
 *
 *	Результат работы функции - список положений тени в МГП (в топоцентрической СК)
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-CMatrix CGnomon::SimulateShadow(const bool WorkTime, const bool days)
+CMatrix CGnomon::SimulateShadow(const bool days)
 {
 	// по новой инициализируем текущую позицию (будем вращать через getPosition)
 	curPosition = position;
@@ -252,10 +307,11 @@ CMatrix CGnomon::SimulateShadow(const bool WorkTime, const bool days)
 		delta = SECINMIN;	// смещение при вычислении curTime
 
 	// для подсчёта светлого времени в секундах: рассвет, закат
-	CMatrix days_of_year(2, DAYS_IN_CURRENT_YEAR);
-	UINT day_number(0);
+	CMatrix days_of_year(2, DAYS_IN_CURRENT_YEAR + 1);
+	//UINT day_number(0);
 
-	bool SunriseGot = false;	// рассчитали ли мы для текущего дня рассвет и закат
+
+	//bool SunriseGot = false;	// рассчитали ли мы для текущего дня рассвет и закат
 
 	/* 
 		если есть смещение часового пояса, то моделирование проводилось на 2 дня,
@@ -286,11 +342,12 @@ CMatrix CGnomon::SimulateShadow(const bool WorkTime, const bool days)
 		соединяющий верхний конец гномона и МГП
 	*/
 		CVector
-			earthPos,
+			earthPos(3),
 			rayNormalized, rayVector;
 
 		// отсекаем скорость и время
-		earthPos = CVector::copyPart(earthPosition_Minute[i], 2);  
+		CVector::copyPart(earthPos, earthPosition_Minute[i], 2);
+		//earthPos = CVector::copyPart(earthPosition_Minute[i], 2);  
 
 		rayNormalized = earthPos * (1 / earthPos.getLength());
 
@@ -300,6 +357,13 @@ CMatrix CGnomon::SimulateShadow(const bool WorkTime, const bool days)
 			гномона в тени Земли
 		*/
 		TYPE scalarProd = rayNormalized * posNormalized;
+
+		/* Просматриваем значения скалярного произведения
+			CVector scalar(1);
+			scalar[0] = scalarProd;
+			addResult(scalar);
+			continue;
+		*/
 
 		// ------------------------- вычисляем на конкретную дату положения гномона
 		if (days)
@@ -337,13 +401,10 @@ CMatrix CGnomon::SimulateShadow(const bool WorkTime, const bool days)
 			addResult(Transform::Fix2Topo(rayVector + gnomonVector, curPosition));
 
 		}
-		// ------------------- иначе считаем количество светлых минут в каждом дней
+		// ------------------- иначе считаем количество светлых минут в каждом из дней
 		else  
 		{	
-			CountTimeInDay(
-				WorkTime, 
-				days_of_year, day_number, SunriseGot,
-				scalarProd, delta, i);
+			CountTimeInDay(days_of_year, scalarProd, delta, i);
 		}	// ENDOF if (days)
 	}
 
@@ -396,7 +457,7 @@ void CGnomon::clearResult()
 	Result_size = 0;
 }
 
-/* public */
+/* * * * * * * * * * * * * * * * * * public * * * * * * * * * * * * * * * * * * * */
 
 CGnomon::CGnomon(const TYPE fi, const TYPE lambda, const SINT timeZone,
 				 const TYPE height)
@@ -409,10 +470,14 @@ CGnomon::CGnomon(const TYPE fi, const TYPE lambda, const SINT timeZone,
 
 	this->height = height;
 
+	WorkTime = false;
+	SummerWinterTime_switch = false;
+
 	Result_size = 0;
 	lastActual_JD = 0;
 
 	starTimeAtStart = 0;
+	WeGotPositionsForYear = false;
 }
 
 void CGnomon::setParam(const TYPE fi, const TYPE lambda, const SINT timeZone,
@@ -431,12 +496,14 @@ void CGnomon::setParam(const TYPE fi, const TYPE lambda, const SINT timeZone,
 
 CMatrix CGnomon::GetShadowForDate(const TYPE JD)
 {
+	if (WeGotPositionsForYear) 
+		WeGotPositionsForYear = false;	// Мы перезаписываем результат поминутных позиций
+
 	/* 
 		Рассчёт звёздного времени на начало моделирования. Прибавляем lambda 
 		(долготу места), вычитаем часовой пояс */
 	if (timeZone == 0)
 		starTimeAtStart = StarTime(getMidnight(JD)) + position[2];
-			//- Earth::CEarth::angularVeloc * timeZone * 3600;
 	else
 		starTimeAtStart = StarTime(getMidnight(JD - 1)) + position[2];
 
@@ -449,7 +516,7 @@ CMatrix CGnomon::GetShadowForDate(const TYPE JD)
 	return Shadow * 1000;
 }
 
-CVector CGnomon::GetLightTimeForYear()
+CVector CGnomon::GetLightTimeForYear(const bool WorkTime, const bool Time_switch)
 {
 	/*
 		Рассчёт звёздного времени на начало моделирования. Прибавляем lambda
@@ -457,24 +524,35 @@ CVector CGnomon::GetLightTimeForYear()
 	starTimeAtStart =
 		StarTime(getMidnight(START_OF_THIS_YEAR))
 		+ position[2];
-		//- Earth::CEarth::angularVeloc * timeZone * 3600;
 
-	// Расчитываем положение Земли на год
-	getEarthPosition(0, false);
+	// Для ускорения тестирования, читаем позиции из готового файла
+	if (!WeGotPositionsForYear)
+		// Расчитываем положение Земли на год
+		getEarthPosition(0, false);
+		//Read_from_file(FILE_WITH_POSITIONS, earthPosition_Minute, 550000);	
+
+	// устанавливаем флаги, связанные с часовым поясом
+	this->SummerWinterTime_switch = Time_switch;
+	this->WorkTime = WorkTime;
 
 	/*
-		Рассчитываем светлое время по дням, записываем в вектор.
-
-		0-ой индекс - из-за особенностей реализации результатом
-		SimulateShadow является матрица. Наш результат - единственная строчка
-		полученной матрицы
+		Рассчитываем светлое время по дням 
+		в виде времени восхода и заката
 	*/
-	CMatrix LightTime(SimulateShadow(true, false));
+	CMatrix LightTime(SimulateShadow(false));
 	clearResult();
 
-	CVector Result(DAYS_IN_CURRENT_YEAR);
+	//to_file(LightTime);	// Просмотрим данные восхода и заката
 
-	for (int i = 0; i < DAYS_IN_CURRENT_YEAR; i++)
+	CVector Result(LightTime.getColCount());
+
+	/*
+		удаляем запасной день из следующего года (чтобы совладать особенностями
+		реализации с учётом часовых поясов)
+	*/
+	Result.pop_back();	
+
+	for (int i = 0; i < Result.getSize(); i++)
 		Result[i] = LightTime[1][i] - LightTime[0][i];
 
 	return Result;

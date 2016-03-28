@@ -30,6 +30,7 @@ public:
 	CVector(const BaseVector &arg) : BaseVector(arg){ 
 	}
 
+	static void copyPart(CVector &target, const CVector &orig, const int position);
 	static CVector copyPart(const CVector &orig, const int position);
 	static CVector copyPart(const CVector &orig, const int First, const int Second);
 

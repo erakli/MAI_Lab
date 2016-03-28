@@ -4,7 +4,7 @@
 
 #include "Time.h"
 
-#include "SolarSystem.h"
+//#include "SolarSystem.h"
 #include "TestSolarWatch.h"
 
 #include "Gnomon.h"
@@ -36,16 +36,19 @@ int main()
 
 	//Dorman_to_file(Result, Integrator);
 
+	//Read_from_file("C:\\output.txt", from_file);
+
 	MyTime::Date date = { 2016, 6, 22, 0, 0, 0 };
 	TYPE JD = MyTime::Transformation::DateToJD(date);
 
-	CGnomon gnom(Numbers::deg2rad(55.75222), Numbers::deg2rad(37.61556), 4);
+	CGnomon gnom(Numbers::deg2rad(43.12), Numbers::deg2rad(131.92), 10);
+	//CGnomon gnom(Numbers::deg2rad(55.75222), Numbers::deg2rad(37.61556), 3);
 
 	// делаем вывод результатов в файл
 	//CMatrix Result(gnom.GetShadowForDate(JD));
 
 	CMatrix Result(1, 0);
-	Result[0] = gnom.GetLightTimeForYear();
+	Result[0] = gnom.GetLightTimeForYear(false, false);
 
 	to_file(Result);
 }

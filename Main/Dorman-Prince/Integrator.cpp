@@ -13,7 +13,8 @@ CVector SetValues(TYPE *values){
 }
 
 /* * * * * * * * * * TIntegrator * * * * * * * * * */
-TIntegrator::TIntegrator(){
+TIntegrator::TIntegrator(): t(0)
+{
 	Step = 1;
 }
 
