@@ -43,6 +43,11 @@ public:
 		this->BaseVector::insert(this->begin() + position, value);
 	}
 
+	void insert_toEnd(const CVector &additional)
+	{
+		BaseVector::insert(this->end(), additional.begin(), additional.end());
+	}
+
 	void setElement(int i, TYPE value);
 	void setSize(int i);
 

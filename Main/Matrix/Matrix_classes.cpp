@@ -37,7 +37,7 @@ const BaseVector &CMatrix::operator [] (int i) const{
 
 CMatrix &CMatrix::operator = (const CMatrix &arg)
 {
-	int 
+	/*int 
 		oldSize = getRowCount(), 
 		newSize = arg.getRowCount();
 
@@ -47,7 +47,10 @@ CMatrix &CMatrix::operator = (const CMatrix &arg)
 	for (int i = 0; i < getRowCount(); i++)
 	{
 		(*this)[i] = arg[i];
-	}
+	}*/
+
+	(*this).assign(arg.begin(), arg.end());
+
 	return *this;
 }
 
@@ -56,16 +59,22 @@ CMatrix &CMatrix::operator = (const CMatrix &arg)
 /* * * * * * * * вектор * * * * * * * */
 void CVector::copyPart(CVector& target, const CVector& orig, const int position)
 {
-	for (int i = 0; i < position + 1; i++)
-		target[i] = orig[i];
+	target.assign(orig.begin(), orig.begin() + position + 1);
+	//if (position + 1 != target.getSize())
+	//	target.setSize(position + 1);
+
+	//for (int i = 0; i < position + 1; i++)
+	//	target[i] = orig[i];
 }
 
 CVector CVector::copyPart(const CVector& orig, const int position)
 {
-	CVector Res(position + 1);
+	CVector Res;
 
-	for (int i = 0; i < position + 1; i++)
-		Res[i] = orig[i];
+	Res.assign(orig.begin(), orig.begin() + position + 1);
+
+	/*for (int i = 0; i < position + 1; i++)
+		Res[i] = orig[i];*/
 
 	return Res;
 }
@@ -77,7 +86,7 @@ CVector CVector::copyPart(const CVector& orig, const int position)
 */
 CVector CVector::copyPart(const CVector& orig, const int First, const int Second)
 {
-	if (First == Second)
+	/*if (First == Second)
 	{
 		CVector Res(1);
 		Res[0] = orig[First];
@@ -102,9 +111,13 @@ CVector CVector::copyPart(const CVector& orig, const int First, const int Second
 			Res[i] = orig[i + Second];
 
 		return Res;
-	}
+	}*/
 	
-	
+	CVector Res;
+
+	Res.assign(orig.begin() + First + 1, orig.begin() + Second + 1);
+
+	return Res;
 }
 
 TYPE CVector::getElement(int i) const{
@@ -275,14 +288,16 @@ void CMatrix::setElement(int n, int m, TYPE value){
 
 void CMatrix::add_toEnd(const CMatrix& additional)
 {
-	int
+	/*int
 		old_size = getRowCount(), 
 		new_size = old_size + additional.getRowCount();
 
 	setSize(new_size, getColCount());
 
 	for (int i = old_size; i < new_size; i++)
-		(*this)[i] = additional[i - old_size];
+		(*this)[i] = additional[i - old_size];*/
+
+	(*this).insert(this->end(), additional.begin(), additional.end());
 }
 
 CMatrix CMatrix::flip(){
