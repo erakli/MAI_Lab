@@ -247,7 +247,7 @@ namespace Project1 {
 				label_Greeting->Visible = false;
 
 			label_Ready->Visible = false;
-			//label_ProgressStatus->Visible = true;
+			label_ProgressStatus->Visible = true;
 			MyForm::Refresh();
 
 			currentSeries = CreateSeries(this->chart1);
@@ -255,14 +255,9 @@ namespace Project1 {
 			limit = 10; //(UINT)(Time);
 
 			CMatrix Result(PIDModelling(Time, hWndMain));
-			/*for (int i = 0; i < Result.getRowCount(); i++)
-			{
-				currentSeries->Points->AddXY(Result[i][0], Result[i][1]);
-			}*/
 
-			//label_ProgressStatus->Visible = false;
+			label_ProgressStatus->Visible = false;
 			label_Ready->Visible = true;
-
 		}
 
 	};
@@ -301,60 +296,60 @@ namespace Project1 {
 	/* NativeWindow class to listen to operating system messages.  */
 	/* Осталось нерешённой оптимизация скорости                    */
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	ref class MyNativeWindowListener : public NativeWindow
-	{
-	private:
+	//ref class MyNativeWindowListener : public NativeWindow
+	//{
+	//private:
 
-		// Constant value was found in the S"windows.h" header file.
-		//literal int WM_ACTIVATEAPP = 0x001C;
-		MyForm^ parent;
+	//	// Constant value was found in the S"windows.h" header file.
+	//	//literal int WM_ACTIVATEAPP = 0x001C;
+	//	MyForm^ parent;
 
-	public:
-		MyNativeWindowListener(MyForm^ parent)
-		{
-			parent->HandleCreated += gcnew EventHandler(this, &MyNativeWindowListener::OnHandleCreated);
-			parent->HandleDestroyed += gcnew EventHandler(this, &MyNativeWindowListener::OnHandleDestroyed);
-			this->parent = parent;
-		}
+	//public:
+	//	MyNativeWindowListener(MyForm^ parent)
+	//	{
+	//		parent->HandleCreated += gcnew EventHandler(this, &MyNativeWindowListener::OnHandleCreated);
+	//		parent->HandleDestroyed += gcnew EventHandler(this, &MyNativeWindowListener::OnHandleDestroyed);
+	//		this->parent = parent;
+	//	}
 
-	internal:
+	//internal:
 
-		// Listen for the control's window creation and then hook into it.
-		void OnHandleCreated(Object^ sender, EventArgs^ /*e*/)
-		{
-			// Window is now created, assign handle to NativeWindow.
-			AssignHandle((dynamic_cast<MyForm^>(sender))->Handle);
-		}
+	//	// Listen for the control's window creation and then hook into it.
+	//	void OnHandleCreated(Object^ sender, EventArgs^ /*e*/)
+	//	{
+	//		// Window is now created, assign handle to NativeWindow.
+	//		AssignHandle((dynamic_cast<MyForm^>(sender))->Handle);
+	//	}
 
-		void OnHandleDestroyed(Object^ /*sender*/, EventArgs^ /*e*/)
-		{
-			// Window was destroyed, release hook.
-			ReleaseHandle();
-		}
+	//	void OnHandleDestroyed(Object^ /*sender*/, EventArgs^ /*e*/)
+	//	{
+	//		// Window was destroyed, release hook.
+	//		ReleaseHandle();
+	//	}
 
-	protected:
+	//protected:
 
-		virtual void WndProc(Message %m) override
-		{
-			// Listen for operating system messages
-			switch (m.Msg)
-			{
-			case WM_ADDPOINT:
+	//	virtual void WndProc(Message %m) override
+	//	{
+	//		// Listen for operating system messages
+	//		switch (m.Msg)
+	//		{
+	//		case WM_ADDPOINT:
 
-				// Notify the form that this message was received.
-				// Application is activated or deactivated,
-				// based upon the WParam parameter.
-				PosXY *pStruct = (PosXY *)m.LParam.ToPointer();
-				parent->AddPoint(pStruct->posX, pStruct->posY);
+	//			// Notify the form that this message was received.
+	//			// Application is activated or deactivated,
+	//			// based upon the WParam parameter.
+	//			PosXY *pStruct = (PosXY *)m.LParam.ToPointer();
+	//			parent->AddPoint(pStruct->posX, pStruct->posY);
 
-				if (pStruct) delete pStruct;
+	//			if (pStruct) delete pStruct;
 
-				break;
-			}
-			NativeWindow::WndProc(m);
-		}
+	//			break;
+	//		}
+	//		NativeWindow::WndProc(m);
+	//	}
 
-	};
+	//};
 
 	MyForm::MyForm(void)
 	{
@@ -365,26 +360,11 @@ namespace Project1 {
 		//myMainForm = this;
 		AcceptButton = button_Modelling;
 
-		nwl = gcnew MyNativeWindowListener(this);
+		//nwl = gcnew MyNativeWindowListener(this);
 
 		hWndMain = (HWND)this->Handle.ToInt32();
 
 		counter = 0;
-		//this->chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-		//this->legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
-		//this->series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
-		//// 
-		//// chart1
-		//// 
-		//chartArea1->AxisX->MajorGrid->LineColor = System::Drawing::Color::DimGray;
-		//chartArea1->AxisY->MajorGrid->LineColor = System::Drawing::Color::DimGray;
-		//chartArea1->BorderColor = System::Drawing::Color::DimGray;
-
-		//chartArea1->Name = L"ChartArea1";
-		//this->chart1->ChartAreas->Add(chartArea1);
-
-		//legend1->Name = L"Legend1";
-		//this->chart1->Legends->Add(legend1);
 	}
 
 }

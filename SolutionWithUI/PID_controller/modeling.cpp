@@ -9,7 +9,9 @@ CMatrix PIDModelling(const TYPE t, HWND hWnd){
 	Integrator.setEps(1.0e-5); // задали начальную погрешность
 
 	// инициализировали модель
-	CPID_controller Model(hWnd);
+	CPID_controller
+		//Model(hWnd);
+		Model;
 	//TTestModel Model;
 
 	Model.set_t1(t);
