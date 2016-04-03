@@ -19,7 +19,7 @@ public:
 };
 
 class CDormanPrince : public TIntegrator{
-private:
+protected:
 	CVector
 		c,  // вектор-столбец слева от таблицы
 		b,  // вектор-строка снизу таблицы
@@ -38,7 +38,7 @@ private:
 
 	int x_size; // длина вектора начальных значений
 
-	void StepCorrection(); // управление длиной шага интегрирования
+	virtual void StepCorrection(); // управление длиной шага интегрирования
 	void getEps(); 
 	TYPE RoundingError() const;
 

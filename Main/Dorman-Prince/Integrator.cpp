@@ -13,21 +13,24 @@ CVector SetValues(TYPE *values){
 }
 
 /* * * * * * * * * * TIntegrator * * * * * * * * * */
-TIntegrator::TIntegrator(): t(0)
+TIntegrator::TIntegrator()
 {
+	t = 0;
 	Step = 1;
 }
 
-TYPE TIntegrator::getStep() const{
+TYPE TIntegrator::getStep() const
+{
 	return Step;
 }
-void TIntegrator::setStep(const TYPE &arg){
+void TIntegrator::setStep(const TYPE &arg)
+{
 	Step = arg;
 }
 
 /* * * * * * * * * * CDormanPrince * * * * * * * * * */
-CDormanPrince::CDormanPrince(){
-
+CDormanPrince::CDormanPrince()
+{
 	// инициализируем все коэффициенты
 	c.setSize(SIZE);
 	A.setSize(SIZE, SIZE);
@@ -51,8 +54,8 @@ CDormanPrince::CDormanPrince(){
 /*
 ------------- основная функция
 */
-void CDormanPrince::Run(CModel &Mod){
-
+void CDormanPrince::Run(CModel &Mod)
+{
 	Model = &Mod; // Храним адрес модели для внутренних нужд
 	Model->setResultType();	// задаём тип контейнера для хранения результатов
 

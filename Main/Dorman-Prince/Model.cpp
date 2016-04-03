@@ -28,7 +28,7 @@ void CModel::addResult(CVector &X, TYPE t){
 
 	if (! large_result_flag)
 	{	// если ожидается менее 1 млн. результатов, пишем в матрицу
-		Result_Matrix[result_matrix_position] = compile;
+		Result_Matrix.push_back(compile);
 		result_matrix_position++;
 	}
 	else
@@ -104,7 +104,7 @@ void CModel::setResultType()
 	else
 	{
 		// иначе создадим сразу большую матрицу результатов и будем её заполнять
-		Result_Matrix.setSize(num_of_results, 0);
+		Result_Matrix.reserve(num_of_results);
 		large_result_flag = false;
 	}
 }
