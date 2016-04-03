@@ -45,10 +45,10 @@ int main()
 	//CGnomon gnom(Numbers::deg2rad(55.75222), Numbers::deg2rad(37.61556), 3);
 
 	// делаем вывод результатов в файл
-	//CMatrix Result(gnom.GetShadowForDate(JD));
+	CMatrix Result(gnom.GetShadowForDate(JD));
 
-	CMatrix Result(1, 0);
-	Result[0] = gnom.GetLightTimeForYear(false, false);
+	/*CMatrix Result(1, 0);
+	Result[0] = gnom.GetLightTimeForYear(false, false);*/
 
 	to_file(Result);
 }

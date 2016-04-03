@@ -342,7 +342,7 @@ CMatrix CGnomon::SimulateShadow(const bool days)
 		соединяющий верхний конец гномона и МГП
 	*/
 		CVector
-			earthPos(3),
+			earthPos,
 			rayNormalized, rayVector;
 
 		// отсекаем скорость и время
