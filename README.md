@@ -3,7 +3,7 @@ Laboratory works that I'm doing for Moscow Aviation Institute.
 
 Discipline: principles of design of robotic systems.
 
-For now, there are 4 connected realisations:
+For now, there are a list of connected realisations:
 
 1. Linear Algebra (vector and matrix calculations)
 2. The Dorman-Prince integration method of order 4(5)
