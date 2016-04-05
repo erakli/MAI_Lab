@@ -56,7 +56,7 @@ void CPID_controller::Generate_WhiteNoise(const TYPE omega)
 	std::default_random_engine generator;
 	std::normal_distribution<TYPE> distribution(0, sqrt(Disp));
 
-	for (int i = 0; i < WhiteNoise.capacity(); i++)
+	for (UINT i = 0; i < WhiteNoise.capacity(); i++)
 		WhiteNoise.push_back(distribution(generator));
 
 	correlation_interval_WhiteNoise = dt;
@@ -84,32 +84,45 @@ TYPE CPID_controller::NonLinearElement(TYPE delta1) const
 /*
 	Агрегат
 */
-CVector CPID_controller::AperiodicElement(TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const
+void CPID_controller::AperiodicElement(CVector &RightPart, 
+	TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const
 {
-	CVector Result(3);
+	//CVector Result(3);
 
-	Result[0] = z1;
+	/*Result[0] = z1;
 	Result[1] = z2;
-	Result[2] = (alpha * K_ag - z2 * ag[1] - z1 * ag[0] - beta) / ag[2];
+	Result[2] = (alpha * K_ag - z2 * ag[1] - z1 * ag[0] - beta) / ag[2];*/
 
-	return Result;
+	//return Result;
+
+	RightPart.push_back(z1);
+	RightPart.push_back(z2);
+	RightPart.push_back(
+		(alpha * K_ag - z2 * ag[1] - z1 * ag[0] - beta) / ag[2]
+		);
 }
 
 /*
 	Формирующий фильтр
 */
-CVector CPID_controller::ShapingFilter(TYPE epsilon, TYPE y, TYPE nu) const
+void CPID_controller::ShapingFilter(CVector &RightPart, 
+	TYPE epsilon, TYPE y, TYPE nu) const
 {
-	CVector Result(2);
+	/*CVector Result(2);
 
 	Result[0] = y;
 	Result[1] = 
 		(nu * K_ag - 2 * T_filter * xi_filter * y - epsilon) / pow(T_filter, 2);
 
-	return Result;
+	return Result;*/
+
+	RightPart.push_back(y);
+	RightPart.push_back(
+		(nu * K_ag - 2 * T_filter * xi_filter * y - epsilon) / pow(T_filter, 2)
+		);
 }
 
-CVector CPID_controller::getRight(CVector &X, TYPE t) const
+CVector CPID_controller::getRight(const CVector &X, TYPE t) const
 {
 	/* Буквенное представление проинтегрированных Правых Частей системы ДУ */
 	TYPE epsilon, y, beta, z1, z2, teta;
@@ -138,22 +151,28 @@ CVector CPID_controller::getRight(CVector &X, TYPE t) const
 		throw std::exception("WhiteNoise hasn't been generated");
 	}
 
-	TYPE nu = WhiteNoise[int(trunc(t / correlation_interval_WhiteNoise))];
+	TYPE index_WN;
+	modf(t / correlation_interval_WhiteNoise, &index_WN);
 
-	/* Как не создавать лишнего экземпляра объекта класса вектора? */
-	CVector 
+	TYPE nu = WhiteNoise[int(index_WN)];
+
+	/*CVector 
 		Shaping_filter = ShapingFilter(epsilon, y, nu),
-		Agregat = AperiodicElement(beta, z1, z2, alpha);
+		Agregat = AperiodicElement(beta, z1, z2, alpha);*/
 
 	/*int size = Elem.getSize();
 	for (int i = 0; i < size; i++)
 		Y[i] = Elem[i];*/
 
 	/* Формируем результирующий вектор как комбинацию векторов от всех звеньев */
-	CVector Y(Shaping_filter);
+	CVector Y;
 	Y.reserve(s_size);
 
-	Y.insert_toEnd(Agregat);
+	/*Y.insert_toEnd(Shaping_filter);
+	Y.insert_toEnd(Agregat);*/
+
+	ShapingFilter(Y, epsilon, y, nu);
+	AperiodicElement(Y, beta, z1, z2, alpha);
 
 	Y.push_back(k_coeff[1] * tau);	// прибавляем к системе Teta[2]
 

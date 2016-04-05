@@ -7,7 +7,7 @@ CDormanPrince_modified::CDormanPrince_modified()
 
 CDormanPrince_modified::CDormanPrince_modified(const TYPE correlation_interval)
 {
-	Step = correlation_interval; // начальный шаг делаем равным интервалу корреляции
+	Step = correlation_interval; // РЅР°С‡Р°Р»СЊРЅС‹Р№ С€Р°Рі РґРµР»Р°РµРј СЂР°РІРЅС‹Рј РёРЅС‚РµСЂРІР°Р»Сѓ РєРѕСЂСЂРµР»СЏС†РёРё
 	this->correlation_interval = correlation_interval;
 }
 
@@ -17,26 +17,28 @@ void CDormanPrince_modified::set_correlation_interval(const TYPE correlation_int
 	this->correlation_interval = correlation_interval;
 }
 
-void CDormanPrince_modified::StepCorrection()
+TYPE CDormanPrince_modified::StepCorrection()
 {
-	CDormanPrince::StepCorrection();
+	TYPE NewStep = CDormanPrince::StepCorrection();
 
 	TYPE
 		currentInterval, nextInterval_of_t;
 
-	// получаем значение текущего интервала корреляции
+	// РїРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ РёРЅС‚РµСЂРІР°Р»Р° РєРѕСЂСЂРµР»СЏС†РёРё
 	modf(t / correlation_interval, &currentInterval);
 		
 	/* 
-		получаем значение интервала, в котором мы окажемся, если прибавим
-		к текущему времени интегрирования полученный шаг.
+		РїРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ РёРЅС‚РµСЂРІР°Р»Р°, РІ РєРѕС‚РѕСЂРѕРј РјС‹ РѕРєР°Р¶РµРјСЃСЏ, РµСЃР»Рё РїСЂРёР±Р°РІРёРј
+		Рє С‚РµРєСѓС‰РµРјСѓ РІСЂРµРјРµРЅРё РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёСЏ РїРѕР»СѓС‡РµРЅРЅС‹Р№ С€Р°Рі.
 	*/
-	modf( (t + Step) / correlation_interval, &nextInterval_of_t );
+	modf( (t + NewStep) / correlation_interval, &nextInterval_of_t );
 
 	/* 
-		если мы с этим шагом окажемся в следующем интервале корреляции,
-		то обрезаем шаг до такого значения, чтобы мы оказались на границе 
-		текущего интервала корреляции */
+		РµСЃР»Рё РјС‹ СЃ СЌС‚РёРј С€Р°РіРѕРј РѕРєР°Р¶РµРјСЃСЏ РІ СЃР»РµРґСѓСЋС‰РµРј РёРЅС‚РµСЂРІР°Р»Рµ РєРѕСЂСЂРµР»СЏС†РёРё,
+		С‚Рѕ РѕР±СЂРµР·Р°РµРј С€Р°Рі РґРѕ С‚Р°РєРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ, С‡С‚РѕР±С‹ РјС‹ РѕРєР°Р·Р°Р»РёСЃСЊ РЅР° РіСЂР°РЅРёС†Рµ 
+		С‚РµРєСѓС‰РµРіРѕ РёРЅС‚РµСЂРІР°Р»Р° РєРѕСЂСЂРµР»СЏС†РёРё */
 	if (nextInterval_of_t != currentInterval)
-		Step = nextInterval_of_t * correlation_interval - t;
+		NewStep = nextInterval_of_t * correlation_interval - t + RoundErr;
+
+	return NewStep;
 }

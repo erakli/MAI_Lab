@@ -37,8 +37,15 @@ private:
 
 	TYPE NonLinearElement(TYPE delta1) const;
 
-	CVector AperiodicElement(TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const;
-	CVector ShapingFilter(TYPE epsilon, TYPE y, TYPE nu) const;
+	/* 
+		В аргумент RightPart передаётся результирующая правая часть, которая будет
+		отдана в return функции getRight */
+
+	void AperiodicElement(CVector &RightPart, 
+		TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const;
+
+	void ShapingFilter(CVector &RightPart, 
+		TYPE epsilon, TYPE y, TYPE nu) const;
 
 public:
 	
@@ -55,7 +62,7 @@ public:
 
 	TYPE get_correlation_interval() const;
 
-	CVector getRight(CVector &X, TYPE t) const override;
+	CVector getRight(const CVector &X, TYPE t) const override;
 
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
 
