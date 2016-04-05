@@ -124,6 +124,12 @@ void CModel::set_t0(const TYPE &arg){
 void CModel::set_t1(const TYPE &arg){
 	t1 = arg;
 }
+
+bool CModel::Stop_Calculation(double t, double Step, CVector& PrevStep, CVector& CurStep)
+{
+	return false;
+}
+
 // ----- конец свойств
 
 

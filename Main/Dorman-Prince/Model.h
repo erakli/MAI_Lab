@@ -68,7 +68,7 @@ public:
 	void set_t0(const TYPE &arg);
 	void set_t1(const TYPE &arg);
 
-	virtual bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) = 0;
+	virtual bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep);
 
 };
 
@@ -82,8 +82,4 @@ public:
 
 	TArenstorfModel(int variant);
 	CVector getRight(const CVector &X, TYPE t) const override;
-
-	// заглушка
-	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override
-	{ return false; };
 };

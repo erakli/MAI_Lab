@@ -1,16 +1,18 @@
 #pragma once
 
-#define TYPE	double
+typedef double				TYPE;
 #define pTYPE	double*
 
-#define SINT	short int
+typedef short int			SINT;
 
-#ifndef UINT
-#define BYTE	unsigned __int8
+#ifndef BYTE
+typedef unsigned __int8		BYTE;
 #endif
 
 #ifndef UINT
-#define UINT	unsigned int
+typedef unsigned int		UINT;
 #endif
 
-#define PI		3.14159265358979323846
+#define PI			3.14159265358979323846
+
+#define VEC_SIZE	3

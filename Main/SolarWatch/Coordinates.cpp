@@ -5,7 +5,7 @@
 #include "Coordinates.h"
 
 using namespace Earth;
-using namespace MyFunc;
+//using namespace MyFunc;
 
 /*
 	Звёздным временем называется часовой угол точки весеннего
@@ -21,7 +21,7 @@ using namespace MyFunc;
 TYPE StarTime(const TYPE JD)
 {
 	TYPE
-		d = JD - J2000,			// количество дней с 01.01.2000
+		d = JD - J2000,				// количество дней с 01.01.2000
 		centuries = d / 36525.0;	// количество столетий, прошедших с 01.01.2000 г.
 
 	TYPE s =
@@ -54,6 +54,10 @@ TYPE StarTime(const TYPE starTime, const TYPE t)
 		//StarTime(midNight) + CEarth::angularVeloc * t + lambda;
 }
 
+
+
+/* * * * * * namespace Transform * * * * * * * * * * * * * * * * * */
+
 /*
 	Создание матрицы поворота вокруг осей на угол
 
@@ -66,7 +70,7 @@ CMatrix Transform::RotMatrix(const BYTE axis, const TYPE angle)
 		sin_t = sin(angle);
 
 	// создаем матрицу поворота
-	CMatrix R(3, 3);
+	CMatrix R(VEC_SIZE, VEC_SIZE);
 
 	switch (axis)
 	{
@@ -165,7 +169,7 @@ CVector Transform::Fix2Topo(const CVector& fix_vector, const CVector &center_Sph
 */
 CVector Transform::Geographic2Fix(const TYPE h, const TYPE fi, const TYPE lambda)
 {
-	CVector Result(3);
+	CVector Result(VEC_SIZE);
 	Result[0] = (h + CEarth::meanRadius) * cos(fi) * cos(lambda);
 	Result[1] = (h + CEarth::meanRadius) * cos(fi) * sin(lambda);
 	Result[2] = (h + CEarth::meanRadius) * sin(fi);
@@ -181,10 +185,85 @@ CVector Transform::Geographic2Fix(const CVector &geographic)
 		fi(geographic[1]), 
 		lambda(geographic[2]);
 
-	CVector Result(3);
+	CVector Result(VEC_SIZE);
 	Result[0] = (h + CEarth::meanRadius) * cos(fi) * cos(lambda);
 	Result[1] = (h + CEarth::meanRadius) * cos(fi) * sin(lambda);
 	Result[2] = (h + CEarth::meanRadius) * sin(fi);
 
 	return Result;
+}
+
+
+
+/* * * * * * namespace Orbit * * * * * * * * * * * * * * * * * * * */
+
+/* 
+*	Генерирование матрицы ориентации для перехода от элементов орбиты к
+	декартовы 
+*/
+CMatrix Orbit::OrientationMatrix(const Kepler_elements& elements)
+{
+	TYPE
+		u = elements.omega + elements.teta;		// аргумент широты
+
+	TYPE
+		sin_u(		sin(u) ),					cos_u(		cos(u) ),
+		sin_Omega(	sin(elements._Omega) ),		cos_Omega(	cos(elements._Omega) ),
+		sin_i(		sin(elements.i) ),			cos_i(		cos(elements.i) );
+
+	CMatrix A(VEC_SIZE, VEC_SIZE);
+
+	A[0][0] =  cos_u * cos_Omega - sin_u * sin_Omega * cos_i;
+	A[0][1] = -sin_u * cos_Omega - cos_u * sin_Omega * cos_i;
+	A[0][2] =  sin_i * sin_Omega;
+
+	A[1][0] =  cos_u * sin_Omega + sin_u * cos_Omega * cos_i;
+	A[1][1] = -sin_u * sin_Omega + cos_u * cos_Omega * cos_i;
+	A[1][2] = -sin_i * cos_Omega;
+
+	A[2][0] =  sin_u * sin_i;
+	A[2][1] =  cos_u * sin_i;
+	A[2][2] =  cos_i;
+
+	return A;
+}
+
+/* 
+*	Переход от кеплеровских элементов орбиты к декартовым координатам (ИСК)
+	
+	Результат:
+		Вектор из 6 компонент: 3 компоненты положения, 3 компоненты скорости
+*/
+CVector Orbit::Kepler2Decart(const Kepler_elements& elements)
+{
+	CVector _position(VEC_SIZE), _velocity(VEC_SIZE);
+
+	TYPE
+		p = elements.a * (1 - pow(elements.e, 2)),	// Фокальный параметр орбиты
+		
+		sin_teta = sin(elements.teta),
+		cos_teta = cos(elements.teta);
+
+	_position[0] = p / (1 + elements.e * cos_teta);
+
+
+	TYPE
+		sqrt_mu = sqrt(CEarth::muEarth / p);
+
+	_velocity[0] = sqrt_mu * elements.e * sin_teta;
+	_velocity[1] = sqrt_mu * (1 + elements.e * cos_teta);
+
+
+	CMatrix A(OrientationMatrix(elements));
+
+	_position = A * _position;
+	_velocity = A * _velocity;
+
+	CVector Res;
+	Res.reserve(VEC_SIZE * 2);
+
+	Res.insert_toEnd(_position);
+	Res.insert_toEnd(_velocity);
+
+	return Res;
 }

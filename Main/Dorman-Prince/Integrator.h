@@ -41,7 +41,7 @@ protected:
 	TYPE RoundErr;
 
 	virtual TYPE StepCorrection(); // управление длиной шага интегрирования
-	void getError(); 
+	virtual void getError(); 
 	TYPE RoundingError() const;
 
 	void set_k(int size);
