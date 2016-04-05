@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Types.h"
-#include "Matrix_classes.h"
 #include "Model.h"
 
 #define JD2016 2457388.5
@@ -13,6 +11,7 @@ namespace Earth
 	{
 	public:
 		static const TYPE
+			muEarth,		// геоцентрическая гравитационная постоянная, [m^3/s^2]
 			angularVeloc,	// угловая скорость вращения, рад/с
 			meanRadius;		// средний радиус для сферической земли, км
 
@@ -25,9 +24,6 @@ namespace Earth
 		void addResult(CVector &X, TYPE t) override;
 
 		CVector getRight(const CVector &X, TYPE t) const override;
-
-		bool Stop_Calculation(TYPE , TYPE , CVector &, CVector &) override 
-		{ return false; };
 	};
 
 }

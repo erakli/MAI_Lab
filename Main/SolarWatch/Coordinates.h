@@ -15,3 +15,23 @@ namespace Transform
 	CVector Geographic2Fix(const TYPE h, const TYPE fi, const TYPE lambda);
 	CVector Geographic2Fix(const CVector &geographic);
 }
+
+namespace Orbit
+{
+	/* Параметры орбиты ИСЗ */
+	struct Kepler_elements
+	{
+		TYPE
+			_Omega,		// Долгота восходящего узла,	градусы [0, 360]
+			i,			// Наклонение орбиты,			градусы [0, 180]
+			omega,		// Широта перицентра,			градусы [-90, 90]
+			a,			// Большая полуось орбиты,		км
+			e,			// Эксцентриситет
+			teta;		// Истинная аномалия,			градусы [0, 360)
+	};
+
+	/* Матрица ориентации */
+	CMatrix OrientationMatrix(const Kepler_elements &elements);
+
+	CVector Kepler2Decart(const Kepler_elements &elements);
+}
