@@ -44,11 +44,13 @@ CDormanPrince::CDormanPrince()
 	setA();
 
 	Step = 1.0e-3;
-	Eps = 1.0e-5;
+	Error = 1.0e-5;
 	Eps_Max = 1.0e-17;
 	Eps_Global = 0;
 
 	iter = 0; // количество итераций
+
+	RoundErr = RoundingError();	// ошибка округления
 }
 
 /*
@@ -66,15 +68,17 @@ void CDormanPrince::Run(CModel &Mod)
 	// вычисляем размер фазового вектора
 	x_size = x0.getSize(); 
 
-	TYPE tout = t; // Для плотной выдачи
-	TYPE PrevStep; // храним знание о предыдущем шаге
+	TYPE
+		t_end = Model->get_t1(),
+		tout = t;			// Для плотной выдачи
+	TYPE NewStep;			// храним знание о новом шаге на эту итерацию
 
 	UINT local_iter(0);
 
 	/*
 		основной цикл вычисления
 	*/
-	while (t <= Model->get_t1())
+	while (t <= t_end)
 	{
 		// необходим контроль количества итераций
 		if (local_iter < 1000)
@@ -87,7 +91,7 @@ void CDormanPrince::Run(CModel &Mod)
 
 		set_k(x_size);
 
-		CVector sum(x_size), sum_1(sum);
+		CVector sum(x_size), sum_1(x_size);
 
 		for (int i = 0; i < x_size; i++) // проходим по элементам вектора Х
 		{
@@ -106,19 +110,22 @@ void CDormanPrince::Run(CModel &Mod)
 		x1 = x0 + sum * Step;
 		_x1 = x0 + sum_1 * Step;
 
-		PrevStep = Step; // Запомнили шаг до конца этой итерации
-		getEps();
-		StepCorrection();	
+		getError();
+		NewStep = StepCorrection();	// Запомнили шаг до конца этой итерации
+		//if (NewStep > RoundErr)
+			Step = NewStep;
+		//else
+		//	Step = Eps_Max;	// TODO: тут надо подумать, что в случае 0 шага делать
 
 		// если мы не довольны ошибкой, уточняем шаг с текущим t
-		if (Eps > Eps_Max)	continue; // ------------------- основной перевалочный пункт
+		if (Error > Eps_Max) continue; // ------------------- основной перевалочный пункт
 
-		Eps_Global += Eps; // считаем глобальную погрешность как сумму локальных
+		Eps_Global += Error; // считаем глобальную погрешность как сумму локальных
 
 		local_iter = 0; // обнуляем счётчик количества итераций при успехе шага
 
 		// если приращение координаты менее заданного условия прерываем процесс
-		if (Model->Stop_Calculation(t, PrevStep, x0, x1)) break;
+		if (Model->Stop_Calculation(t, NewStep, x0, x1)) break;
 
 		/*
 			Плотная выдача. Результаты уходят в матрицу
@@ -126,16 +133,16 @@ void CDormanPrince::Run(CModel &Mod)
 		*/
 		TYPE Teta;
 		CVector Xout; // сюда записываются значения с учётом коэф. плотной выдачи
-		while ((tout < t + PrevStep) && (tout <= Model->get_t1()))
+		while ((tout < t + NewStep) && (tout <= t_end))
 		{
-			Teta = (tout - t) / PrevStep;
-			Xout = thick_extradition(Teta, PrevStep);
+			Teta = (tout - t) / NewStep;
+			Xout = thick_extradition(Teta, NewStep);
 			Model->addResult(Xout, tout);
 			tout += Model->getInterval();
 		}
 
 		x0 = x1; // на выход отдаём результат 4 порядка (принимая его основным)
-		t += PrevStep;
+		t += NewStep;
 	}
 }
 
@@ -149,7 +156,7 @@ void CDormanPrince::set_k(int size){
 	for (int s = 1; s < SIZE; s++) // двигаемся по вектору вниз (по строкам)
 	{
 		// инициализируем элементы-векторы вектора вспомогательных коэфф.
-		k[s].setSize(size);
+		//k[s].setSize(size);
 
 		CVector set_k_sum(size);
 
@@ -179,7 +186,7 @@ CVector CDormanPrince::thick_extradition(TYPE &Teta, TYPE &Step){
 
 	sqrTeta = pow(Teta, 2); // квадрат от тета
 
-	const int b_size = 6;
+	static const auto b_size = 6;
 
 	CVector b(b_size);
 
@@ -217,23 +224,23 @@ CVector CDormanPrince::thick_extradition(TYPE &Teta, TYPE &Step){
 /*
 ------------- Коррекция текущего шага на основе погрешности
 */
-void CDormanPrince::StepCorrection(){
+TYPE CDormanPrince::StepCorrection(){
 	TYPE min_part =
 			std::min<TYPE>
-			(5.0, pow(Eps / Eps_Max, 0.2) / 0.9);
+			(5.0, pow(Error / Eps_Max, 0.2) / 0.9);
 
-	Step /= std::max<TYPE>(0.1, min_part);
+	return Step / std::max<TYPE>(0.1, min_part);
 }
 
 /*
 ------------- Получение локальной погрешности
 */
-void CDormanPrince::getEps(){
+void CDormanPrince::getError(){
 
 	// числитель и знаменатель дроби под корнем
 	CVector numerator(x_size), denominator(x_size), fraction(x_size);
 	
-	TYPE u = RoundingError(); // вычисление ошибки округления
+	//TYPE u = RoundingError(); // вычисление ошибки округления
 
 	for (int i = 0; i < x_size; i++)
 	{
@@ -241,13 +248,13 @@ void CDormanPrince::getEps(){
 		denominator[i] =
 			std::max<TYPE>(
 			std::max<TYPE>(1.0e-5, abs(x1[i])),
-			std::max<TYPE>(abs(x0[i]), 2.0 * u / Eps_Max)
+			std::max<TYPE>(abs(x0[i]), 2.0 * RoundErr / Eps_Max)
 			);
 		fraction[i] = numerator[i] / denominator[i];
 	}
 
 	// воспользовались нахождением длины вектора
-	Eps = fraction.getLength() / sqrt(TYPE(x_size));	
+	Error = fraction.getLength() / sqrt(TYPE(x_size));	
 	
 }
 
@@ -256,7 +263,7 @@ TYPE CDormanPrince::RoundingError() const{
 
 	while (1 + v > 1)
 	{
-		u = v;
+		u =	v;
 		v /= 2;
 	}
 
@@ -309,7 +316,7 @@ void CDormanPrince::setEps_Max(const TYPE &arg){
 }
 
 void CDormanPrince::setEps(const TYPE &arg){
-	Eps = arg;
+	Error = arg;
 }
 
 TYPE CDormanPrince::getEps_Max() const{

@@ -79,11 +79,6 @@ CVector CVector::copyPart(const CVector& orig, const int position)
 	return Res;
 }
 
-/* 
-	direction - направление копирования от position:
-		true - в конец
-		false - в начало
-*/
 CVector CVector::copyPart(const CVector& orig, const int First, const int Second)
 {
 	/*if (First == Second)
@@ -148,23 +143,25 @@ CVector CVector::operator + (const CVector &arg){
 	// избыточно, добавить обработчки приёма значения
 	/*int s = std::min<int>
 		(getSize(), arg.getSize());*/
-	int s = this->getSize();
-	CVector Res(s);
-	for (int i = 0; i < Res.getSize(); i++)
+	auto size = this->getSize();
+	CVector Res(size);
+	for (int i = 0; i < size; i++)
 		Res[i] = (*this)[i] + arg[i];
 	return Res;
 }
 
 CVector CVector::operator * (const TYPE num){
-	CVector Res(getSize());
-	for (int i = 0; i < getSize(); i++)
+	auto size = getSize();
+	CVector Res(size);
+	for (int i = 0; i < size; i++)
 		Res[i] = (*this)[i] * num;
 	return Res;
 }
 
 CVector CVector::operator * (const TYPE num) const{
-	CVector Res(getSize());
-	for (int i = 0; i < getSize(); i++)
+	auto size = getSize();
+	CVector Res(size);
+	for (int i = 0; i < size; i++)
 		Res[i] = (*this)[i] * num;
 	return Res;
 }
@@ -173,17 +170,17 @@ CVector CVector::operator * (const TYPE num) const{
 TYPE CVector::operator * (const CVector &arg){
 	/*int s = std::min<int>
 		(getSize(), arg.getSize());*/
-	int s = this->getSize();
+	auto size = this->getSize();
 	TYPE sum = 0;
-	for (int i = 0; i < s; i++)
+	for (int i = 0; i < size; i++)
 		sum += (*this)[i] * arg[i];
 	return sum;
 }
 
 TYPE CVector::operator * (const CVector &arg) const{
-	int s = this->getSize();
+	auto size = this->getSize();
 	TYPE sum = 0;
-	for (int i = 0; i < s; i++)
+	for (int i = 0; i < size; i++)
 		sum += (*this)[i] * arg[i];
 	return sum;
 }
@@ -216,7 +213,7 @@ CVector CVector::operator * (const CMatrix &arg){
 
 // векторное произведение
 CVector CVector::crossProduct(const CVector &b) const{
-	int n = 3;
+	auto n = 3;
 	CVector Res(n), a = *this;
 	Res[0] = a[1] * b[2] - a[2] * b[1];
 	Res[1] = a[2] * b[0] - a[0] * b[2];
@@ -240,8 +237,8 @@ int CMatrix::getColCount() const{
 }
 
 bool CMatrix::checkSymmetric() const{
-	int Col = getColCount(), Row = getRowCount();
-	bool flag = true;
+	auto Col = getColCount(), Row = getRowCount();
+	auto flag = true;
 	if (Col == Row)
 	{
 		int i = 0, j;

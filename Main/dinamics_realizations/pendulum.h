@@ -5,13 +5,14 @@
 class CPendulum : public CModel
 {
 protected:
-	TYPE mass,
+	TYPE 
+		mass,
 		g; // гравитационная постоянная
 public:
 	TYPE Period;
 
 	CPendulum();
-	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep);
+	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
 };
 
 
@@ -25,7 +26,7 @@ private:
 
 public:
 	CMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad = 0);
-	CVector getRight(CVector &X, TYPE t) const;
+	CVector getRight(const CVector &X, TYPE t) const override;
 
 };
 
@@ -43,6 +44,6 @@ private:
 
 public:
 	CSpringPendulum(TYPE StartPos, TYPE mass, TYPE k, TYPE coeff = 0, bool bForceType = false);
-	CVector getRight(CVector &X, TYPE t) const;
+	CVector getRight(const CVector &X, TYPE t) const override;
 
 };

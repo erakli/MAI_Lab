@@ -2,8 +2,8 @@
 
 /* * * * * * * * * * CPendulum * * * * * * * * * */
 
-CPendulum::CPendulum(){
-	
+CPendulum::CPendulum(): mass(0), Period(0)
+{
 	g = 9.81;
 
 };
@@ -32,8 +32,8 @@ bool CPendulum::Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &
 
 /* * * * * * * * * * CMathPendulum * * * * * * * * * */
 
-CMathPendulum::CMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad){
-	
+CMathPendulum::CMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad)
+{
 	StartValues.setSize(2);
 	s_size = StartValues.getSize();
 	
@@ -52,7 +52,8 @@ CMathPendulum::CMathPendulum(TYPE leng, TYPE ang, TYPE mass, TYPE fad){
 
 }
 
-CVector CMathPendulum::getRight(CVector &X, TYPE t) const{
+CVector CMathPendulum::getRight(const CVector &X, TYPE t) const
+{
 	CVector Y(s_size);
 
 	Y[0] = X[1];									// p = fi'
@@ -97,7 +98,7 @@ CSpringPendulum::CSpringPendulum(TYPE StartPos, TYPE mass, TYPE k,
 	stop_condition = 1.0e-15;
 }
 
-CVector CSpringPendulum::getRight(CVector &X, TYPE t) const{
+CVector CSpringPendulum::getRight(const CVector &X, TYPE t) const{
 
 	// знак скорости (сила трения противоположно-направлена)
 	const short int sign = (X[1] > 0) - (X[1] < 0);

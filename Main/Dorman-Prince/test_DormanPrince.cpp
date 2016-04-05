@@ -22,7 +22,7 @@ int main(){
 	TArenstorfModel Model(orbit);
 	//TTestModel Model;
 	
-	Model.set_t1(Model.Period * 6); // проверяем устойчивость на 5 периодов
+	Model.set_t1(Model.Period * 5); // проверяем устойчивость на 5 периодов
 	Model.setInterval(0.1); // интервал выдачи
 
 	// ------------------------------------------------------------ Интерфейс

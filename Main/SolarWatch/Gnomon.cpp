@@ -458,6 +458,23 @@ void CGnomon::clearResult()
 }
 
 /* * * * * * * * * * * * * * * * * * public * * * * * * * * * * * * * * * * * * * */
+CGnomon::CGnomon()
+{
+	height = 1.0e-3;
+	starTimeAtStart = 0;
+
+	WeGotPositionsForYear = false;
+
+	lastActual_JD = 0;
+	timeZone = 0; 
+
+	WorkTime = false; 
+	SummerWinterTime_switch = false;
+
+	Result_size = 0;
+	position.setSize(3);
+};
+
 
 CGnomon::CGnomon(const TYPE fi, const TYPE lambda, const SINT timeZone,
 				 const TYPE height)
