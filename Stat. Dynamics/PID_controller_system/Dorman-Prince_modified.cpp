@@ -38,7 +38,7 @@ TYPE CDormanPrince_modified::StepCorrection()
 		то обрезаем шаг до такого значения, чтобы мы оказались на границе 
 		текущего интервала корреляции */
 	if (nextInterval_of_t != currentInterval)
-		NewStep = nextInterval_of_t * correlation_interval - t + RoundErr;
+		NewStep = nextInterval_of_t * correlation_interval - t/* + RoundErr*/;
 
 	return NewStep;
 }
