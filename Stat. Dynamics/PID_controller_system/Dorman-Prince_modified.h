@@ -13,6 +13,7 @@ private:
 		формирования белого шума
 	*/
 	TYPE StepCorrection() override;
+	void getError() override;
 public:
 	CDormanPrince_modified();
 	CDormanPrince_modified(const TYPE correlation_interval);

@@ -15,12 +15,12 @@ int main()
 		//Model(hWnd);
 		Model;
 
-	TYPE t = 50;
+	TYPE t = 500;
 
 	Model.set_t1(t);
 	Model.setInterval(0.1); // интервал выдачи
 
-	TYPE omega = 1.0e+2;	// частота генерации Белого Шума
+	TYPE omega = 1.0e+3;	// частота генерации Белого Шума
 
 	Model.Generate_WhiteNoise(omega);
 

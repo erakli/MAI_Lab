@@ -1,5 +1,24 @@
 #include "Dorman-Prince_modified.h"
 
+#define ORDER 1.0e-7
+
+/* Округление до необходимого знака после запятой */
+void RoundTo(TYPE &value, const TYPE order)
+{
+	TYPE
+		rounded_value = ceil(value),
+		difference = rounded_value - value;
+
+	/* 
+		Если разница между округлённым вверх значением и самим числом меньше 
+		заданного порядка, то считаем, что число является уже округлённым
+	*/
+	if (difference < order && difference != 0)
+		value = rounded_value;
+}
+
+/* * * * * * * * * * CDormanPrince_modified * * * * * * * * * */
+
 CDormanPrince_modified::CDormanPrince_modified()
 {
 	correlation_interval = 0;
@@ -19,26 +38,38 @@ void CDormanPrince_modified::set_correlation_interval(const TYPE correlation_int
 
 TYPE CDormanPrince_modified::StepCorrection()
 {
-	TYPE NewStep = CDormanPrince::StepCorrection();
+	//TYPE NewStep = CDormanPrince::StepCorrection();
 
-	TYPE
-		currentInterval, nextInterval_of_t;
+	//TYPE
+	//	curPosition_on_curInterval,
+	//	currentInterval, nextInterval_of_t;
 
-	// получаем значение текущего интервала корреляции
-	modf(t / correlation_interval, &currentInterval);
-		
-	/* 
-		получаем значение интервала, в котором мы окажемся, если прибавим
-		к текущему времени интегрирования полученный шаг.
-	*/
-	modf( (t + NewStep) / correlation_interval, &nextInterval_of_t );
+	//curPosition_on_curInterval = t / correlation_interval;
+	//RoundTo(curPosition_on_curInterval, ORDER);
 
-	/* 
-		если мы с этим шагом окажемся в следующем интервале корреляции,
-		то обрезаем шаг до такого значения, чтобы мы оказались на границе 
-		текущего интервала корреляции */
-	if (nextInterval_of_t != currentInterval)
-		NewStep = nextInterval_of_t * correlation_interval - t/* + RoundErr*/;
+	//// получаем значение текущего интервала корреляции
+	//modf(curPosition_on_curInterval, &currentInterval);
+	//	
+	///* 
+	//	получаем значение интервала, в котором мы окажемся, если прибавим
+	//	к текущему времени интегрирования полученный шаг.
+	//*/
+	//modf( (t + NewStep) / correlation_interval, &nextInterval_of_t );
 
-	return NewStep;
+	///* 
+	//	если мы с этим шагом окажемся в следующем интервале корреляции,
+	//	то обрезаем шаг до такого значения, чтобы мы оказались на границе 
+	//	текущего интервала корреляции */
+	//if (nextInterval_of_t != currentInterval)
+	//	NewStep = nextInterval_of_t * correlation_interval - t/* + RoundErr*/;
+
+	//return NewStep;
+
+	return Step;
+}
+
+void CDormanPrince_modified::getError()
+{
+	if (Error > Eps_Max)
+		Error = 0;
 }
