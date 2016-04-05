@@ -147,7 +147,7 @@ void CEarth::addResult(CVector& X, double t)
 	Правая часть ДУ невозмущённого кеплеровского движения
 	Земли вокруг Солнца
 */
-CVector CEarth::getRight(CVector& X, TYPE t) const
+CVector CEarth::getRight(const CVector& X, TYPE t) const
 {
 	CVector Res(s_size);
 

@@ -43,7 +43,7 @@ public:
 
 	CModel();
 
-	virtual CVector getRight(CVector &X, TYPE t) const = 0;
+	virtual CVector getRight(const CVector &X, TYPE t) const = 0;
 
 	virtual void addResult(CVector &X, TYPE t);
 
@@ -81,7 +81,7 @@ public:
 	int orbit; // Выбор орбиты (малая/большая)
 
 	TArenstorfModel(int variant);
-	CVector getRight(CVector &X, TYPE t) const override;
+	CVector getRight(const CVector &X, TYPE t) const override;
 
 	// заглушка
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override

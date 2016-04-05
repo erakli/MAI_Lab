@@ -156,7 +156,7 @@ TArenstorfModel::TArenstorfModel(int variant){
 
 using namespace MyFunc;
 
-CVector TArenstorfModel::getRight(CVector &X, TYPE t) const{
+CVector TArenstorfModel::getRight(const CVector &X, TYPE t) const{
 	CVector Y(s_size);
 	TYPE
 		R[2] = 

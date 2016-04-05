@@ -24,7 +24,7 @@ namespace Earth
 
 		void addResult(CVector &X, TYPE t) override;
 
-		CVector getRight(CVector &X, TYPE t) const override;
+		CVector getRight(const CVector &X, TYPE t) const override;
 
 		bool Stop_Calculation(TYPE , TYPE , CVector &, CVector &) override 
 		{ return false; };
