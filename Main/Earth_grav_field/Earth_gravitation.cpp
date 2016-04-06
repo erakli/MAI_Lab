@@ -1,4 +1,4 @@
-#include "SolarSystem.h"
+#include "SolarSystem.h"	// Для константы muEarth
 #include "Earth_gravitation.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

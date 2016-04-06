@@ -27,8 +27,8 @@ CEarth::CEarth()
 		1.1.2016
 	*/
 	StartValues[0] = -2.439276441307208e+7;
-	StartValues[1] = 1.332124993767647e+8;
-	StartValues[2] = 5.772281789058973e+7;
+	StartValues[1] =  1.332124993767647e+8;
+	StartValues[2] =  5.772281789058973e+7;
 
 	StartValues[3] = -2.984063142864898e+1;
 	StartValues[4] = -4.727555397178124;

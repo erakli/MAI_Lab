@@ -7,6 +7,7 @@ namespace Earth
 {
 	class CGravitation_Field
 	{
+	public:
 		CVector getRight(const CVector &X, TYPE t) const;
 	};
 }
