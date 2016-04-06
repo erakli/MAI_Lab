@@ -50,7 +50,7 @@ void CPID_controller::Generate_WhiteNoise(const TYPE omega)
 		dt = 2 * PI / omega,	// интервал корреляции (квази)Белого Шума
 		Disp = 1 / dt;			// его же дисперсия
 
-	WhiteNoise.reserve(int((t1 - t0) / dt) + 1);
+	WhiteNoise.reserve(int((t1 - t0) / dt) + 3);
 
 	// генератор с гауссовским нормальным распределением СВ
 	std::default_random_engine generator;

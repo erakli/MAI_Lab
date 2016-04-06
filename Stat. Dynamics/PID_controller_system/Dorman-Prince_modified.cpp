@@ -1,21 +1,21 @@
 #include "Dorman-Prince_modified.h"
 
-#define ORDER 1.0e-7
+//#define ORDER 1.0e-7
 
 /* Округление до необходимого знака после запятой */
-void RoundTo(TYPE &value, const TYPE order)
-{
-	TYPE
-		rounded_value = ceil(value),
-		difference = rounded_value - value;
-
-	/* 
-		Если разница между округлённым вверх значением и самим числом меньше 
-		заданного порядка, то считаем, что число является уже округлённым
-	*/
-	if (difference < order && difference != 0)
-		value = rounded_value;
-}
+//void RoundTo(TYPE &value, const TYPE order)
+//{
+//	TYPE
+//		rounded_value = ceil(value),
+//		difference = rounded_value - value;
+//
+//	/* 
+//		Если разница между округлённым вверх значением и самим числом меньше 
+//		заданного порядка, то считаем, что число является уже округлённым
+//	*/
+//	if (difference < order && difference != 0)
+//		value = rounded_value;
+//}
 
 /* * * * * * * * * * CDormanPrince_modified * * * * * * * * * */
 
@@ -38,7 +38,10 @@ void CDormanPrince_modified::set_correlation_interval(const TYPE correlation_int
 
 TYPE CDormanPrince_modified::StepCorrection()
 {
-	//TYPE NewStep = CDormanPrince::StepCorrection();
+	/*TYPE NewStep = CDormanPrince::StepCorrection();
+
+	if (NewStep > correlation_interval)
+		NewStep = correlation_interval;*/
 
 	//TYPE
 	//	curPosition_on_curInterval,
@@ -70,6 +73,8 @@ TYPE CDormanPrince_modified::StepCorrection()
 
 void CDormanPrince_modified::getError()
 {
+	//CDormanPrince::getError();
+	
 	if (Error > Eps_Max)
 		Error = 0;
 }

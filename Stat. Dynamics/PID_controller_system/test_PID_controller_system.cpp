@@ -8,7 +8,7 @@ int main()
 {
 	CDormanPrince_modified Integrator;
 
-	Integrator.setEps_Max(1.0e-7); // задали максимально допустимую погрешность
+	Integrator.setEps_Max(1.0e-13); // задали максимально допустимую погрешность
 
 	// инициализировали модель
 	CPID_controller
