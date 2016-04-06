@@ -238,8 +238,16 @@ CVector Orbit::Kepler2Decart(const Kepler_elements& elements)
 {
 	CVector _position(VEC_SIZE), _velocity(VEC_SIZE);
 
+	TYPE big_axis;
+
+	/* На случай, если орбиту задали менее радиуса Земли, прибавляем его */
+	if (elements.a < CEarth::meanRadius)
+		big_axis = elements.a + CEarth::meanRadius;
+	else
+		big_axis = elements.a;
+
 	TYPE
-		p = elements.a * (1 - pow(elements.e, 2)),	// Фокальный параметр орбиты
+		p = big_axis * (1 - pow(elements.e, 2)),	// Фокальный параметр орбиты
 		
 		sin_teta = sin(elements.teta),
 		cos_teta = cos(elements.teta);

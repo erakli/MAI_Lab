@@ -70,6 +70,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Dorman-Prince;..\Matrix;..\Supporting files;..\SolarWatch;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -79,18 +80,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dorman-Prince\Dorman-Prince.vcxproj">
-      <Project>{688d501c-3654-4cf0-86cf-8fcd2ecd56b9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Matrix\Matrix.vcxproj">
-      <Project>{ef706f73-91af-4e82-89b3-61911ec626e9}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Earth_gravitation.h" />
     <ClInclude Include="Sputnik.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dorman-Prince\file_output.cpp" />
+    <ClCompile Include="..\Dorman-Prince\Integrator.cpp" />
+    <ClCompile Include="..\Dorman-Prince\Model.cpp" />
+    <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="..\SolarWatch\Coordinates.cpp" />
+    <ClCompile Include="..\SolarWatch\SolarSystem.cpp" />
     <ClCompile Include="Earth_gravitation.cpp" />
     <ClCompile Include="Sputnik.cpp" />
     <ClCompile Include="test_Earth_grav_field.cpp" />

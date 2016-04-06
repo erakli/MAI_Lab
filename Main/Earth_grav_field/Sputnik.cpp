@@ -1,4 +1,4 @@
-#include "SolarSystem.h"	// Äëÿ êîíñòàíòû muEarth
+#include "SolarSystem.h"	// Ð”Ð»Ñ ÐºÐ¾Ð½ÑÑ‚Ð°Ð½Ñ‚Ñ‹ muEarth
 #include "Sputnik.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -16,7 +16,5 @@ CSputnik::CSputnik(const Orbit::Kepler_elements &elements)
 
 CVector CSputnik::getRight(const CVector &X, TYPE t) const
 {
-	CVector RightPart(gravitation->getRight(X, t));
-
-	return RightPart;
+	return gravitation->getRight(X, t);
 }

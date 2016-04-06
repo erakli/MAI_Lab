@@ -219,4 +219,7 @@ pip-log.txt
 ## My Own files to ignore
 #############
 
-output*.txt
+output00.txt
+output01.txt
+output02.txt
+output03.txt
