@@ -1,13 +1,36 @@
 #pragma once
 
-#include "Types.h"
-#include "Matrix_classes.h"
+#include "Grav_field_coefficients.h"
 
 namespace Earth
 {
+	/* Структура для хранения точеченых масс */
+	struct Mass_Point
+	{
+		CVector position;
+		TYPE value;
+	};
+
+	typedef std::vector<Mass_Point> MassPoints;
+
+
+/* Модели гравитационного поля Земли */
+
+	/* Центральное поле */
 	class CGravitation_Field
 	{
 	public:
-		CVector getRight(const CVector &X, TYPE t) const;
+		virtual CVector getRight(const CVector &X, TYPE t) const;
+	};
+
+	/* Нормальное поле в системе точечных масс */
+	class CNormal_field : public CGravitation_Field
+	{
+	private:
+		MassPoints massPoints;
+
+	public:
+		CNormal_field();
+		CVector getRight(const CVector &X, TYPE t) const override;
 	};
 }

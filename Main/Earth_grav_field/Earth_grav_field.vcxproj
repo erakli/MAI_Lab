@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Earth_gravitation.h" />
+    <ClInclude Include="Grav_field_coefficients.h" />
     <ClInclude Include="Sputnik.h" />
   </ItemGroup>
   <ItemGroup>
