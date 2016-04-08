@@ -12,8 +12,9 @@ int main()
 
 	CSputnik sputnik(elements);
 
-	//Earth::CGravitation_Field field;
-	Earth::CNormal_field field;
+	//Earth::CGravitation_field field;
+	//Earth::CNormal_field field;
+	Earth::CNormal_spheric field;
 
 	sputnik.addForce(field);
 

@@ -2,7 +2,7 @@
 
 namespace Earth
 {
-	/* Структура для хранения точеченых масс */
+	/* РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ С‚РѕС‡РµС‡РµРЅС‹С… РјР°СЃСЃ */
 	struct Mass_Point
 	{
 		CVector position;
@@ -12,23 +12,43 @@ namespace Earth
 	typedef std::vector<Mass_Point> MassPoints;
 
 
-/* Модели гравитационного поля Земли */
+/* РњРѕРґРµР»Рё РіСЂР°РІРёС‚Р°С†РёРѕРЅРЅРѕРіРѕ РїРѕР»СЏ Р—РµРјР»Рё */
 
-	/* Центральное поле */
-	class CGravitation_Field
+/* Р¦РµРЅС‚СЂР°Р»СЊРЅРѕРµ РїРѕР»Рµ */
+	class CGravitation_field
 	{
 	public:
-		virtual CVector getRight(const CVector &X, TYPE t) const;
+		virtual ~CGravitation_field();
+
+		virtual CVector getRight(const CVector &X) const;
 	};
 
-	/* Нормальное поле в системе точечных масс */
-	class CNormal_field : public CGravitation_Field
+/* РќРѕСЂРјР°Р»СЊРЅРѕРµ РїРѕР»Рµ РІ СЃРёСЃС‚РµРјРµ С‚РѕС‡РµС‡РЅС‹С… РјР°СЃСЃ */
+	class CNormal_field : public CGravitation_field
 	{
 	private:
 		MassPoints massPoints;
 
 	public:
 		CNormal_field();
-		CVector getRight(const CVector &X, TYPE t) const override;
+		CVector getRight(const CVector &X) const override;
 	};
+
+/* РќРѕСЂРјР°Р»СЊРЅРѕРµ РїРѕР»Рµ РІ СЃС„РµСЂРёС‡РµСЃРєРёС… С„СѓРЅРєС†РёСЏС… */
+	class CNormal_spheric : public CGravitation_field
+	{
+	protected:
+		// Р’С‹С‡РёСЃР»РµРЅРёРµ РЅРѕСЂРјРёСЂРѕРІР°РЅРЅС‹С… С„СѓРЅРєС†РёР№ Р›РµР¶Р°РЅРґСЂР° Рё РёС… РїСЂРѕРёР·РІРѕРґРЅС‹С… РїРѕ С€РёСЂРѕС‚Рµ
+		void PrepareP(
+			CMatrix &P, CMatrix &_P, const TYPE fi, const int _degree) const;
+
+		CVector ProjectOnDecart(
+			const CVector &coord, const CVector &spheric) const;
+	public:
+		CNormal_spheric();
+
+		CVector getRight(const CVector &X) const override;
+	};
+
+
 }

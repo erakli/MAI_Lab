@@ -6,7 +6,7 @@ namespace Earth
 {
 #define MASSPOINTS 7
 
-	/* Позиции точечных масс, km */
+	/* РџРѕР·РёС†РёРё С‚РѕС‡РµС‡РЅС‹С… РјР°СЃСЃ, km */
 	TYPE massPositions[MASSPOINTS][VEC_SIZE] =
 	{
 		{ 0, 0,	   0 },
@@ -18,7 +18,7 @@ namespace Earth
 		{ 0, 0, -180 }
 	};
 
-	/* Сами точечные массы */
+	/* РЎР°РјРё С‚РѕС‡РµС‡РЅС‹Рµ РјР°СЃСЃС‹ */
 	TYPE massValues[MASSPOINTS] = 
 	{
 		 7.53770461,

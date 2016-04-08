@@ -193,6 +193,28 @@ CVector Transform::Geographic2Fix(const CVector &geographic)
 	return Result;
 }
 
+/*
+	Переход от декартовых координат к сферическим
+
+	углы в радианах
+
+	[ro, fi, lambda] - радиус-вектор, широта, долгота
+*/
+CVector Transform::Decart2Spher(const CVector& fix)
+{
+	auto
+		x = fix[0],
+		y = fix[1],
+		z = fix[2];
+
+	CVector Result(VEC_SIZE);
+	
+	Result[0] = fix.getLength();
+	Result[1] = atan2(z, sqrt(pow(x, 2) + pow(y, 2)));
+	Result[2] = atan2(y, x);
+
+	return Result;
+}
 
 
 /* * * * * * namespace Orbit * * * * * * * * * * * * * * * * * * * */

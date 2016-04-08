@@ -11,12 +11,12 @@ CSputnik::CSputnik(const Orbit::Kepler_elements &elements)
 	s_size = StartValues.getSize();
 }
 
-void CSputnik::addForce(Earth::CGravitation_Field &_field)
+void CSputnik::addForce(Earth::CGravitation_field &_field)
 {
 	gravitation = &_field;
 }
 
 CVector CSputnik::getRight(const CVector &X, TYPE t) const
 {
-	return gravitation->getRight(X, t);
+	return gravitation->getRight(X);
 }

@@ -14,6 +14,8 @@ namespace Transform
 
 	CVector Geographic2Fix(const TYPE h, const TYPE fi, const TYPE lambda);
 	CVector Geographic2Fix(const CVector &geographic);
+
+	CVector Decart2Spher(const CVector &fix);;
 }
 
 namespace Orbit

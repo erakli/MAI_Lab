@@ -7,11 +7,11 @@
 class CSputnik : public CModel
 {
 private:
-	Earth::CGravitation_Field *gravitation;
+	Earth::CGravitation_field *gravitation;
 public:
 	CSputnik(const Orbit::Kepler_elements &elements);
 	
-	void addForce(Earth::CGravitation_Field &_field);
+	void addForce(Earth::CGravitation_field &_field);
 
 	CVector getRight(const CVector &X, TYPE t) const override;
 };
