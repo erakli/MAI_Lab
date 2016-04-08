@@ -12,10 +12,15 @@ int main()
 
 	CSputnik sputnik(elements);
 
+	//Earth::CGravitation_Field field;
+	Earth::CNormal_field field;
+
+	sputnik.addForce(field);
+
 	sputnik.set_t1(SECINDAY);
 	sputnik.setInterval(600);
 
 	Integrator.Run(sputnik);
 
-	to_file(sputnik.getResult());
+	Dorman_to_file(sputnik.getResult(), Integrator);
 }

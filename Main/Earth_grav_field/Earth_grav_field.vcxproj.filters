@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Source Files\External">
-      <UniqueIdentifier>{43eb361f-e830-4a7f-94d7-54c6b333c4d0}</UniqueIdentifier>
+      <UniqueIdentifier>{667ac41b-4df2-4465-8a18-3b40dd46944b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,13 +44,13 @@
     <ClCompile Include="..\Dorman-Prince\Integrator.cpp">
       <Filter>Source Files\External</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dorman-Prince\Model.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
     <ClCompile Include="..\Matrix\Matrix_classes.cpp">
       <Filter>Source Files\External</Filter>
     </ClCompile>
     <ClCompile Include="..\SolarWatch\Coordinates.cpp">
-      <Filter>Source Files\External</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dorman-Prince\Model.cpp">
       <Filter>Source Files\External</Filter>
     </ClCompile>
     <ClCompile Include="..\SolarWatch\SolarSystem.cpp">

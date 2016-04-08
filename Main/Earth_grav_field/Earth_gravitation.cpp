@@ -1,4 +1,5 @@
 #include "SolarSystem.h"	// Для константы muEarth
+#include "Grav_field_coefficients.h"
 #include "Earth_gravitation.h"
 
 using namespace Earth;
@@ -40,6 +41,7 @@ CNormal_field::CNormal_field()
 	/* Заполняем массив точечных масс */
 	massPoints.reserve(MASSPOINTS);
 	Mass_Point mass_point;
+	mass_point.position.setSize(VEC_SIZE);
 
 	for (auto i = 0; i < MASSPOINTS; i++)
 	{
@@ -54,73 +56,51 @@ CNormal_field::CNormal_field()
 
 CVector CNormal_field::getRight(const CVector &X, TYPE t) const
 {
-	/* Позиция ИСЗ */
-	CVector position(CVector::copyPart(X, 2));
-
-	TYPE 
-		ro, ae_ro2, ae_ro4, Z_ro2, Z_ro4, P, deltaP;
-
-	// Радиус вектор текущей точки (положение ИСЗ
-	ro = position.getLength();
-
-	// 2 и 4 степень ro
-	ae_ro2 = pow(CEarth::meanRadius / ro, 2);
-	ae_ro4 = pow(ae_ro2, 2);
-
-	// 2 и 4 степени Z / ro 
-	Z_ro2 = pow(position[2] / ro, 2);
-	Z_ro4 = pow(Z_ro2, 2);
-
-	P =
-		1.5 * J_02 * ae_ro2 * (1 - 5 * Z_ro2) 
-		- 1.875 * J_04 * ae_ro4 
-			* (1 - 14 * Z_ro2 + 21 * Z_ro4);
-
-	deltaP =
-		3 * J_02 * ae_ro2 
-		- 2.5 * J_04 * ae_ro4 * (3 - 7 * Z_ro2);
-
 	/* 
-		Суммы в элементах вектора проекций силы гравитационного
-		притяжения Земли
+		Вектор покомпонентной суммы, необбходимой для
+		вычисления потенциала притяжения нормальной
+		Земли в точечных массах V_0
+
+			sum(epsilon[i] / r[i]),
+
+			где 
+				epsilon[i] - отношение i-ой точеченой массы
+				к массе Земли,
+
+				r[i] - расстояние от i-ой точечной массы
+				до текущей точки (положение ИСЗ)
 	*/
 	CVector Sum(VEC_SIZE);
 
+	CVector 
+		curPosition(CVector::copyPart(X, 2)),
+		r_vec;
+
+	TYPE distance, distance3;
+
 	for (auto i = 0; i < MASSPOINTS; i++)
 	{
-		// Расстояние от i-ой точечной массы до текущей точки
-		TYPE distance =
-			(position + massPoints[i].position * (-1)).getLength(),
+		// Вектор между точками массы и ИСЗ
+		r_vec = curPosition + massPoints[i].position;
 
-			distance3 = pow(distance, 3);
+		distance = r_vec.getLength();
+		distance3 = -1 * pow(distance, 3);
 
-		for (auto j = 0; i < VEC_SIZE; j++)
-			Sum[j] += 
-				massPoints[i].value 
-				* (position[i] - massPoints[i].position[j])
-				/ distance3;
+		/*
+			Sum(epsilon[i] * (-(X + x) 
+			/ ((X[0] + x[0])^2 + (X[1] + x[1])^2 + (X[2] + x[2])^2)^0.5))
+		*/
+
+		Sum = Sum + r_vec * (massPoints[i].value / distance3);
 	}
-	
-	TYPE
-		muEarth_ro3 = CEarth::muEarth / pow(ro, 3);
 
-	/* 
-		Проекции силы гравитационного притяжения Земли
-		на оси земной геоцентрической системы координат
-	*/
-	CVector Res(VEC_SIZE);
+	CVector Res;
+	Res.reserve(X.getSize());
 
-	Res[0] =
-		-muEarth_ro3 * (1 + P) * position[0] 
-		- CEarth::muEarth * Sum[0];
-	
-	Res[1] =
-		-muEarth_ro3 * (1 + P) * position[1]
-		- CEarth::muEarth * Sum[1];
+	for (int i = 0; i < VEC_SIZE; i++)
+		Res.push_back(X[i + VEC_SIZE]);
 
-	Res[2] =
-		-muEarth_ro3 * (1 + P + deltaP) * position[2]
-		- CEarth::muEarth * Sum[2];
+	Res.insert_toEnd(Sum * CEarth::muEarth);
 
 	return Res;
 }

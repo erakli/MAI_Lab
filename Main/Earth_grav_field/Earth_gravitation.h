@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Grav_field_coefficients.h"
-
 namespace Earth
 {
 	/* —труктура дл€ хранени€ точеченых масс */
