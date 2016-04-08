@@ -55,8 +55,20 @@ CMatrix &CMatrix::operator = (const CMatrix &arg)
 }
 
 
-
 /* * * * * * * * вектор * * * * * * * */
+
+CVector::CVector() : BaseVector()
+{
+}
+
+CVector::CVector(int n): BaseVector(n)
+{ 
+}
+
+CVector::CVector(const BaseVector& arg): BaseVector(arg)
+{ 
+}
+
 void CVector::copyPart(CVector& target, const CVector& orig, const int position)
 {
 	target.assign(orig.begin(), orig.begin() + position + 1);
@@ -131,13 +143,80 @@ TYPE CVector::getLength() const{
 	return res;
 }
 
+void CVector::insert(const int position, const TYPE value)
+{
+	this->BaseVector::insert(this->begin() + position, value);
+}
+
+void CVector::insert_toEnd(const CVector& additional)
+{
+	BaseVector::insert(this->end(), additional.begin(), additional.end());
+}
+
 void CVector::setElement(int i, TYPE value){
 	(*this)[i] = value;
+}
+
+
+/*
+	Assembler-style functions
+*/
+
+void CVector::Add(const CVector& source, CVector& destination)
+{
+	auto size = destination.getSize();
+	for (auto i = 0; i < size; i++)
+		destination[i] += source[i];
+}
+
+void CVector::Add(const CVector& source1, const CVector& source2, CVector& destination)
+{
+	auto size = source2.getSize();
+	destination.setSize(size);
+	for (auto i = 0; i < size; i++)
+		destination[i] = source1[i] + source2[i];
+}
+
+// Sub: destination - source
+void CVector::Sub(const CVector& source, CVector& destination)
+{
+	auto size = destination.getSize();
+	for (auto i = 0; i < size; i++)
+		destination[i] -= source[i];
+}
+
+// Sub: source2 - source1
+void CVector::Sub(const CVector& source1, const CVector& source2, CVector& destination)
+{
+	auto size = source2.getSize();
+	destination.setSize(size);
+	for (auto i = 0; i < size; i++)
+		destination[i] = source2[i] - source1[i];
+}
+
+void CVector::Mult(const TYPE num, CVector& destination)
+{
+	auto size = destination.getSize();
+	for (auto i = 0; i < size; i++)
+		destination[i] *= num;
+}
+
+void CVector::Mult(const TYPE num, const CVector& source, CVector& destination)
+{
+	auto size = source.getSize();
+	destination.setSize(size);
+	for (auto i = 0; i < size; i++)
+		destination[i] = source[i] * num;
 }
 
 void CVector::setSize(int i){
 	this->resize(i, 0); // новые элементы заполняются 0
 }
+
+
+/* 
+	Перегрузки операторов 
+*/
 
 CVector CVector::operator + (const CVector &arg){
 	// избыточно, добавить обработчки приёма значения
@@ -223,6 +302,19 @@ CVector CVector::crossProduct(const CVector &b) const{
 
 
 /* * * * * * * * матрица * * * * * * * */
+
+CMatrix::CMatrix() : BaseMatrix()
+{
+}
+
+CMatrix::CMatrix(int n, int m): BaseMatrix()
+{ 
+	this->setSize(n, m);
+}
+
+CMatrix::CMatrix(const CMatrix& arg): BaseMatrix(arg)
+{ 	
+}
 
 TYPE CMatrix::getElement(int i, int j) const{
 	return (*this)[i][j];
@@ -595,6 +687,19 @@ CVector CMatrix::operator * (const CVector &arg){
 
 
 /* * * * * * * * Симметричная матрица * * * * * * * */
+
+CSymmetricMatrix::CSymmetricMatrix() : CMatrix()
+{
+}
+
+CSymmetricMatrix::CSymmetricMatrix(int n): CMatrix()
+{
+	this->setSize(n, n);
+}
+
+CSymmetricMatrix::CSymmetricMatrix(const CMatrix& arg): CMatrix(arg)
+{
+}
 
 CMatrix CSymmetricMatrix::inverse(){
 	int n = getRowCount(); // размерность квадратной матрицы

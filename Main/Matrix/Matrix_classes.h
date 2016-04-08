@@ -19,16 +19,13 @@ class CVector : public BaseVector
 {
 public:
 	// constructor пустой
-	CVector() : BaseVector(){ 
-	} 
+	CVector();
 
 	// создаём вектор заданной длины
-	CVector(int n) : BaseVector(n){ 
-	} 
+	CVector(int n);
 
 	// конструктор копии вектора arg
-	CVector(const BaseVector &arg) : BaseVector(arg){ 
-	}
+	CVector(const BaseVector& arg);
 
 	static void copyPart(CVector &target, const CVector &orig, const int position);
 	static CVector copyPart(const CVector &orig, const int position);
@@ -38,19 +35,23 @@ public:
 	int getSize() const;
 	TYPE getLength() const;
 
-	void insert(const int position, const TYPE value)
-	{
-		this->BaseVector::insert(this->begin() + position, value);
-	}
-
-	void insert_toEnd(const CVector &additional)
-	{
-		BaseVector::insert(this->end(), additional.begin(), additional.end());
-	}
+	void insert(const int position, const TYPE value);
+	void insert_toEnd(const CVector& additional);
 
 	void setElement(int i, TYPE value);
 	void setSize(int i);
 
+	/* Assembler-style functions */
+	static void Add(const CVector &source, CVector &destination);
+	static void Add(const CVector &source1, const CVector &source2, CVector &destination);
+
+	static void Sub(const CVector &source, CVector &destination);
+	static void Sub(const CVector &source1, const CVector &source2, CVector &destination);
+
+	static void Mult(const TYPE num, CVector &destination);
+	static void Mult(const TYPE num, const CVector &source, CVector &destination);
+
+	/* Перегрузки опреаторов */
 	CVector operator + (const CVector &arg);
 
 	CVector operator * (const TYPE num);
@@ -69,17 +70,13 @@ class CMatrix : public BaseMatrix
 {
 public:
 	// путсой конструктор
-	CMatrix() : BaseMatrix(){ 
-	}
+	CMatrix();
 
 	// constructor
-	CMatrix(int n, int m) : BaseMatrix(){ 
-		this->setSize(n, m);
-	}
+	CMatrix(int n, int m);
 
 	// конструктор копии
-	CMatrix(const CMatrix &arg) : BaseMatrix(arg){ 	
-	} 
+	CMatrix(const CMatrix& arg);
 
 	TYPE getElement(int i, int j) const;
 	int getRowCount() const; // количество строк
@@ -114,17 +111,13 @@ public:
 class CSymmetricMatrix : public CMatrix
 {
 public:
-	CSymmetricMatrix() : CMatrix(){
-	}
+	CSymmetricMatrix();
 
 	// конструктор
-	CSymmetricMatrix(int n) : CMatrix(){
-		this->setSize(n, n);
-	}
+	CSymmetricMatrix(int n);
 
 	// конструктор копии
-	CSymmetricMatrix(const CMatrix &arg) : CMatrix(arg){
-	}
+	CSymmetricMatrix(const CMatrix& arg);
 
 	// обратная матрица методом Холецкого
 	CMatrix inverse();
