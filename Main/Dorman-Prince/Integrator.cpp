@@ -15,6 +15,8 @@ CVector SetValues(TYPE *values){
 /* * * * * * * * * * TIntegrator * * * * * * * * * */
 TIntegrator::TIntegrator()
 {
+	Model = nullptr;
+
 	t = 0;
 	Step = 1;
 }

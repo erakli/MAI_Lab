@@ -19,7 +19,7 @@ int main()
 	sputnik.addForce(field);
 
 	sputnik.set_t1(SECINDAY);
-	sputnik.setInterval(600);
+	sputnik.setInterval(60);
 
 	Integrator.Run(sputnik);
 

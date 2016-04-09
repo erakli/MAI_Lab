@@ -7,6 +7,8 @@
 
 CSputnik::CSputnik(const Orbit::Kepler_elements &elements)
 {
+	gravitation = nullptr;
+
 	StartValues.insert_toEnd(Orbit::Kepler2Decart(elements));
 	s_size = StartValues.getSize();
 }

@@ -42,7 +42,7 @@ namespace Earth
 		void PrepareP(
 			CMatrix &P, CMatrix &_P, const TYPE fi, const int _degree) const;
 
-		CVector ProjectOnDecart(
+		CMatrix ProjectOnDecart(
 			const CVector &coord, const CVector &spheric) const;
 	public:
 		CNormal_spheric();

@@ -96,16 +96,28 @@ public:
 	TYPE detGauss() const;
 	bool PositiveDef() const;
 
+	CMatrix &operator = (const CMatrix &arg);
 	BaseVector &operator [] (int i);
 	const BaseVector &operator [] (int i) const;  // проверить, нужна ли здесь ссылка
 
+	/* Assembler-style functions */
+	static void Add(const CMatrix &source, CMatrix &destination);
+	static void Add(const CMatrix &source1, const CMatrix &source2, CMatrix &destination);
+
+	static void Sub(const CMatrix &source, CMatrix &destination);
+	static void Sub(const CMatrix &source1, const CMatrix &source2, CMatrix &destination);
+
+	static void Mult(const TYPE num, CMatrix &destination);
+	static void Mult(const TYPE num, const CMatrix &source, CMatrix &destination);
+
+	static void Mult(const CMatrix source_matrix, const CVector &source_vector, CVector &destination_vector);
+
+	/* Перегрузки опреаторов */
 	CMatrix operator + (const CMatrix &arg);
 
 	CMatrix operator * (const TYPE num); // матрица на число
 	CVector operator * (const CVector &arg);
 	CMatrix operator * (const CMatrix &arg);
-
-	CMatrix &operator = (const CMatrix &arg);
 };
 
 class CSymmetricMatrix : public CMatrix

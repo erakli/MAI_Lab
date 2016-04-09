@@ -213,7 +213,7 @@ void CNormal_spheric::PrepareP(
 	}
 }
 
-CVector CNormal_spheric::ProjectOnDecart(
+CMatrix CNormal_spheric::ProjectOnDecart(
 	const CVector &coord, const CVector& spheric) const
 {
 	/* 
@@ -249,18 +249,49 @@ CVector CNormal_spheric::ProjectOnDecart(
 	SpherOnFix[2][1] =  r_xy / ro;	
 	SpherOnFix[2][2] =  0;
 
-	return SpherOnFix * spheric;
+	return SpherOnFix;
 }
 
 CVector CNormal_spheric::getRight(const CVector& X) const
 {
+	/*
+		TODO:
+			- проверить полиномы Лежандра
+	*/
+
 	CVector
-		spher_coordinates = Transform::Decart2Spher(CVector::copyPart(X, 2));
+		fix_coordinates = CVector::copyPart(X, 2),
+		spher_coordinates = Transform::Decart2Spher(fix_coordinates);
 
 	CMatrix P, _P;
 
 	PrepareP(P, _P, spher_coordinates[1], 4);
 	
-	/* TODO: Написать основное вычисление ускорения */
-	return spher_coordinates;
+	TYPE
+		ro = spher_coordinates[0],
+		mu_ro2 = CEarth::muEarth / pow(ro, 2),
+
+		ae_ro2 = pow(CEarth::ae / ro, 2),
+		ae_ro4 = pow(ae_ro2, 2);
+
+	CVector g_spher(VEC_SIZE);
+
+	g_spher[0] = 
+		-mu_ro2 
+		+ 5 * mu_ro2 * (C_0_20 * ae_ro2 * P[2][0] + C_0_40 * ae_ro4 * P[4][0]);
+
+	g_spher[1] = 
+		-mu_ro2
+		+ (C_0_20 * ae_ro2 * _P[2][0] + C_0_40 * ae_ro4 * _P[4][0]);
+
+	g_spher[2] = 0;
+
+
+	CVector Res;
+	Res.reserve(X.getSize());
+
+	Res.insert_toEnd(CVector::copyPart(X, VEC_SIZE - 1, VEC_SIZE * 2 - 1));
+	Res.insert_toEnd(ProjectOnDecart(fix_coordinates, spher_coordinates) * g_spher);
+
+	return Res;
 }

@@ -603,12 +603,117 @@ bool CMatrix::PositiveDef() const{
 	return flag;
 }
 
-CMatrix CMatrix::operator + (const CMatrix &arg){
-	int n = arg.getRowCount(), m = arg.getColCount();
-	CMatrix Res(n, m);
-	for (int i = 0; i < n; i++)
+
+/*
+	Assembler-style functions
+*/
+void CMatrix::Add(const CMatrix& source, CMatrix& destination)
+{
+	auto rows = destination.getRowCount(), cols = destination.getColCount();
+	for (auto i = 0; i < rows; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (auto j = 0; j < cols; j++)
+		{
+			destination[i][j] += source[i][j];
+		}
+	}
+}
+
+void CMatrix::Add(const CMatrix& source1, const CMatrix& source2, CMatrix& destination)
+{
+	auto rows = source2.getRowCount(), cols = source2.getColCount();
+	destination.setSize(rows, cols);
+	for (auto i = 0; i < rows; i++)
+	{
+		for (auto j = 0; j < cols; j++)
+		{
+			destination[i][j] = source1[i][j] + source2[i][j];
+		}
+	}
+}
+
+void CMatrix::Sub(const CMatrix& source, CMatrix& destination)
+{
+	auto rows = destination.getRowCount(), cols = destination.getColCount();
+	for (auto i = 0; i < rows; i++)
+	{
+		for (auto j = 0; j < cols; j++)
+		{
+			destination[i][j] -= source[i][j];
+		}
+	}
+}
+
+void CMatrix::Sub(const CMatrix& source1, const CMatrix& source2, CMatrix& destination)
+{
+	auto rows = source2.getRowCount(), cols = source2.getColCount();
+	destination.setSize(rows, cols);
+	for (auto i = 0; i < rows; i++)
+	{
+		for (auto j = 0; j < cols; j++)
+		{
+			destination[i][j] = source2[i][j] - source1[i][j];
+		}
+	}
+}
+
+void CMatrix::Mult(const TYPE num, CMatrix& destination)
+{
+	auto rows = destination.getRowCount(), cols = destination.getColCount();
+	for (auto i = 0; i < rows; i++)
+	{
+		for (auto j = 0; j < cols; j++)
+		{
+			destination[i][j] *= num;
+		}
+	}
+}
+
+void CMatrix::Mult(const TYPE num, const CMatrix& source, CMatrix& destination)
+{
+	auto rows = source.getRowCount(), cols = source.getColCount();
+	destination.setSize(rows, cols);
+	for (auto i = 0; i < rows; i++)
+	{
+		for (auto j = 0; j < cols; j++)
+		{
+			destination[i][j] = source[i][j] * num;
+		}
+	}
+}
+
+void CMatrix::Mult(const CMatrix source_matrix, const CVector& source_vector, CVector& destination_vector)
+{
+	auto rows = source_matrix.getRowCount(), cols = source_matrix.getColCount(),
+		size = source_vector.getSize(); // длина вектора
+	if (size == cols) // ширина матрицы свпадает с длиной вектора-столбца?
+	{
+		destination_vector.assign(size, 0);
+		for (auto i = 0; i < rows; i++)
+		{
+			for (auto j = 0; j < cols; j++)
+			{
+				destination_vector[i] += source_matrix[i][j] * source_vector[j];
+			}
+		}
+	}
+	else // не совпадает
+	{
+		destination_vector = CVector(size); // возвращаем нулевой вектор
+	}
+}
+
+
+/*
+	Перегрузки операторов
+*/
+CMatrix CMatrix::operator + (const CMatrix &arg)
+{
+	auto rows = arg.getRowCount(), cols = arg.getColCount();
+	CMatrix Res(rows, cols);
+	for (auto i = 0; i < rows; i++)
+	{
+		for (auto j = 0; j < cols; j++)
 		{
 			// первые [] перегружены нами, а вторые берутся из BaseVector
 			Res[i][j] = (*this)[i][j] + arg[i][j];
@@ -617,12 +722,13 @@ CMatrix CMatrix::operator + (const CMatrix &arg){
 	return Res;
 }
 
-CMatrix CMatrix::operator * (const TYPE num){
-	int n = getRowCount(), m = getColCount();
-	CMatrix Res(n, m);
-	for (int i = 0; i < n; i++)
+CMatrix CMatrix::operator * (const TYPE num)
+{
+	auto rows = getRowCount(), cols = getColCount();
+	CMatrix Res(rows, cols);
+	for (auto i = 0; i < rows; i++)
 	{
-		for (int j = 0; j < m; j++)
+		for (auto j = 0; j < cols; j++)
 		{
 			Res[i][j] = (*this)[i][j] * num;
 		}
@@ -630,20 +736,21 @@ CMatrix CMatrix::operator * (const TYPE num){
 	return Res;
 }
 
-CMatrix CMatrix::operator * (const CMatrix &arg){
-	int n = getRowCount(), m = arg.getColCount(),
+CMatrix CMatrix::operator * (const CMatrix &arg)
+{
+	auto rows = getRowCount(), cols = arg.getColCount(),
 		p = getColCount(), // = RowCount у второй матрицы
 		p2 = arg.getRowCount();
 
 	/* избыточно, ввести обработчик */
 	if (p == p2) // ширина первой матрицы равна высоте второй?
 	{
-		CMatrix Res(n, m);
-			for (int i = 0; i < n; i++)
+		CMatrix Res(rows, cols);
+			for (auto i = 0; i < rows; i++)
 			{
-				for (int j = 0; j < m; j++)
+				for (auto j = 0; j < cols; j++)
 				{
-					for (int k = 0; k < p; k++)
+					for (auto k = 0; k < p; k++)
 					{
 						Res[i][j] += (*this)[i][k] * arg[k][j];
 					}
@@ -653,7 +760,7 @@ CMatrix CMatrix::operator * (const CMatrix &arg){
 	}
 	else // не равна
 	{
-		return CMatrix(n, m); // возвращаем нулевую матрицу
+		return CMatrix(rows, cols); // возвращаем нулевую матрицу
 	}
 	
 }
@@ -663,15 +770,16 @@ CMatrix CMatrix::operator * (const CMatrix &arg){
 	произведение матрицы на вектор-столбец. (строка на столбец)
 	результат - вектор столбец.
 */
-CVector CMatrix::operator * (const CVector &arg){
-	int n = getRowCount(), m = getColCount(),
+CVector CMatrix::operator * (const CVector &arg)
+{
+	auto rows = getRowCount(), cols = getColCount(),
 		size = arg.getSize(); // длина вектора
-	if (size == m) // ширина матрицы свпадает с длиной вектора-столбца?
+	if (size == cols) // ширина матрицы свпадает с длиной вектора-столбца?
 	{
-		CVector Res(n);
-			for (int i = 0; i < n; i++)
+		CVector Res(rows);
+			for (auto i = 0; i < rows; i++)
 			{
-				for (int j = 0; j < m; j++)
+				for (auto j = 0; j < cols; j++)
 				{
 					Res[i] += (*this)[i][j] * arg[j];
 				}
@@ -680,7 +788,7 @@ CVector CMatrix::operator * (const CVector &arg){
 	}
 	else // не совпадает
 	{
-		return CVector(n); // возвращаем нулевой вектор
+		return CVector(rows); // возвращаем нулевой вектор
 	}
 	
 }
@@ -701,7 +809,8 @@ CSymmetricMatrix::CSymmetricMatrix(const CMatrix& arg): CMatrix(arg)
 {
 }
 
-CMatrix CSymmetricMatrix::inverse(){
+CMatrix CSymmetricMatrix::inverse()
+{
 	int n = getRowCount(); // размерность квадратной матрицы
 	CMatrix matrix_L(n, n);
 
