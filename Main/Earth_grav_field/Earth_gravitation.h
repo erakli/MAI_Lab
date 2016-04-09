@@ -42,6 +42,9 @@ namespace Earth
 		void PrepareP(
 			CMatrix &P, CMatrix &_P, const TYPE fi, const int _degree) const;
 
+		TYPE P(const int n, const int m, const TYPE fi) const;
+		TYPE _P(const int n, const int m, const TYPE fi) const;
+
 		CMatrix ProjectOnDecart(
 			const CVector &coord, const CVector &spheric) const;
 	public:

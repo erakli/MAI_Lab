@@ -213,6 +213,49 @@ void CNormal_spheric::PrepareP(
 	}
 }
 
+
+/* Рекуретная форма полиномов Лежандра */
+TYPE CNormal_spheric::P(const int n, const int m, const TYPE fi) const
+{
+	if (n < m)
+		return 0;
+
+	if (n == m && m == 0)
+		return 1;
+
+	if (n == m && m != 0)
+		return
+			P(n - 1, m - 1, fi)
+			* cos(fi)
+			* sqrt((2 * n + 1) / (2 * n)
+			* 1 / delta_m(m - 1));
+
+	if (n > m)
+	{
+		auto
+			n2 = pow(n, 2),
+			m2 = pow(m, 2);
+
+		return 
+			P(n - 1, m, fi)
+			* sin(fi)
+			* sqrt((4 * n2 - 1) / (n2 - m2))
+			
+			- P(n - 2, m, fi)
+			* sqrt((pow(n - 1, 2) - m2) * (2 * n + 1)
+			/ ((n2 - m2) * (2 * n - 3)));
+	}
+}
+
+TYPE CNormal_spheric::_P(const int n, const int m, const TYPE fi) const
+{
+	return
+		-1 * m * tan(fi) * P(n, m, fi)
+		+ sqrt(delta_m(m) * (n - m) * (n + m + 1))
+		* P(n, m + 1, fi);
+}
+
+
 CMatrix CNormal_spheric::ProjectOnDecart(
 	const CVector &coord, const CVector& spheric) const
 {
@@ -263,12 +306,14 @@ CVector CNormal_spheric::getRight(const CVector& X) const
 		fix_coordinates = CVector::copyPart(X, 2),
 		spher_coordinates = Transform::Decart2Spher(fix_coordinates);
 
-	CMatrix P, _P;
+	CMatrix P_matrix, _P_matrix;
 
-	PrepareP(P, _P, spher_coordinates[1], 4);
+	PrepareP(P_matrix, _P_matrix, spher_coordinates[1], 4);
 	
 	TYPE
 		ro = spher_coordinates[0],
+		fi = spher_coordinates[1],
+
 		mu_ro2 = CEarth::muEarth / pow(ro, 2),
 
 		ae_ro2 = pow(CEarth::ae / ro, 2),
@@ -276,13 +321,29 @@ CVector CNormal_spheric::getRight(const CVector& X) const
 
 	CVector g_spher(VEC_SIZE);
 
-	g_spher[0] = 
+	/*g_spher[0] = 
 		-mu_ro2 
-		+ 5 * mu_ro2 * (C_0_20 * ae_ro2 * P[2][0] + C_0_40 * ae_ro4 * P[4][0]);
+		+ 5 * mu_ro2 
+		* (C_0_20 * ae_ro2 * P[2][0] + C_0_40 * ae_ro4 * P[4][0]);
 
 	g_spher[1] = 
 		-mu_ro2
-		+ (C_0_20 * ae_ro2 * _P[2][0] + C_0_40 * ae_ro4 * _P[4][0]);
+		+ (C_0_20 * ae_ro2 * _P[2][0] + C_0_40 * ae_ro4 * _P[4][0]);*/
+
+	TYPE
+		 P_20 = P(2, 0, fi),
+		 P_40 = P(4, 0, fi),
+		_P_20 = _P(2, 0, fi),
+		_P_40 = _P(4, 0, fi);
+
+	g_spher[0] =
+		-mu_ro2
+		+ 5 * mu_ro2
+		* (C_0_20 * ae_ro2 * P_20 + C_0_40 * ae_ro4 * P_40);
+
+	g_spher[1] =
+		-mu_ro2
+		+ (C_0_20 * ae_ro2 * _P_20 + C_0_40 * ae_ro4 * _P_40);
 
 	g_spher[2] = 0;
 
