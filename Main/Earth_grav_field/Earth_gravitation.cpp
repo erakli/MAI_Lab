@@ -119,11 +119,6 @@ CVector CNormal_field::getRight(const CVector &X) const
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* * * CNormal_spheric                                 * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-CNormal_spheric::CNormal_spheric()
-{
-
-}
-
 
 inline TYPE delta_m(const int& m)
 {
@@ -144,6 +139,7 @@ void CNormal_spheric::PrepareP(
 
 	for (auto n = 0; n < degree; n++)
 	{
+	/* Вычисляем псевдорекурентным методом нормированные функции Лежандра */
 		for (auto m = 0; m < n + 1; m++)
 		{
 			if (n > m)
@@ -161,7 +157,7 @@ void CNormal_spheric::PrepareP(
 					просто не вычитаем второе слагаемое, так как произойдёт 
 					обращение к отрицательному индексу.
 
-					Поэтому, что сымитировать рекуретное выражение, мы принимаем,
+					Поэтому, чтобы сымитировать рекуретное выражение, мы принимаем,
 					что P[-1][m] = 0 по условию P_nm = 0 при (n < m)
 				*/
 				if (n != 1)
@@ -174,24 +170,20 @@ void CNormal_spheric::PrepareP(
 			else
 			{
 				if (n == m && m != 0)
-				{
 					P[n][m] = P[n - 1][m - 1] 
 						* cos(fi) 
 						* sqrt((2 * n + 1) / (2 * n) 
 						* 1 / delta_m(m - 1));
-				}
-				else
-				{
-					if (n < m)
-						P[n][m] = 0;
-					else
-						if (n == m && m == 0)
-							P[n][m] = 1;
-				}
-			}
+					
+				if (n == m && m == 0)
+					P[n][m] = 1;
 
+				if (n < m)
+					P[n][m] = 0;
+			}
 		}	// for (auto m = 0;...)
 
+	/* Вычисляем производные функций на основе самих этих функций */
 		for (auto m = 0; m < n + 1; m++)
 		{
 			_P[n][m] =
@@ -203,7 +195,7 @@ void CNormal_spheric::PrepareP(
 					P[n][m + 1] = 0, где m = n, то есть из условия 
 					P_nm = 0 при (n < m)
 			*/
-			if (m != n)
+			if (n != m)
 			{
 				_P[n][m] += 
 					sqrt(delta_m(m) * (n - m) * (n + m + 1))
@@ -214,7 +206,9 @@ void CNormal_spheric::PrepareP(
 }
 
 
-/* Рекуретная форма полиномов Лежандра */
+/* 
+	Рекуретная форма полиномов Лежандра 
+*/
 TYPE CNormal_spheric::P(const int n, const int m, const TYPE fi) const
 {
 	if (n < m)
@@ -228,7 +222,7 @@ TYPE CNormal_spheric::P(const int n, const int m, const TYPE fi) const
 			P(n - 1, m - 1, fi)
 			* cos(fi)
 			* sqrt((2 * n + 1) / (2 * n)
-			* 1 / delta_m(m - 1));
+			* (1 / delta_m(m - 1)));
 
 	if (n > m)
 	{
@@ -245,6 +239,8 @@ TYPE CNormal_spheric::P(const int n, const int m, const TYPE fi) const
 			* sqrt((pow(n - 1, 2) - m2) * (2 * n + 1)
 			/ ((n2 - m2) * (2 * n - 3)));
 	}
+
+	return 0;
 }
 
 TYPE CNormal_spheric::_P(const int n, const int m, const TYPE fi) const
@@ -255,15 +251,19 @@ TYPE CNormal_spheric::_P(const int n, const int m, const TYPE fi) const
 		* P(n, m + 1, fi);
 }
 
-
+/*
+	Вычисление переходной матрицы
+	
+	Пересчет частных производных потенциала V по сферическим координатам в
+	соответствующие им частные производные по геоцентрическим прямоугольным 
+	координатам выполняется с использованием переходной матрицы
+*/
 CMatrix CNormal_spheric::ProjectOnDecart(
 	const CVector &coord, const CVector& spheric) const
 {
 	/* 
 		TODO: 
-			- множественное создание локальных матриц и векторов - стоит исправить
 			- деление на 0
-			- ассемблер-стайл перемножение матрицы и вектора
 			- возможно стоит вынести пересчёт матрицы SpherOnFix в отдельную ф-ию
 	*/
 
@@ -276,7 +276,7 @@ CMatrix CNormal_spheric::ProjectOnDecart(
 
 		r_xy = sqrt(pow(x, 2) + pow(y, 2));
 
-	if (r_xy == 0) r_xy = 0.00001; // костыльный костыль
+	if (r_xy == 0) r_xy = 1.0e-6; // костыльный костыль
 
 	CMatrix SpherOnFix(VEC_SIZE, VEC_SIZE);
 
@@ -295,21 +295,17 @@ CMatrix CNormal_spheric::ProjectOnDecart(
 	return SpherOnFix;
 }
 
+
 CVector CNormal_spheric::getRight(const CVector& X) const
 {
-	/*
-		TODO:
-			- проверить полиномы Лежандра
-	*/
-
 	CVector
 		fix_coordinates = CVector::copyPart(X, 2),
 		spher_coordinates = Transform::Decart2Spher(fix_coordinates);
-
-	CMatrix P_matrix, _P_matrix;
-
-	PrepareP(P_matrix, _P_matrix, spher_coordinates[1], 4);
 	
+	/* 
+		Коэффициенты, участвующие в вычислениях нормального 
+		гравитационного ускорения 
+	*/
 	TYPE
 		ro = spher_coordinates[0],
 		fi = spher_coordinates[1],
@@ -319,40 +315,129 @@ CVector CNormal_spheric::getRight(const CVector& X) const
 		ae_ro2 = pow(CEarth::ae / ro, 2),
 		ae_ro4 = pow(ae_ro2, 2);
 
+	/*
+		Вычисление матриц нормированных функций Лежандра и их производных до
+		заданного порядка
+	*/
+#define NORMAL_DEGREE	4
+
+	CMatrix P_matrix, _P_matrix;
+	PrepareP(P_matrix, _P_matrix, fi, NORMAL_DEGREE);
+
+	/*
+		Вычисление производных нормального гравитационного потенциала по 
+		сферическим координатам
+	*/
 	CVector g_spher(VEC_SIZE);
 
-	/*g_spher[0] = 
+	g_spher[0] = 
 		-mu_ro2 
 		+ 5 * mu_ro2 
-		* (C_0_20 * ae_ro2 * P[2][0] + C_0_40 * ae_ro4 * P[4][0]);
+		* (C_0_20 * ae_ro2 * P_matrix[2][0] + C_0_40 * ae_ro4 * P_matrix[4][0]);
 
 	g_spher[1] = 
 		-mu_ro2
-		+ (C_0_20 * ae_ro2 * _P[2][0] + C_0_40 * ae_ro4 * _P[4][0]);*/
-
-	TYPE
-		 P_20 = P(2, 0, fi),
-		 P_40 = P(4, 0, fi),
-		_P_20 = _P(2, 0, fi),
-		_P_40 = _P(4, 0, fi);
-
-	g_spher[0] =
-		-mu_ro2
-		+ 5 * mu_ro2
-		* (C_0_20 * ae_ro2 * P_20 + C_0_40 * ae_ro4 * P_40);
-
-	g_spher[1] =
-		-mu_ro2
-		+ (C_0_20 * ae_ro2 * _P_20 + C_0_40 * ae_ro4 * _P_40);
+		* (C_0_20 * ae_ro2 * _P_matrix[2][0] + C_0_40 * ae_ro4 * _P_matrix[4][0]);
 
 	g_spher[2] = 0;
 
 
 	CVector Res;
 	Res.reserve(X.getSize());
+	Res.setSize(VEC_SIZE);
 
-	Res.insert_toEnd(CVector::copyPart(X, VEC_SIZE - 1, VEC_SIZE * 2 - 1));
-	Res.insert_toEnd(ProjectOnDecart(fix_coordinates, spher_coordinates) * g_spher);
+	Res[0] = X[3];
+	Res[1] = X[4];
+	Res[2] = X[5];
+
+	/* 
+		Пересчёт частных производных по сферическим координатам в 
+		соответствующие им частные производные по геоцентрическим прямоугольным
+		координатам
+	*/
+	Res.insert_toEnd(
+		ProjectOnDecart(fix_coordinates, spher_coordinates) * g_spher);
 
 	return Res;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * CAnomalous_spheric                              * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+CAnomalous_spheric::CAnomalous_spheric()
+{
+	/*
+		TODO:
+			- считывание нормированных коэффициентов разложения
+	*/
+}
+
+void CAnomalous_spheric::EvalAll(
+	CVector &delta_g_spher, const CVector &spheric,
+	const CMatrix &P, const CMatrix &_P)
+{
+	TYPE
+		ro, fi, lambda,
+
+		cos_m, sin_m,  // заранее посчитанные значения cos и sin на шаг
+		ae_ro,         // заранее считаемые степени (ae / ro)^n+1
+		muEarth_ae_ro,          // заранее посчитанное значение ( fM / (ae * ro) )
+
+		div_ae_ro;      // значение ae / ro
+
+	ro = spheric[0];
+	fi = spheric[1];
+	lambda = spheric[2];
+
+	div_ae_ro = CEarth::ae / ro;
+	ae_ro = pow(div_ae_ro, 2);
+
+	muEarth_ae_ro = CEarth::muEarth / (CEarth::ae * ro);
+
+	// сумма по каждой отдельной сферической координате
+	CVector
+		sum_inner(VEC_SIZE), 
+		sum_outter(VEC_SIZE);
+
+	for (auto n = 2; n < NUM_OF_HARMONICS + 1; n++)
+	{
+		for (auto m = 0; m < n + 1; m++)
+		{
+			/* можно оптимизировать просчитав массив cos и sin заранее */
+			sin_m = sin(m * lambda);
+			cos_m = cos(m * lambda);
+
+			// "внутренние" суммы - сложение по m
+			sum_inner[0] += (C[n][m] * cos_m + S[n][m] * sin_m) * P[n][m];
+
+			/* 
+				здесь множитель - производная. а ещё здесь может быть 
+				дополнительное умножение на cos */
+			sum_inner[1] += (C[n][m] * cos_m + S[n][m] * sin_m) * _P[n][m];
+
+			sum_inner[2] += (-C[n][m] * sin_m + S[n][m] * cos_m) * m * P[n][m];
+
+		};
+
+		ae_ro = ae_ro * (div_ae_ro); // степень n + 1
+
+		// "внешние" суммы - сложение по n
+		sum_outter[0] += (n + 1) * ae_ro * sum_inner[0];
+
+		sum_outter[1] += ae_ro * sum_inner[1];
+
+		sum_outter[2] += ae_ro * sum_inner[2];
+
+	};
+
+	delta_g_spher[0] = -muEarth_ae_ro * sum_outter[0];			// g_ro
+	delta_g_spher[1] = -muEarth_ae_ro * sum_outter[1];			// g_fi
+	delta_g_spher[2] = -muEarth_ae_ro / cos(fi) * sum_outter[2];// g_lambda
+
+}
+
+CVector CAnomalous_spheric::getRight(const CVector& X) const
+{
 }

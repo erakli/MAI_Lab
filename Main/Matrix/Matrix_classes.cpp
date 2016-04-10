@@ -122,7 +122,7 @@ CVector CVector::copyPart(const CVector& orig, const int First, const int Second
 	
 	CVector Res;
 
-	Res.assign(orig.begin() + First + 1, orig.begin() + Second + 1);
+	Res.assign(orig.begin() + First, orig.begin() + Second);
 
 	return Res;
 }
