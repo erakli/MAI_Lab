@@ -87,7 +87,7 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 
 	// ------------------------------------------------------------ Интерфейс
 	cout << "\n\nProcess have been ended. \n	Number of iterations: "
-		<< Integrator.get_iter()
+		<< fixed << Integrator.get_iter()
 		<< "\n	Global Eps: " << scientific << Integrator.getEps_Global()
 		<< "\n\nNow would be opened result file\n";
 	Sleep(DELAY);
@@ -97,6 +97,8 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 	ShellExecuteA(nullptr, "open", FileName, nullptr, nullptr, SW_RESTORE);
 
 	SecondNum++;
+
+	cout << fixed;
 }
 
 

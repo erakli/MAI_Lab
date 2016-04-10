@@ -2,6 +2,9 @@
 
 namespace Earth
 {
+// количество используемых гармоник в вычеслениях аномального поля Земли (макс. 36)
+#define NUM_OF_HARMONICS	12	
+
 	/* Структура для хранения точеченых масс */
 	struct Mass_Point
 	{
@@ -67,7 +70,7 @@ namespace Earth
 /*
 	Аномальное поле в сферических координатах
 */
-	class CAnomalous_spheric : public CNormal_field
+	class CAnomalous_spheric : public CNormal_spheric
 	{
 	private:
 		/* 
@@ -80,7 +83,7 @@ namespace Earth
 			координатах */
 		void EvalAll(
 			CVector &delta_g_spher, const CVector &spheric, 
-			const CMatrix &P, const CMatrix &_P);
+			const CMatrix &P, const CMatrix &_P) const;
 	public:
 		CAnomalous_spheric();
 

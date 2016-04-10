@@ -120,6 +120,8 @@ CVector CNormal_field::getRight(const CVector &X) const
 /* * * CNormal_spheric                                 * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#define NORMAL_DEGREE	4
+
 inline TYPE delta_m(const int& m)
 {
 	return m == 0 ? 0.5 : 1;
@@ -133,12 +135,15 @@ void CNormal_spheric::PrepareP(
 
 	if (P.getRowCount() != degree)
 	{
-		P.setSize(degree, degree);
-		_P.setSize(degree, degree);
+		P.setSize(degree, 0);
+		_P.setSize(degree, 0);
 	}
 
 	for (auto n = 0; n < degree; n++)
 	{
+		P[n].resize(n + 2, 0);
+		_P[n].resize(n + 2, 0);
+
 	/* Вычисляем псевдорекурентным методом нормированные функции Лежандра */
 		for (auto m = 0; m < n + 1; m++)
 		{
@@ -319,7 +324,6 @@ CVector CNormal_spheric::getRight(const CVector& X) const
 		Вычисление матриц нормированных функций Лежандра и их производных до
 		заданного порядка
 	*/
-#define NORMAL_DEGREE	4
 
 	CMatrix P_matrix, _P_matrix;
 	PrepareP(P_matrix, _P_matrix, fi, NORMAL_DEGREE);
@@ -342,6 +346,7 @@ CVector CNormal_spheric::getRight(const CVector& X) const
 	g_spher[2] = 0;
 
 
+/* Подготовка результата */
 	CVector Res;
 	Res.reserve(X.getSize());
 	Res.setSize(VEC_SIZE);
@@ -369,21 +374,40 @@ CVector CNormal_spheric::getRight(const CVector& X) const
 CAnomalous_spheric::CAnomalous_spheric()
 {
 	/*
-		TODO:
-			- считывание нормированных коэффициентов разложения
+		- считывание нормированных коэффициентов разложения
 	*/
+	C.setSize(NUM_OF_HARMONICS + 1, 0);
+	S.setSize(NUM_OF_HARMONICS + 1, 0);
+
+	int m_index = 0;
+
+	for (auto n = 1; n < NUM_OF_HARMONICS + 1; n++)
+	{
+		C[n].resize(n + 1, 0);
+		S[n].resize(n + 1, 0);
+
+		for (auto m = 0; m < n + 1; m++)
+		{
+			C[n][m] = C_nm_coefficients[n + m_index] * CS_COEFF_MULTIPLIER;
+			S[n][m] = S_nm_coefficients[n + m_index] * CS_COEFF_MULTIPLIER;
+
+			m_index++;
+		}
+
+		m_index--;
+	}
 }
 
 void CAnomalous_spheric::EvalAll(
 	CVector &delta_g_spher, const CVector &spheric,
-	const CMatrix &P, const CMatrix &_P)
+	const CMatrix &P, const CMatrix &_P) const
 {
 	TYPE
 		ro, fi, lambda,
 
 		cos_m, sin_m,  // заранее посчитанные значения cos и sin на шаг
 		ae_ro,         // заранее считаемые степени (ae / ro)^n+1
-		muEarth_ae_ro,          // заранее посчитанное значение ( fM / (ae * ro) )
+		muEarth_ae_ro, // заранее посчитанное значение ( fM / (ae * ro) )
 
 		div_ae_ro;      // значение ae / ro
 
@@ -403,6 +427,8 @@ void CAnomalous_spheric::EvalAll(
 
 	for (auto n = 2; n < NUM_OF_HARMONICS + 1; n++)
 	{
+		sum_inner.assign(VEC_SIZE, 0);
+
 		for (auto m = 0; m < n + 1; m++)
 		{
 			/* можно оптимизировать просчитав массив cos и sin заранее */
@@ -440,4 +466,53 @@ void CAnomalous_spheric::EvalAll(
 
 CVector CAnomalous_spheric::getRight(const CVector& X) const
 {
+	CVector
+		fix_coordinates = CVector::copyPart(X, 2),
+		spher_coordinates = Transform::Decart2Spher(fix_coordinates);
+
+	/*
+		Вычисление матриц нормированных функций Лежандра и их производных до
+		заданного порядка
+	*/
+	CMatrix P_matrix, _P_matrix;
+	PrepareP(P_matrix, _P_matrix, spher_coordinates[1], NUM_OF_HARMONICS);
+
+	/* Аномалии гравитационного ускорения в сферических координатах */
+	CVector delta_g_spher(VEC_SIZE);
+
+	/* Вычисление аномалий гравитационного ускорения */
+	EvalAll(delta_g_spher, spher_coordinates, P_matrix, _P_matrix);
+
+
+/* Подготовка результата */
+	CVector Res;
+	Res.reserve(X.getSize());
+	Res.setSize(VEC_SIZE);
+
+	Res[0] = X[3];
+	Res[1] = X[4];
+	Res[2] = X[5];
+
+	/*
+		Вычисление нормальной составляющей ускорения
+	*/
+	TYPE moduleX3 = pow(fix_coordinates.getLength(), 3);
+
+	CVector NormalPart(VEC_SIZE);
+	CVector::Mult(-CEarth::muEarth / moduleX3, fix_coordinates, NormalPart);
+
+	/*
+		Пересчёт частных производных по сферическим координатам в
+		соответствующие им частные производные по геоцентрическим прямоугольным
+		координатам
+	*/
+	fix_coordinates = 
+		ProjectOnDecart(fix_coordinates, spher_coordinates) * delta_g_spher;
+
+	/* Результат - сумма нормальной и аномальной составляющих */
+	CVector::Add(NormalPart, fix_coordinates);
+
+	Res.insert_toEnd(fix_coordinates);
+
+	return Res;
 }
