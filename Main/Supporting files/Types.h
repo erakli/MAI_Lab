@@ -1,6 +1,8 @@
 #pragma once
 
 typedef double				TYPE;
+typedef const double		cTYPE;
+
 #define pTYPE	double*
 
 typedef short int			SINT;

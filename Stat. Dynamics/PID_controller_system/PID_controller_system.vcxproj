@@ -86,11 +86,13 @@
     <ClCompile Include="..\..\Main\Matrix\Matrix_classes.cpp" />
     <ClCompile Include="Dorman-Prince_modified.cpp" />
     <ClCompile Include="PID_model.cpp" />
+    <ClCompile Include="Stat_linearization.cpp" />
     <ClCompile Include="test_PID_controller_system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dorman-Prince_modified.h" />
     <ClInclude Include="PID_model.h" />
+    <ClInclude Include="Stat_linearization.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

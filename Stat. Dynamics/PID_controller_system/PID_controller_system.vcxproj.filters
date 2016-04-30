@@ -39,12 +39,18 @@
     <ClCompile Include="..\..\Main\Dorman-Prince\file_output.cpp">
       <Filter>Source Files\External</Filter>
     </ClCompile>
+    <ClCompile Include="Stat_linearization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PID_model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dorman-Prince_modified.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stat_linearization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
