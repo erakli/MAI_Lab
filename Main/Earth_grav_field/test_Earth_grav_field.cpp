@@ -22,11 +22,28 @@ int main()
 	CAnomalous_spheric anomalous_spheric_field;
 
 	Orbit::Kepler_elements
-		elements = { 0, 0, 0, 500, 0, 0 };
+		elements = { 0, 0, 0, 200, 0, 0 };
 
 	Information(elements);
 
 	TYPE duration = SECINDAY;
+
+	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, normal_field);
+	Modelling(duration, elements, normal_spheric_field);
+	Modelling(duration, elements, anomalous_spheric_field);
+
+	elements.i = deg2rad(90);
+	Information(elements);
+
+	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, normal_field);
+	Modelling(duration, elements, normal_spheric_field);
+	Modelling(duration, elements, anomalous_spheric_field);
+
+	elements.a = 500;
+	elements.i = 0;
+	Information(elements);
 
 	Modelling(duration, elements, central_field);
 	Modelling(duration, elements, normal_field);
