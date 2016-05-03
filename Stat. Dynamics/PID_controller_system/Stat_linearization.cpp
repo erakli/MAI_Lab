@@ -26,7 +26,7 @@ TYPE Linearization::erf(cTYPE x) const
 {
 	TYPE
 		t = 1 / (1 + b * abs(x)),
-		sign = copysign(x, x),
+		sign = copysign(1, x),
 		polynomial_sum(0);
 	
 	for (auto i = 0; i < POLYNOMIAL_DEGREE; i++)
@@ -78,6 +78,20 @@ TYPE Linearization::J1_integral(
 		- disp * (f_gauss(u_border, Mx, disp) - f_gauss(l_border, Mx, disp));
 }
 
+TYPE Linearization::J2_integral(cTYPE Mx, cTYPE disp, cTYPE l_border, cTYPE u_border) const
+{
+	TYPE
+		J0 = J0_integral(Mx, disp, l_border, u_border),
+		J1 = J1_integral(Mx, disp, l_border, u_border);
+
+	return
+		Mx * J1 
+		+ disp 
+		* (J0 
+			- u_border * f_gauss(u_border, Mx, disp) 
+			+ l_border * f_gauss(l_border, Mx, disp));
+}
+
 LinearCoeff Linearization::getCoefficients(cTYPE Mx, cTYPE disp)
 {
 	this->Mx = Mx;
@@ -86,34 +100,68 @@ LinearCoeff Linearization::getCoefficients(cTYPE Mx, cTYPE disp)
 	TYPE
 		fi_0 = get_fi_0(),
 		k1_first = get_k1_first(fi_0),
-		k1_second = get_k1_second(fi_0),
-		k0 = get_k0(fi_0);
+		k1_second = get_k1_second(fi_0);
 
-	return { fi_0, k1_first, k1_second, k0 };
+	return { fi_0, k1_first, k1_second };
 }
 
 
+/* 
+	SaturationLinearize
+*/
 
-SaturationLinearize::SaturationLinearize(): s_index(0)
+SaturationLinearize::SaturationLinearize() : s_index(0), J2(0)
 {
+	for (auto i = 0; i < INTERVALS; i++)
+	{
+		J0[i] = 0;
+		J1[i] = 0;
+	}
 }
 
 TYPE SaturationLinearize::get_fi_0()
 {
+	return 
+		-s_index * J0[0] 
+		+ J1[1] 
+		+ s_index * J0[2];
 }
 
 TYPE SaturationLinearize::get_k1_first(cTYPE fi_0)
 {
+	TYPE
+		integral = 
+			pow(s_index, 2) * J0[0]
+			+ J2
+			+ pow(s_index, 2) * J0[2];
+
+	return
+		sqrt((integral - pow(fi_0, 2)) / disp);
 }
 
 TYPE SaturationLinearize::get_k1_second(cTYPE fi_0)
 {
-}
+	TYPE
+		integral =
+		-s_index * J1[0]
+		+ J2
+		+ s_index * J1[2];
 
-TYPE SaturationLinearize::get_k0(cTYPE fi_0)
-{
+	return
+		(integral - Mx * fi_0) / disp;
 }
 
 LinearCoeff SaturationLinearize::getCoefficients(cTYPE s, cTYPE Mx, cTYPE disp)
 {
+	J0[0] = J0_integral(Mx, disp, -INFINITY, -s);
+	J0[1] = J0_integral(Mx, disp, -s, s);
+	J0[2] = J0_integral(Mx, disp, s, INFINITY);
+
+	J1[0] = J1_integral(Mx, disp, -INFINITY, -s);
+	J1[1] = J1_integral(Mx, disp, -s, s);
+	J1[2] = J1_integral(Mx, disp, s, INFINITY);
+
+	s_index = s;
+
+	return Linearization::getCoefficients(Mx, disp);
 }

@@ -2,10 +2,15 @@
 
 #include "PID_model.h"
 #include "Dorman-Prince_modified.h"
+#include "Stat_linearization.h"
 
 
 int main()
 {
+	SaturationLinearize Nonlinear;
+
+	LinearCoeff coeffs = Nonlinear.getCoefficients(2.2, 5.83, 68.02);
+
 	CDormanPrince_modified Integrator;
 
 	Integrator.setEps_Max(1.0e-13); // задали максимально допустимую погрешность
