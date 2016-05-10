@@ -122,7 +122,7 @@ CVector CVector::copyPart(const CVector& orig, const int First, const int Second
 	
 	CVector Res;
 
-	Res.assign(orig.begin() + First, orig.begin() + Second);
+	Res.assign(orig.begin() + First, orig.begin() + Second + 1);
 
 	return Res;
 }
@@ -300,6 +300,22 @@ CVector CVector::crossProduct(const CVector &b) const{
 	return Res;
 }
 
+CVector CVector::SymmetricToVec(const CMatrix& Matrix)
+{
+	UINT
+		row = Matrix.getRowCount(),
+		col = Matrix.getColCount();
+
+	CVector ret((row * col + row) / 2);
+
+	for (auto i = 0; i < row; i++)
+	{
+		for (auto j = i; j < col; j++)
+			ret[i * col + j] = Matrix[i][j];
+	}
+
+	return ret;
+}
 
 /* * * * * * * * матрица * * * * * * * */
 
@@ -391,10 +407,10 @@ void CMatrix::add_toEnd(const CMatrix& additional)
 
 CMatrix CMatrix::flip(){
 	int Col = getColCount(), Row = getRowCount();
-	CMatrix Res(Row, Col);
-	for (int i = 0; i < Row; i++)
+	CMatrix Res(Col, Row);
+	for (int i = 0; i < Col; i++)
 	{
-		for (int j = 0; j < Col; j++)
+		for (int j = 0; j < Row; j++)
 		{ 
 			Res[i][j] = (*this)[j][i];
 		}
@@ -682,7 +698,7 @@ void CMatrix::Mult(const TYPE num, const CMatrix& source, CMatrix& destination)
 	}
 }
 
-void CMatrix::Mult(const CMatrix source_matrix, const CVector& source_vector, CVector& destination_vector)
+void CMatrix::Mult(const CMatrix& source_matrix, const CVector& source_vector, CVector& destination_vector)
 {
 	auto rows = source_matrix.getRowCount(), cols = source_matrix.getColCount(),
 		size = source_vector.getSize(); // длина вектора
@@ -703,6 +719,33 @@ void CMatrix::Mult(const CMatrix source_matrix, const CVector& source_vector, CV
 	}
 }
 
+void CMatrix::Mult(const CMatrix& source1, const CMatrix& source2, CMatrix& destination)
+{
+	auto rows = source1.getRowCount(), cols = source2.getColCount(),
+		p = source1.getColCount(), // = RowCount у второй матрицы
+		p2 = source2.getRowCount();
+
+	/* избыточно, ввести обработчик */
+	if (p == p2) // ширина первой матрицы равна высоте второй?
+	{
+		destination.resize(rows);
+		for (auto i = 0; i < rows; i++)
+		{
+			destination[i].assign(cols, 0);
+			for (auto j = 0; j < cols; j++)
+			{
+				for (auto k = 0; k < p; k++)
+				{
+					destination[i][j] += source1[i][k] * source2[k][j];
+				}
+			}
+		}
+	}
+	else // не равна
+	{
+		destination = CMatrix(rows, cols); // возвращаем нулевую матрицу
+	}
+}
 
 /*
 	Перегрузки операторов
@@ -883,4 +926,21 @@ CMatrix CSymmetricMatrix::inverse()
 
 void CSymmetricMatrix::setElement(int n, int m, TYPE value){
 	(*this)[n][m] = (*this)[m][n] = value;
+}
+
+CSymmetricMatrix CSymmetricMatrix::VecToSymmetric(const CVector& Vec)
+{
+	UINT
+		size = Vec.getSize(),
+		matrix_side = (sqrt(1 + 8 * size) - 1) / 2;
+
+	CSymmetricMatrix matrix(matrix_side);
+
+	for (auto i = 0; i < matrix_side; i++)
+	{
+		for (auto j = i; j < matrix_side; j++)
+			matrix.setElement(i, j, Vec[i * matrix_side + j]);
+	}
+
+	return matrix;
 }

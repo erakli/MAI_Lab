@@ -62,6 +62,8 @@ public:
 
 	// векторное произведение
 	CVector crossProduct(const CVector &b) const;
+
+	static CVector SymmetricToVec(const CMatrix& Matrix);
 };
 
 
@@ -110,7 +112,8 @@ public:
 	static void Mult(const TYPE num, CMatrix &destination);
 	static void Mult(const TYPE num, const CMatrix &source, CMatrix &destination);
 
-	static void Mult(const CMatrix source_matrix, const CVector &source_vector, CVector &destination_vector);
+	static void Mult(const CMatrix& source_matrix, const CVector &source_vector, CVector &destination_vector);
+	static void Mult(const CMatrix &source1, const CMatrix &source2, CMatrix &destination);
 
 	/* Перегрузки опреаторов */
 	CMatrix operator + (const CMatrix &arg);
@@ -135,4 +138,6 @@ public:
 	CMatrix inverse();
 
 	void setElement(int n, int m, TYPE value);
+
+	static CSymmetricMatrix VecToSymmetric(const CVector& Vec);
 };
