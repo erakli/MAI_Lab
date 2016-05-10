@@ -26,21 +26,22 @@ TYPE Linearization::erf(cTYPE x) const
 {
 	TYPE
 		t = 1 / (1 + b * abs(x)),
-		sign = copysign(1, x),
 		polynomial_sum(0);
 	
 	for (auto i = 0; i < POLYNOMIAL_DEGREE; i++)
 		polynomial_sum += a_vec[i] * pow(t, i + 1);
 
-	return sign * (1 - polynomial_sum * exp(-pow(x, 2)));
+	return 1 - polynomial_sum * exp(-pow(x, 2));
 }
 
-TYPE Linearization::norm(cTYPE x) const
+TYPE Linearization::LaplaceFcn(cTYPE x) const
 {
-	if (INFINITY == abs(x))
-		return copysign(0.5, x);	// Ф(+-INF) = +-1/2
+	TYPE sign = copysign(0.5, x);
 
-	return 0.5 * erf(x / sqrt(2));
+	if (INFINITY == abs(x))
+		return sign;		// Ф(+-INF) = +- 1
+
+	return sign * erf(abs(x) / sqrt(2));  // Ф(t) = sqn(t) Ф(|t|)
 }
 
 /* Стандартное нормальное гауссовское распределение */
@@ -64,7 +65,7 @@ TYPE Linearization::J0_integral(
 {
 	TYPE sigma = sqrt(disp);
 
-	return norm((u_border - Mx) / sigma) - norm((l_border - Mx) / sigma);
+	return LaplaceFcn((u_border - Mx) / sigma) - LaplaceFcn((l_border - Mx) / sigma);
 }
 
 TYPE Linearization::J1_integral(
@@ -160,6 +161,8 @@ LinearCoeff SaturationLinearize::getCoefficients(cTYPE s, cTYPE Mx, cTYPE disp)
 	J1[0] = J1_integral(Mx, disp, -INFINITY, -s);
 	J1[1] = J1_integral(Mx, disp, -s, s);
 	J1[2] = J1_integral(Mx, disp, s, INFINITY);
+
+	J2 = J2_integral(Mx, disp, -s, s);
 
 	s_index = s;
 

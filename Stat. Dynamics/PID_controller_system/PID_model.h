@@ -28,6 +28,9 @@ private:
 
 	//HWND hWnd;
 
+	// Флаг на вычисление статистических характеристик системы
+	bool calculation_of_statistics;	
+
 	// интервал корреляции Белого Шума
 	TYPE correlation_interval_WhiteNoise;
 
@@ -35,17 +38,44 @@ private:
 	CVector WhiteNoise;
 	bool WhiteNoise_got;	// была ли получена реализация Белого Шума
 
+	TYPE getWhiteNoise(cTYPE t) const;
+
+private:
 	TYPE NonLinearElement(TYPE delta1) const;
+
+	TYPE getEpsilon(cTYPE x1, cTYPE y1, cTYPE y2, cTYPE z1) const;
 
 	/* 
 		В аргумент RightPart передаётся результирующая правая часть, которая будет
 		отдана в return функции getRight */
 
-	void AperiodicElement(CVector &RightPart, 
-		TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const;
+	void AperiodicElement(	CVector &RightPart, 
+							TYPE y1, TYPE y2, TYPE y3, TYPE input) const;
 
-	void ShapingFilter(CVector &RightPart, 
-		TYPE epsilon, TYPE y, TYPE nu) const;
+	void ShapingFilter(	CVector &RightPart, 
+						TYPE x1, TYPE x2, TYPE input) const;
+
+private:
+	SaturationLinearize Saturation;
+
+	// количество элементов в векторе, составленном из треугольной матрицы К (ковариации)
+	UINT size_K_vec;
+
+	// Флаг на текущий метод линеаризации (0 - первый, 1 - второй)
+	bool linearisation_method;
+
+	TYPE getEpsilonDisp(const CMatrix& K, cTYPE mean) const;
+
+	/*
+		Функции для вычисления матриц и векторов, необходимых для матрично-векторного
+		вычисления эволюции системы с учётом стат. характеристик */
+
+	void getA_Mtrx(		CMatrix &A, cTYPE linearization_k) const;
+	void getB_Vector(	CMatrix &B) const;
+	void getC_Vector(	CVector &C, cTYPE k0) const;
+	void getC_Vector(	CVector &C, cTYPE k1, cTYPE Mx, cTYPE fi_0) const;
+
+	CVector LinearizedSystem(const CVector &full_system_vec, cTYPE input_signal);
 
 public:
 	
@@ -62,7 +92,9 @@ public:
 
 	TYPE get_correlation_interval() const;
 
-	CVector getRight(const CVector &X, TYPE t) const override;
+	void ModelWithLinearisation(bool got_linearisation, bool linearisation_method = false);
+
+	CVector getRight(const CVector &X, TYPE t);
 
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
 

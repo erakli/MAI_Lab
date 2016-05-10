@@ -9,7 +9,11 @@ int main()
 {
 	SaturationLinearize Nonlinear;
 
-	LinearCoeff coeffs = Nonlinear.getCoefficients(2.2, 5.83, 68.02);
+	auto erf = Nonlinear.erf(0.76);
+	auto normcdf = Nonlinear.LaplaceFcn(0);
+	auto fg = Nonlinear.J0_integral(0, 1, -2.2, 2.2);
+
+	LinearCoeff coeffs = Nonlinear.getCoefficients(2.2, 0, 1);
 
 	CDormanPrince_modified Integrator;
 

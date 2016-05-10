@@ -19,11 +19,14 @@ public:
 protected:
 	TYPE Mx, disp;
 
+#ifdef _DEBUG
+public:
+#else
 protected:
+#endif
 	TYPE erf(cTYPE x) const;
-	TYPE norm(cTYPE x) const;
+	TYPE LaplaceFcn(cTYPE x) const;
 
-protected:
 	TYPE f_gauss(cTYPE x) const;
 	TYPE f_gauss(cTYPE x, cTYPE Mx, cTYPE disp) const;
 
@@ -31,7 +34,6 @@ protected:
 	TYPE J1_integral(cTYPE Mx, cTYPE disp, cTYPE l_border, cTYPE u_border) const;
 	TYPE J2_integral(cTYPE Mx, cTYPE disp, cTYPE l_border, cTYPE u_border) const;
 
-protected:
 	virtual TYPE get_fi_0() = 0;
 	virtual TYPE get_k1_first(cTYPE fi_0) = 0;
 	virtual TYPE get_k1_second(cTYPE fi_0) = 0;
@@ -40,8 +42,6 @@ public:
 	LinearCoeff getCoefficients(cTYPE Mx, cTYPE disp);
 };
 
-
-/* TO-DO: реализовать методы этого класса */
 
 class SaturationLinearize: public Linearization
 {

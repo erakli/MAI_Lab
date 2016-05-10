@@ -1,21 +1,25 @@
 #include <random>	// Для генерации Белого Шума
 #include <exception>
 
+#include "Stat_linearization.h"
+
 #include "PID_model.h"
 
 /* * * * * * * * * * CPID_controller * * * * * * * * * */
 
+#define SYSTEM_COORDINATES 6
+
 CPID_controller::CPID_controller(){
 
-	StartValues.setSize(6);
+	StartValues.setSize(SYSTEM_COORDINATES);
 	s_size = StartValues.getSize();
 
-	StartValues[0] = 0;		// epsilon
-	StartValues[1] = 0;		// y
-	StartValues[2] = 0;		// beta
-	StartValues[3] = 0;		// z1
-	StartValues[4] = 0;		// z2
-	StartValues[5] = 0;		// teta (используется в сумме x)
+	StartValues[0] = 0;		// x1
+	StartValues[1] = 0;		// x2
+	StartValues[2] = 0;		// y1
+	StartValues[3] = 0;		// y2
+	StartValues[4] = 0;		// y3
+	StartValues[5] = 0;		// z1 (используется в сумме teta)
 
 	extU = 1.7;			// управляющее воздействие
 
@@ -37,12 +41,18 @@ CPID_controller::CPID_controller(){
 	k_coeff[1] = 0.0504;	// integrate
 	k_coeff[2] = 1.9688;	// differentiate
 
+	calculation_of_statistics = false;	// без вычисления стат. характеристик
+
 	correlation_interval_WhiteNoise = 0;
 	WhiteNoise_got = false;
+
+	size_K_vec = (pow(s_size, 2) + s_size) / 2;
+
+	linearisation_method = false; // первый метод линеаризации
 }
 
 /* 
-	Генерация вектора (квази)Белого Шума по заданной частоте среза
+*	Генерация вектора (квази)Белого Шума по заданной частоте среза
 */
 void CPID_controller::Generate_WhiteNoise(const TYPE omega)
 {
@@ -70,6 +80,29 @@ TYPE CPID_controller::get_correlation_interval() const
 	return correlation_interval_WhiteNoise;
 }
 
+void CPID_controller::ModelWithLinearisation(bool got_linearisation, bool linearisation_method)
+{
+	calculation_of_statistics = got_linearisation;
+	this->linearisation_method = linearisation_method;
+}
+
+/*
+*	Входной БШ для Формирующего Фильтра.
+*	Индекс - кратное интервалу корреляции целочисленное число - номер интервала
+*/
+TYPE CPID_controller::getWhiteNoise(cTYPE t)  const
+{
+	if (!WhiteNoise_got)
+	{
+		throw std::exception("WhiteNoise hasn't been generated");
+	}
+
+	TYPE index_WN;
+	modf(t / correlation_interval_WhiteNoise, &index_WN);
+
+	return WhiteNoise[int(index_WN)];
+}
+
 TYPE CPID_controller::NonLinearElement(TYPE delta1) const
 {
 	if (delta1 < -nonLinear_border)
@@ -81,88 +114,267 @@ TYPE CPID_controller::NonLinearElement(TYPE delta1) const
 	return nonLinear_border;
 }
 
+TYPE CPID_controller::getEpsilon(cTYPE x1, cTYPE y1, cTYPE y2, cTYPE z1) const
+{
+	/* Уравнения связи */
+	TYPE teta, tau;
+
+	tau = y1 - extU;
+	teta = k_coeff[0] * tau + z1 + k_coeff[2] * y2;
+
+	return x1 - teta;
+}
+
 /*
-	Агрегат
+*	Агрегат
 */
 void CPID_controller::AperiodicElement(CVector &RightPart, 
-	TYPE beta, TYPE z1, TYPE z2, TYPE alpha) const
+	TYPE y1, TYPE y2, TYPE y3, TYPE input) const
 {
 	//CVector Result(3);
 
-	/*Result[0] = z1;
-	Result[1] = z2;
-	Result[2] = (alpha * K_ag - z2 * ag[1] - z1 * ag[0] - beta) / ag[2];*/
+	/*Result[0] = y2;
+	Result[1] = y3;
+	Result[2] = (input * K_ag - y3 * ag[1] - y2 * ag[0] - y1) / ag[2];*/
 
 	//return Result;
 
-	RightPart.push_back(z1);
-	RightPart.push_back(z2);
+	RightPart.push_back(y2);
+	RightPart.push_back(y3);
 	RightPart.push_back(
-		(alpha * K_ag - z2 * ag[1] - z1 * ag[0] - beta) / ag[2]
+		(input * K_ag - y3 * ag[1] - y2 * ag[0] - y1) / ag[2]
 		);
 }
 
 /*
-	Формирующий фильтр
+*	Формирующий фильтр
 */
 void CPID_controller::ShapingFilter(CVector &RightPart, 
-	TYPE epsilon, TYPE y, TYPE nu) const
+	TYPE x1, TYPE x2, TYPE input) const
 {
 	/*CVector Result(2);
 
-	Result[0] = y;
+	Result[0] = x2;
 	Result[1] = 
-		(nu * K_ag - 2 * T_filter * xi_filter * y - epsilon) / pow(T_filter, 2);
+		(input * K_ag - 2 * T_filter * xi_filter * x2 - x1) / pow(T_filter, 2);
 
 	return Result;*/
 
-	RightPart.push_back(y);
+	RightPart.push_back(x2);
 	RightPart.push_back(
-		(nu * K_ag - 2 * T_filter * xi_filter * y - epsilon) / pow(T_filter, 2)
+		(input * K_ag - 2 * T_filter * xi_filter * x2 - x1) / pow(T_filter, 2)
 		);
 }
 
-CVector CPID_controller::getRight(const CVector &X, TYPE t) const
+TYPE CPID_controller::getEpsilonDisp(const CMatrix& K, cTYPE mean) const
+{
+	/*
+		D[epsilon] = M[epsilon^2] - M[epsilon]^2
+
+		D[epsilon] = 
+			D[x1] - 2 * k * K[x1, y1] - 2 * k_d * K[x1, x2] - 2 * K[x1, z1] + 
+
+			+ k^2 * D[y1] + 2 * k * k_d * K[y1, y2] + 2 * k * K[y1, z1] +
+
+			+ k_d^2 * D[y2] + 2 * k_d * K[y2, z1] +
+
+			+ D[z1]
+		
+		M[epsilon] по идее принимаем 0, так как сигнал стационарный.
+	*/
+
+	return
+		K[0][0]
+		- 2 * k_coeff[0] * K[0][2]
+		- 2 * k_coeff[2] * K[0][3]
+		- 2 * K[0][5]
+
+		+ pow(k_coeff[0], 2) * K[2][2]
+		+ 2 * k_coeff[0] * k_coeff[2] * K[2][3]
+		+ 2 * k_coeff[0] * K[2][5]
+
+		+ pow(k_coeff[2], 2) * K[3][3]
+		+ 2 * k_coeff[2] * K[3][5]
+
+		+ K[5][5]
+		
+		- pow(mean, 2);
+}
+
+void CPID_controller::getA_Mtrx(CMatrix& A, cTYPE linearization_k) const
+{
+	A.setSize(SYSTEM_COORDINATES, SYSTEM_COORDINATES);
+
+	A[0][0] = 0;
+	A[0][1] = 1;
+	A[0][2] = 0;
+	A[0][3] = 0;
+	A[0][4] = 0;
+	A[0][5] = 0;
+
+	A[1][0] = -1 / pow(T_filter, 2);
+	A[1][1] = -2 * xi_filter / T_filter;
+	A[1][2] = 0;
+	A[1][3] = 0;
+	A[1][4] = 0;
+	A[1][5] = 0;
+
+	A[2][0] = 0;
+	A[2][1] = 0;
+	A[2][2] = 0;
+	A[2][3] = 1;
+	A[2][4] = 0;
+	A[2][5] = 0;
+
+	A[3][0] = 0;
+	A[3][1] = 0;
+	A[3][2] = 0;
+	A[3][3] = 0;
+	A[3][4] = 1;
+	A[3][5] = 0;
+
+	A[4][0] = K_ag * linearization_k / ag[2];
+	A[4][1] = 0;
+	A[4][2] = - (1 + K_ag * k_coeff[0] * linearization_k) / ag[2];
+	A[4][3] = - (ag[0] + K_ag * k_coeff[2] * linearization_k) / ag[2];
+	A[4][4] = - ag[1] / ag[2];
+	A[4][5] = - K_ag * linearization_k / ag[2];
+
+	A[5][0] = 0;
+	A[5][1] = 0;
+	A[5][2] = k_coeff[1];
+	A[5][3] = 0;
+	A[5][4] = 0;
+	A[5][5] = 0;
+}
+
+void CPID_controller::getB_Vector(CMatrix& B) const
+{
+	B.resize(1);
+	B[0].assign(SYSTEM_COORDINATES, 0);
+
+	//B[0] = 0;
+	B[0][1] = K_filter / pow(T_filter, 2);
+	//B[2] = 0;
+	//B[3] = 0;
+	//B[4] = 0;
+	//B[5] = 0;
+}
+
+void CPID_controller::getC_Vector(CVector& C, cTYPE k0) const
+{
+	C.setSize(SYSTEM_COORDINATES);
+
+	C[0] = 0;
+	C[1] = 0;
+	C[2] = 0;
+	C[3] = 0;
+	C[4] = K_ag * k0 / ag[2];
+	C[5] = -k_coeff[1];
+}
+
+void CPID_controller::getC_Vector(CVector& C, cTYPE k1, cTYPE Mx, cTYPE fi_0) const
+{
+	C.setSize(SYSTEM_COORDINATES);
+
+	C[0] = 0;
+	C[1] = 0;
+	C[2] = 0;
+	C[3] = 0;
+	C[4] = K_ag * (k1 * (-k_coeff[0] * extU - Mx) + fi_0) / ag[2];
+	C[5] = -k_coeff[1];
+}
+
+CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE input_signal)
+{
+	CVector
+		K_in = CVector::copyPart(full_system_vec, size_K_vec),
+		M_in = CVector::copyPart(full_system_vec, size_K_vec + 1, size_K_vec + SYSTEM_COORDINATES + 1),
+		X_in = CVector::copyPart(full_system_vec, size_K_vec + SYSTEM_COORDINATES + 1, full_system_vec.getSize());
+
+	/* Формирование статистических величин */
+
+	CMatrix K = CSymmetricMatrix::VecToSymmetric(K_in);
+
+	TYPE
+		mean_epsilon = getEpsilon(M_in[0], M_in[2], M_in[3], M_in[5]),
+		disp_epsilon = getEpsilonDisp(K, 0);
+
+	LinearCoeff linearisation =
+		Saturation.getCoefficients(nonLinear_border, mean_epsilon, disp_epsilon);
+
+	TYPE 
+		k0 = linearisation.fi_0 / mean_epsilon,
+		k1;
+
+	k1 = linearisation_method ? linearisation.k1_second : linearisation.k1_first;
+
+	/* Формирование векторов и матриц для вычисления системы ДУ */
+
+	CMatrix A0, A1, B_matrix;
+	CVector B_vec, C0, C1;
+
+	getA_Mtrx(A0, k0);
+	getA_Mtrx(A1, k1);
+
+	getB_Vector(B_matrix);
+
+	getC_Vector(C0, k0);
+	getC_Vector(C1, k1, mean_epsilon, disp_epsilon);
+
+	/* Рассчёт правых частей системы ДУ */
+
+	CMatrix 
+		K_out(K.getRowCount(), K.getColCount()), 
+		temp_matrix(K.getRowCount(), K.getColCount());
+
+	CMatrix::Mult(K, A1, temp_matrix);
+	CMatrix::Add(temp_matrix, K_out);
+	CMatrix::Mult(K, A1.flip(), temp_matrix);
+	CMatrix::Add(temp_matrix, K_out);
+	CMatrix::Mult(B_matrix.flip(), B_matrix, temp_matrix);
+	CMatrix::Add(temp_matrix, K_out);
+
+	CVector dM(M_in.getSize()), dX(X_in.getSize());
+
+	B_vec = B_matrix[0];
+
+	dM = A0 * M_in + C0;
+	dX = A1 * X_in + B_vec * input_signal + C1;
+
+	/* Формирование общего вектора системы (общей правой части) */
+
+	CVector ret;
+	ret.reserve(full_system_vec.getSize());
+
+	ret.insert_toEnd(CVector::SymmetricToVec(K_out));
+	ret.insert_toEnd(dM);
+	ret.insert_toEnd(dX);
+
+	return ret;
+}
+
+CVector CPID_controller::getRight(const CVector &X, TYPE t)
 {
 	/* Буквенное представление проинтегрированных Правых Частей системы ДУ */
-	TYPE epsilon, y, beta, z1, z2, teta;
+	TYPE x1, x2, y1, y2, y3, z1;
 
-	epsilon = X[0];
-	y		= X[1];
-	beta	= X[2];
-	z1		= X[3];
-	z2		= X[4];
-	teta	= X[5];
+	x1		= X[0];
+	x2		= X[1];
+	y1		= X[2];
+	y2		= X[3];
+	y3		= X[4];
+	z1		= X[5];
 
 	/* Уравнения связи */
-	TYPE x, alpha, delta, tau;
+	TYPE alpha, epsilon, tau;
 
-	tau = beta - extU;
-	x = k_coeff[0] * tau + teta + k_coeff[2] * z1;
-	delta = epsilon - x;
-	alpha = NonLinearElement(delta);
+	tau = y1 - extU;
+	epsilon = getEpsilon(x1, y1, y2, z1);
+	alpha = NonLinearElement(epsilon);
 
-	/* 
-		Входной БШ для Формирующего Фильтра. 
-		Индекс - кратное интервалу корреляции целочисленное число - номер интервала
-	*/
-	if (! WhiteNoise_got)
-	{
-		throw std::exception("WhiteNoise hasn't been generated");
-	}
-
-	TYPE index_WN;
-	modf(t / correlation_interval_WhiteNoise, &index_WN);
-
-	TYPE nu = WhiteNoise[int(index_WN)];
-
-	/*CVector 
-		Shaping_filter = ShapingFilter(epsilon, y, nu),
-		Agregat = AperiodicElement(beta, z1, z2, alpha);*/
-
-	/*int size = Elem.getSize();
-	for (int i = 0; i < size; i++)
-		Y[i] = Elem[i];*/
+	// Входной БШ для Формирующего Фильтра.
+	TYPE nu = getWhiteNoise(t);
 
 	/* Формируем результирующий вектор как комбинацию векторов от всех звеньев */
 	CVector Y;
@@ -171,8 +383,8 @@ CVector CPID_controller::getRight(const CVector &X, TYPE t) const
 	/*Y.insert_toEnd(Shaping_filter);
 	Y.insert_toEnd(Agregat);*/
 
-	ShapingFilter(Y, epsilon, y, nu);
-	AperiodicElement(Y, beta, z1, z2, alpha);
+	ShapingFilter(Y, x1, x2, nu);
+	AperiodicElement(Y, y1, y2, y3, alpha);
 
 	Y.push_back(k_coeff[1] * tau);	// прибавляем к системе Teta[2]
 
