@@ -1,13 +1,14 @@
 #include <random>	// Для генерации Белого Шума
 #include <exception>
 
-#include "Stat_linearization.h"
+#include "file_output.h"
 
 #include "PID_model.h"
 
 /* * * * * * * * * * CPID_controller * * * * * * * * * */
 
-#define SYSTEM_COORDINATES 6
+#define SYSTEM_COORDINATES		6
+#define DISP_IN_SETTLED_MODE	5.0
 
 CPID_controller::CPID_controller(){
 
@@ -46,7 +47,7 @@ CPID_controller::CPID_controller(){
 	correlation_interval_WhiteNoise = 0;
 	WhiteNoise_got = false;
 
-	size_K_vec = (pow(s_size, 2) + s_size) / 2;
+	size_K_vec = int((pow(s_size, 2) + s_size) / 2);
 
 	linearisation_method = false; // первый метод линеаризации
 }
@@ -80,10 +81,38 @@ TYPE CPID_controller::get_correlation_interval() const
 	return correlation_interval_WhiteNoise;
 }
 
+/*
+*	Включение и отключение линеаризации. Вызывать строго перед интегрированием.
+*/
 void CPID_controller::ModelWithLinearisation(bool got_linearisation, bool linearisation_method)
 {
 	calculation_of_statistics = got_linearisation;
-	this->linearisation_method = linearisation_method;
+
+	if (calculation_of_statistics)
+	{
+		/* 
+			Заполняем вектор НУ. Все значения нулевые, кроме диагональных элементов
+			матрицы ковариации. Эти элементы - дисперсии - должны быть инициализированы
+			значениями, бОльшими, чем дисперсия этих координат в установившемся режиме*/
+		CMatrix K(SYSTEM_COORDINATES, SYSTEM_COORDINATES);
+		for (auto i = 0; i < SYSTEM_COORDINATES; i++)
+			K[i][i] = DISP_IN_SETTLED_MODE;
+		CVector K_vectorized = CVector::SymmetricToVec(K);
+		auto K_size = K_vectorized.getSize();
+
+		StartValues.assign(K_size + SYSTEM_COORDINATES * 2, 0);
+
+		for (auto i = 0; i < K_size; i++)
+			StartValues[i] = K_vectorized[i];
+
+		this->linearisation_method = linearisation_method;
+	}
+	else
+	{
+		StartValues.assign(SYSTEM_COORDINATES, 0);
+	}
+	
+	s_size = StartValues.getSize();
 }
 
 /*
@@ -164,6 +193,40 @@ void CPID_controller::ShapingFilter(CVector &RightPart,
 	RightPart.push_back(
 		(input * K_ag - 2 * T_filter * xi_filter * x2 - x1) / pow(T_filter, 2)
 		);
+}
+
+CVector CPID_controller::SourceSystem(const CVector& X, cTYPE input_signal) const
+{
+	/* Буквенное представление проинтегрированных Правых Частей системы ДУ */
+	TYPE x1, x2, y1, y2, y3, z1;
+
+	x1 = X[0];
+	x2 = X[1];
+	y1 = X[2];
+	y2 = X[3];
+	y3 = X[4];
+	z1 = X[5];
+
+	/* Уравнения связи */
+	TYPE alpha, epsilon, tau;
+
+	tau = y1 - extU;
+	epsilon = getEpsilon(x1, y1, y2, z1);
+	alpha = NonLinearElement(epsilon);
+
+	/* Формируем результирующий вектор как комбинацию векторов от всех звеньев */
+	CVector Y;
+	Y.reserve(s_size);
+
+	/*Y.insert_toEnd(Shaping_filter);
+	Y.insert_toEnd(Agregat);*/
+
+	ShapingFilter(Y, x1, x2, input_signal);
+	AperiodicElement(Y, y1, y2, y3, alpha);
+
+	Y.push_back(k_coeff[1] * tau);	// прибавляем к системе z1
+
+	return Y;
 }
 
 TYPE CPID_controller::getEpsilonDisp(const CMatrix& K, cTYPE mean) const
@@ -285,12 +348,12 @@ void CPID_controller::getC_Vector(CVector& C, cTYPE k1, cTYPE Mx, cTYPE fi_0) co
 	C[5] = -k_coeff[1];
 }
 
-CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE input_signal)
+CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE input_signal) const
 {
 	CVector
-		K_in = CVector::copyPart(full_system_vec, size_K_vec),
-		M_in = CVector::copyPart(full_system_vec, size_K_vec + 1, size_K_vec + SYSTEM_COORDINATES + 1),
-		X_in = CVector::copyPart(full_system_vec, size_K_vec + SYSTEM_COORDINATES + 1, full_system_vec.getSize());
+		K_in = CVector::copyPart(full_system_vec, size_K_vec - 1),
+		M_in = CVector::copyPart(full_system_vec, size_K_vec, size_K_vec + SYSTEM_COORDINATES - 1),
+		X_in = CVector::copyPart(full_system_vec, size_K_vec + SYSTEM_COORDINATES, full_system_vec.getSize() - 1);
 
 	/* Формирование статистических величин */
 
@@ -309,6 +372,12 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 
 	k1 = linearisation_method ? linearisation.k1_second : linearisation.k1_first;
 
+#ifdef TESTS
+	/*k0 = 0;
+	k1 = 1;
+	linearisation.fi_0 = 0;*/
+#endif
+
 	/* Формирование векторов и матриц для вычисления системы ДУ */
 
 	CMatrix A0, A1, B_matrix;
@@ -320,22 +389,26 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 	getB_Vector(B_matrix);
 
 	getC_Vector(C0, k0);
-	getC_Vector(C1, k1, mean_epsilon, disp_epsilon);
+	getC_Vector(C1, k1, mean_epsilon, linearisation.fi_0);
 
 	/* Рассчёт правых частей системы ДУ */
 
-	CMatrix 
+	/*CMatrix 
 		K_out(K.getRowCount(), K.getColCount()), 
 		temp_matrix(K.getRowCount(), K.getColCount());
 
-	CMatrix::Mult(K, A1, temp_matrix);
+	CMatrix::Mult(A1, K, temp_matrix);
 	CMatrix::Add(temp_matrix, K_out);
 	CMatrix::Mult(K, A1.flip(), temp_matrix);
 	CMatrix::Add(temp_matrix, K_out);
 	CMatrix::Mult(B_matrix.flip(), B_matrix, temp_matrix);
-	CMatrix::Add(temp_matrix, K_out);
+	CMatrix::Add(temp_matrix, K_out);*/
 
-	CVector dM(M_in.getSize()), dX(X_in.getSize());
+	CMatrix K_out;
+
+	K_out = A1 * K + K * A1.flip() + B_matrix.flip() * B_matrix;
+
+	CVector dM, dX;
 
 	B_vec = B_matrix[0];
 
@@ -354,41 +427,19 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 	return ret;
 }
 
-CVector CPID_controller::getRight(const CVector &X, TYPE t)
+CVector CPID_controller::getRight(const CVector &X, TYPE t) const
 {
-	/* Буквенное представление проинтегрированных Правых Частей системы ДУ */
-	TYPE x1, x2, y1, y2, y3, z1;
-
-	x1		= X[0];
-	x2		= X[1];
-	y1		= X[2];
-	y2		= X[3];
-	y3		= X[4];
-	z1		= X[5];
-
-	/* Уравнения связи */
-	TYPE alpha, epsilon, tau;
-
-	tau = y1 - extU;
-	epsilon = getEpsilon(x1, y1, y2, z1);
-	alpha = NonLinearElement(epsilon);
-
 	// Входной БШ для Формирующего Фильтра.
 	TYPE nu = getWhiteNoise(t);
 
-	/* Формируем результирующий вектор как комбинацию векторов от всех звеньев */
-	CVector Y;
-	Y.reserve(s_size);
-
-	/*Y.insert_toEnd(Shaping_filter);
-	Y.insert_toEnd(Agregat);*/
-
-	ShapingFilter(Y, x1, x2, nu);
-	AperiodicElement(Y, y1, y2, y3, alpha);
-
-	Y.push_back(k_coeff[1] * tau);	// прибавляем к системе Teta[2]
-
-	return Y;
+	if (calculation_of_statistics == false)
+	{
+		return SourceSystem(X, nu);
+	}
+	else
+	{
+		return LinearizedSystem(X, nu);
+	}
 }
 
 bool CPID_controller::Stop_Calculation(TYPE t, TYPE, CVector &PrevStep, CVector &CurStep)

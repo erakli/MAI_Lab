@@ -7,6 +7,7 @@
 
 int main()
 {
+#ifdef _DEBUG
 	SaturationLinearize Nonlinear;
 
 	auto erf = Nonlinear.erf(0.76);
@@ -14,6 +15,7 @@ int main()
 	auto fg = Nonlinear.J0_integral(0, 1, -2.2, 2.2);
 
 	LinearCoeff coeffs = Nonlinear.getCoefficients(2.2, 0, 1);
+#endif
 
 	CDormanPrince_modified Integrator;
 
@@ -32,6 +34,9 @@ int main()
 	TYPE omega = 1.0e+3;	// частота генерации Белого Шума
 
 	Model.Generate_WhiteNoise(omega);
+
+	// активируем процесс линеаризации
+	Model.ModelWithLinearisation(true, false);
 
 	// информируем интегратор о величине интервала корреляции
 	Integrator.set_correlation_interval(Model.get_correlation_interval());

@@ -93,7 +93,7 @@ TYPE Linearization::J2_integral(cTYPE Mx, cTYPE disp, cTYPE l_border, cTYPE u_bo
 			+ l_border * f_gauss(l_border, Mx, disp));
 }
 
-LinearCoeff Linearization::getCoefficients(cTYPE Mx, cTYPE disp)
+LinearCoeff Linearization::getCoefficients(cTYPE Mx, cTYPE disp) const
 {
 	this->Mx = Mx;
 	this->disp = disp;
@@ -120,7 +120,7 @@ SaturationLinearize::SaturationLinearize() : s_index(0), J2(0)
 	}
 }
 
-TYPE SaturationLinearize::get_fi_0()
+TYPE SaturationLinearize::get_fi_0() const
 {
 	return 
 		-s_index * J0[0] 
@@ -128,7 +128,7 @@ TYPE SaturationLinearize::get_fi_0()
 		+ s_index * J0[2];
 }
 
-TYPE SaturationLinearize::get_k1_first(cTYPE fi_0)
+TYPE SaturationLinearize::get_k1_first(cTYPE fi_0) const
 {
 	TYPE
 		integral = 
@@ -140,7 +140,7 @@ TYPE SaturationLinearize::get_k1_first(cTYPE fi_0)
 		sqrt((integral - pow(fi_0, 2)) / disp);
 }
 
-TYPE SaturationLinearize::get_k1_second(cTYPE fi_0)
+TYPE SaturationLinearize::get_k1_second(cTYPE fi_0) const
 {
 	TYPE
 		integral =
@@ -152,7 +152,7 @@ TYPE SaturationLinearize::get_k1_second(cTYPE fi_0)
 		(integral - Mx * fi_0) / disp;
 }
 
-LinearCoeff SaturationLinearize::getCoefficients(cTYPE s, cTYPE Mx, cTYPE disp)
+LinearCoeff SaturationLinearize::getCoefficients(cTYPE s, cTYPE Mx, cTYPE disp) const
 {
 	J0[0] = J0_integral(Mx, disp, -INFINITY, -s);
 	J0[1] = J0_integral(Mx, disp, -s, s);

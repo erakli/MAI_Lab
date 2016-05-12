@@ -4,6 +4,10 @@
 
 #include "Model.h"
 
+#include "Stat_linearization.h"
+
+//#define TESTS
+
 //#define WM_USER			0x0400
 //#define WM_ADDPOINT		WM_USER + 1
 //
@@ -55,6 +59,8 @@ private:
 	void ShapingFilter(	CVector &RightPart, 
 						TYPE x1, TYPE x2, TYPE input) const;
 
+	CVector SourceSystem(const CVector& X, cTYPE input_signal) const;
+
 private:
 	SaturationLinearize Saturation;
 
@@ -75,7 +81,7 @@ private:
 	void getC_Vector(	CVector &C, cTYPE k0) const;
 	void getC_Vector(	CVector &C, cTYPE k1, cTYPE Mx, cTYPE fi_0) const;
 
-	CVector LinearizedSystem(const CVector &full_system_vec, cTYPE input_signal);
+	CVector LinearizedSystem(const CVector &full_system_vec, cTYPE input_signal) const;
 
 public:
 	
@@ -94,7 +100,7 @@ public:
 
 	void ModelWithLinearisation(bool got_linearisation, bool linearisation_method = false);
 
-	CVector getRight(const CVector &X, TYPE t);
+	CVector getRight(const CVector &X, TYPE t) const override;
 
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
 
