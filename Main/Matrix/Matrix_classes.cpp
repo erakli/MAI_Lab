@@ -302,16 +302,19 @@ CVector CVector::crossProduct(const CVector &b) const{
 
 CVector CVector::SymmetricToVec(const CMatrix& Matrix)
 {
-	UINT
+	auto
 		row = Matrix.getRowCount(),
 		col = Matrix.getColCount();
 
 	CVector ret((row * col + row) / 2);
 
-	for (auto i = 0; i < row; i++)
+	for (auto i = 0, index = 0; i < row; i++)
 	{
 		for (auto j = i; j < col; j++)
-			ret[i * col + j] = Matrix[i][j];
+		{
+			ret[index] = Matrix[i][j];
+			index++;
+		}
 	}
 
 	return ret;
@@ -930,16 +933,19 @@ void CSymmetricMatrix::setElement(int n, int m, TYPE value){
 
 CSymmetricMatrix CSymmetricMatrix::VecToSymmetric(const CVector& Vec)
 {
-	UINT
+	int
 		size = Vec.getSize(),
-		matrix_side = (sqrt(1 + 8 * size) - 1) / 2;
+		matrix_side = int((sqrt(1 + 8 * size) - 1) / 2);
 
 	CSymmetricMatrix matrix(matrix_side);
 
-	for (auto i = 0; i < matrix_side; i++)
+	for (auto i = 0, index = 0; i < matrix_side; i++)
 	{
 		for (auto j = i; j < matrix_side; j++)
-			matrix.setElement(i, j, Vec[i * matrix_side + j]);
+		{
+			matrix.setElement(i, j, Vec[index]);
+			index++;
+		}
 	}
 
 	return matrix;
