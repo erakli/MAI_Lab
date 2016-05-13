@@ -4,6 +4,7 @@
 #include "Dorman-Prince_modified.h"
 #include "Stat_linearization.h"
 
+//extern CMatrix coefficients;
 
 int main()
 {
@@ -26,7 +27,9 @@ int main()
 		//Model(hWnd);
 		Model;
 
-	TYPE t = 500;
+	TYPE 
+		//t = 10;
+		t = 500;
 
 	Model.set_t1(t);
 	Model.setInterval(0.1); // интервал выдачи

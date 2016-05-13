@@ -5,6 +5,8 @@
 
 #include "PID_model.h"
 
+static CMatrix coefficients; // коэффициенты линеаризации
+
 /* * * * * * * * * * CPID_controller * * * * * * * * * */
 
 #define SYSTEM_COORDINATES		6
@@ -332,8 +334,8 @@ void CPID_controller::getC_Vector(CVector& C, cTYPE k0) const
 	C[1] = 0;
 	C[2] = 0;
 	C[3] = 0;
-	C[4] = K_ag * k0 / ag[2];
-	C[5] = -k_coeff[1];
+	C[4] = K_ag * k0 / ag[2] * extU;
+	C[5] = -k_coeff[1] * extU;
 }
 
 void CPID_controller::getC_Vector(CVector& C, cTYPE k1, cTYPE Mx, cTYPE fi_0) const
@@ -345,7 +347,7 @@ void CPID_controller::getC_Vector(CVector& C, cTYPE k1, cTYPE Mx, cTYPE fi_0) co
 	C[2] = 0;
 	C[3] = 0;
 	C[4] = K_ag * (k1 * (-k_coeff[0] * extU - Mx) + fi_0) / ag[2];
-	C[5] = -k_coeff[1];
+	C[5] = -k_coeff[1] * extU;
 }
 
 CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE input_signal) const
@@ -371,6 +373,14 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 		k1;
 
 	k1 = linearisation_method ? linearisation.k1_second : linearisation.k1_first;
+
+
+	CVector row(3);
+	row[0] = linearisation.fi_0;
+	row[1] = k1;
+	row[2] = k0;
+
+	coefficients.push_back(row);
 
 #ifdef TESTS
 	/*k0 = 0;
@@ -464,3 +474,9 @@ bool CPID_controller::Stop_Calculation(TYPE t, TYPE, CVector &PrevStep, CVector 
 //
 //	PostMessage(hWnd, WM_ADDPOINT, 0, (LPARAM)pStruct);
 //}
+
+CMatrix CPID_controller::getResult()
+{
+	//to_file(coefficients);
+	return CModel::getResult();
+};

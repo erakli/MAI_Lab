@@ -105,4 +105,5 @@ public:
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
 
 	//void addResult(CVector &X, TYPE t) override;
+	CMatrix getResult();
 };
