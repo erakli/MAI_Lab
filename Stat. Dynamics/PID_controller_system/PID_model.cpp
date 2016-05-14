@@ -26,7 +26,7 @@ CPID_controller::CPID_controller(){
 	StartValues[4] = 0;		// y3
 	StartValues[5] = 0;		// z1 (используется в сумме teta)
 
-	extU = 1.7;			// управляющее воздействие
+	extU = 1.7 * 0 + 1.5;			// управляющее воздействие
 
 	nonLinear_border = 2.2;			// границы в нелинейном звене
 
@@ -43,7 +43,7 @@ CPID_controller::CPID_controller(){
 
 	/* Коэффициенты ПИД-регулятора */
 	k_coeff[0] = 0.63;		// gain
-	k_coeff[1] = 0.0504 * 3;	// integrate
+	k_coeff[1] = 0.0504 * 2;	// integrate
 	k_coeff[2] = 1.9688	* 2;	// differentiate
 
 	calculation_of_statistics = false;	// без вычисления стат. характеристик
