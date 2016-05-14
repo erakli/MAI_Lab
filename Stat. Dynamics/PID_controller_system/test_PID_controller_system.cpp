@@ -29,7 +29,7 @@ int main()
 
 	TYPE 
 		//t = 10;
-		t = 500;
+		t = 500 * 2;
 
 	Model.set_t1(t);
 	Model.setInterval(0.1); // интервал выдачи

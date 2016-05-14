@@ -5,7 +5,9 @@
 
 #include "PID_model.h"
 
+#ifdef LOOKUP_COEFF
 static CMatrix coefficients; // коэффициенты линеаризации
+#endif
 
 /* * * * * * * * * * CPID_controller * * * * * * * * * */
 
@@ -29,10 +31,10 @@ CPID_controller::CPID_controller(){
 	nonLinear_border = 2.2;			// границы в нелинейном звене
 
 	/* Коэффициенты в числителе и знаменателе Агрегата */
-	K_ag	= 1.5;
+	K_ag	= 1.5	/	2.0;
 	ag[0]	= 1.5;
 	ag[1]	= 43;
-	ag[2]	= 50;
+	ag[2]	= 50	/	2.0;
 
 	/* Коэффициенты в числителе и знаменателе Формирующего Фильтра */
 	K_filter	= 4 / sqrt(7);
@@ -41,8 +43,8 @@ CPID_controller::CPID_controller(){
 
 	/* Коэффициенты ПИД-регулятора */
 	k_coeff[0] = 0.63;		// gain
-	k_coeff[1] = 0.0504;	// integrate
-	k_coeff[2] = 1.9688;	// differentiate
+	k_coeff[1] = 0.0504 * 3;	// integrate
+	k_coeff[2] = 1.9688	* 2;	// differentiate
 
 	calculation_of_statistics = false;	// без вычисления стат. характеристик
 
@@ -334,7 +336,7 @@ void CPID_controller::getC_Vector(CVector& C, cTYPE k0) const
 	C[1] = 0;
 	C[2] = 0;
 	C[3] = 0;
-	C[4] = K_ag * k0 / ag[2] * extU;
+	C[4] = K_ag * k0 * k_coeff[0] / ag[2] * extU;
 	C[5] = -k_coeff[1] * extU;
 }
 
@@ -346,7 +348,7 @@ void CPID_controller::getC_Vector(CVector& C, cTYPE k1, cTYPE Mx, cTYPE fi_0) co
 	C[1] = 0;
 	C[2] = 0;
 	C[3] = 0;
-	C[4] = K_ag * (k1 * (-k_coeff[0] * extU - Mx) + fi_0) / ag[2];
+	C[4] = K_ag * (k1 * (k_coeff[0] * extU - Mx) + fi_0) / ag[2];
 	C[5] = -k_coeff[1] * extU;
 }
 
@@ -374,13 +376,14 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 
 	k1 = linearisation_method ? linearisation.k1_second : linearisation.k1_first;
 
-
+#ifdef LOOKUP_COEFF
 	CVector row(3);
 	row[0] = linearisation.fi_0;
 	row[1] = k1;
 	row[2] = k0;
 
 	coefficients.push_back(row);
+#endif
 
 #ifdef TESTS
 	/*k0 = 0;
@@ -477,6 +480,8 @@ bool CPID_controller::Stop_Calculation(TYPE t, TYPE, CVector &PrevStep, CVector 
 
 CMatrix CPID_controller::getResult()
 {
-	//to_file(coefficients);
+#ifdef LOOKUP_COEFF
+	to_file(coefficients);
+#endif
 	return CModel::getResult();
 };
