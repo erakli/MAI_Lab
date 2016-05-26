@@ -100,9 +100,21 @@ void CModel::setResultType()
 
 	// если ожидается более LISTLIMIT результатов, производим запись в List
 	if (num_of_results >= LISTLIMIT)
+	{
+		// проверяем и очищаем список
+		if (!Result.empty()) Result.clear();
+
 		large_result_flag = true;
+	}
 	else
 	{
+		// очистим перед этим матрицу, если там что-то есть
+		if (!Result_Matrix.empty())
+		{
+			Result_Matrix.clear();
+			result_matrix_position = 0;
+		}
+
 		// иначе создадим сразу большую матрицу результатов и будем её заполнять
 		Result_Matrix.reserve(num_of_results);
 		large_result_flag = false;

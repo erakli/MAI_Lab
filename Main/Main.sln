@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Earth_grav_field", "Earth_grav_field\Earth_grav_field.vcxproj", "{FCEFEF84-EDB1-410B-B5DC-CAE84574191E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RandomProcessModelling", "RandomProcessModelling\RandomProcessModelling.vcxproj", "{CE98AA03-94B6-488D-B861-1FAD6EAEF891}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,18 @@ Global
 		{FCEFEF84-EDB1-410B-B5DC-CAE84574191E}.Release|Win32.ActiveCfg = Release|Win32
 		{FCEFEF84-EDB1-410B-B5DC-CAE84574191E}.Release|Win32.Build.0 = Release|Win32
 		{FCEFEF84-EDB1-410B-B5DC-CAE84574191E}.Release|x64.ActiveCfg = Release|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Debug|Win32.Build.0 = Debug|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Debug|x64.ActiveCfg = Debug|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Release|Any CPU.ActiveCfg = Release|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Release|Win32.ActiveCfg = Release|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Release|Win32.Build.0 = Release|Win32
+		{CE98AA03-94B6-488D-B861-1FAD6EAEF891}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

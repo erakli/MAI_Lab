@@ -1,5 +1,7 @@
 #include "Dorman-Prince_modified.h"
 
+#define STEP_CORRECTION
+
 //#define ORDER 1.0e-7
 
 /* Округление до необходимого знака после запятой */
@@ -38,10 +40,14 @@ void CDormanPrince_modified::set_correlation_interval(const TYPE correlation_int
 
 TYPE CDormanPrince_modified::StepCorrection()
 {
-	/*TYPE NewStep = CDormanPrince::StepCorrection();
+#ifdef STEP_CORRECTION
+	TYPE NewStep = CDormanPrince::StepCorrection();
 
 	if (NewStep > correlation_interval)
-		NewStep = correlation_interval;*/
+		NewStep = correlation_interval;
+
+	return NewStep;
+#endif
 
 	//TYPE
 	//	curPosition_on_curInterval,
@@ -68,7 +74,9 @@ TYPE CDormanPrince_modified::StepCorrection()
 
 	//return NewStep;
 
+#ifndef STEP_CORRECTION
 	return Step;
+#endif
 }
 
 void CDormanPrince_modified::getError()
