@@ -84,16 +84,16 @@
     <ClCompile Include="..\..\Main\Dorman-Prince\Integrator.cpp" />
     <ClCompile Include="..\..\Main\Dorman-Prince\Model.cpp" />
     <ClCompile Include="..\..\Main\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="..\..\Main\RandomProcessModelling\Dorman-Prince_modified.cpp" />
     <ClCompile Include="..\..\Main\RandomProcessModelling\WhiteNoise.cpp" />
-    <ClCompile Include="Dorman-Prince_modified.cpp" />
     <ClCompile Include="forUIRS.cpp" />
     <ClCompile Include="PID_model.cpp" />
     <ClCompile Include="Stat_linearization.cpp" />
     <ClCompile Include="test_PID_controller_system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Main\RandomProcessModelling\Dorman-Prince_modified.h" />
     <ClInclude Include="..\..\Main\RandomProcessModelling\WhiteNoise.h" />
-    <ClInclude Include="Dorman-Prince_modified.h" />
     <ClInclude Include="PID_model.h" />
     <ClInclude Include="Stat_linearization.h" />
   </ItemGroup>

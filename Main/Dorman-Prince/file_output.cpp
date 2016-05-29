@@ -141,11 +141,11 @@ void to_file(const CMatrix& Result, bool radians)
 
 
 	/*
-	Множитель перевода радиан в градусы
+		Множитель перевода радиан в градусы
 
-	По умолчанию равен 1. Если результат вывода
-	выбран в градусах (radians = false), то результат
-	вывода будет в градусах
+		По умолчанию равен 1. Если результат вывода
+		выбран в градусах (radians = false), то результат
+		вывода будет в градусах
 	*/
 	TYPE rad2deg;
 	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
@@ -158,11 +158,16 @@ void to_file(const CMatrix& Result, bool radians)
 	{
 		if (!Result[i].empty())
 		{
-			fout << Result[i][0] << "	";	// время
-
-			for (int j = 1; j < ColCount - 1; j++)
+			for (int j = 0; j < ColCount - 1; j++)
 			{
-				fout << Result[i][j] * rad2deg << "	";
+				if (j == 0)
+				{
+					fout << Result[i][j] << "	";	// время
+				}
+				else
+				{
+					fout << Result[i][j] * rad2deg << "	";
+				}
 			}
 			fout << Result[i][ColCount - 1] * rad2deg;
 			fout << "\n";

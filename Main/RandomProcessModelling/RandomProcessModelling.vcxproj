@@ -53,6 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Matrix;..\Supporting files;..\Dorman-Prince;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -69,6 +70,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Matrix;..\Supporting files;..\Dorman-Prince;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,9 +80,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dorman-Prince\file_output.cpp" />
+    <ClCompile Include="..\Dorman-Prince\Integrator.cpp" />
+    <ClCompile Include="..\Dorman-Prince\Model.cpp" />
+    <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
+    <ClCompile Include="Dorman-Prince_modified.cpp" />
+    <ClCompile Include="ShapingFilter.cpp" />
+    <ClCompile Include="test_RandomProcessModelling.cpp" />
     <ClCompile Include="WhiteNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dorman-Prince_modified.h" />
+    <ClInclude Include="ShapingFilter.h" />
     <ClInclude Include="WhiteNoise.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
