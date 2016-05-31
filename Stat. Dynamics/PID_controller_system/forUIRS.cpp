@@ -140,6 +140,7 @@ CMatrix get_K(CVector &realization)
 #ifdef UIRS
 int main()
 {
+#ifdef MODELLING
 	CDormanPrince_modified Integrator;
 
 	Integrator.setEps_Max(1.0e-13); // задали максимально допустимую погрешность
@@ -172,6 +173,15 @@ int main()
 
 	CMatrix temp(result.flip());
 	CVector for_K(temp[1]);
+#endif
+
+#ifndef MODELLING
+#define FILENAME "mas_out.txt"
+	CMatrix from_file;
+	Read_from_file(FILENAME, from_file, 10001);
+
+	CVector for_K(from_file.flip()[0]);
+#endif
 
 	// делаем вывод результатов в файл
 	to_file(get_K(for_K));

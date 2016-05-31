@@ -86,12 +86,14 @@
     <ClCompile Include="..\Matrix\Matrix_classes.cpp" />
     <ClCompile Include="Dorman-Prince_modified.cpp" />
     <ClCompile Include="ShapingFilter.cpp" />
+    <ClCompile Include="StatProcessing.cpp" />
     <ClCompile Include="test_RandomProcessModelling.cpp" />
     <ClCompile Include="WhiteNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dorman-Prince_modified.h" />
     <ClInclude Include="ShapingFilter.h" />
+    <ClInclude Include="StatProcessing.h" />
     <ClInclude Include="WhiteNoise.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
