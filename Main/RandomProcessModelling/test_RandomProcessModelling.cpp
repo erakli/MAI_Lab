@@ -1,9 +1,10 @@
-#include <iostream>
+п»ї#include <iostream>
 
 #include "file_output.h"
 
 #include "ShapingFilter.h"
 #include "Dorman-Prince_modified.h"
+#include "StatAnalysis.h"
 
 using namespace std;
 
@@ -14,16 +15,16 @@ int main()
 
 	CDormanPrince_modified Integrator;
 
-	Integrator.setEps_Max(1.0e-13); // задали максимально допустимую погрешность
+	Integrator.setEps_Max(1.0e-13); // Р·Р°РґР°Р»Рё РјР°РєСЃРёРјР°Р»СЊРЅРѕ РґРѕРїСѓСЃС‚РёРјСѓСЋ РїРѕРіСЂРµС€РЅРѕСЃС‚СЊ
 
-	// инициализировали модель
+	// РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°Р»Рё РјРѕРґРµР»СЊ
 	CShapingFilter
 		//Model(hWnd);
 		Model;
 
-	TYPE omega = 1.0e+3;	// частота генерации Белого Шума
+	TYPE omega = 1.0e+3;	// С‡Р°СЃС‚РѕС‚Р° РіРµРЅРµСЂР°С†РёРё Р‘РµР»РѕРіРѕ РЁСѓРјР°
 
-	// цикл интерфейса взаимодейтсивя с программой
+	// С†РёРєР» РёРЅС‚РµСЂС„РµР№СЃР° РІР·Р°РёРјРѕРґРµР№С‚СЃРёРІСЏ СЃ РїСЂРѕРіСЂР°РјРјРѕР№
 	int repeat(0);
 	do
 	{
@@ -32,12 +33,12 @@ int main()
 		cout << "Define time of modelling: "; cin >> t; cout << endl;
 		Model.set_t1(t);
 
-		// если в первый раз моделируем, то создаём реализацию БШ
+		// РµСЃР»Рё РІ РїРµСЂРІС‹Р№ СЂР°Р· РјРѕРґРµР»РёСЂСѓРµРј, С‚Рѕ СЃРѕР·РґР°С‘Рј СЂРµР°Р»РёР·Р°С†РёСЋ Р‘РЁ
 		if (!repeat)
 		{
 			Model.Generate_WhiteNoise(omega);
 
-			// информируем интегратор о величине интервала корреляции
+			// РёРЅС„РѕСЂРјРёСЂСѓРµРј РёРЅС‚РµРіСЂР°С‚РѕСЂ Рѕ РІРµР»РёС‡РёРЅРµ РёРЅС‚РµСЂРІР°Р»Р° РєРѕСЂСЂРµР»СЏС†РёРё
 			Integrator.set_correlation_interval(Model.get_correlation_interval());
 
 			cout << "White Noise is generated. For this session max modelling time is "
@@ -45,12 +46,12 @@ int main()
 		}
 
 		cout << "What about output interval (sec)? "; cin >> interval; cout << endl;
-		Model.setInterval(interval); // интервал выдачи
+		Model.setInterval(interval); // РёРЅС‚РµСЂРІР°Р» РІС‹РґР°С‡Рё
 
-		// запускаем интегрирование
+		// Р·Р°РїСѓСЃРєР°РµРј РёРЅС‚РµРіСЂРёСЂРѕРІР°РЅРёРµ
 		Integrator.Run(Model);
 
-		// делаем вывод результатов в файл
+		// РґРµР»Р°РµРј РІС‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РІ С„Р°Р№Р»
 		to_file(Model.getResult());
 
 		cout << endl << "	Repeat modelling? "; cin >> repeat; cout << endl;

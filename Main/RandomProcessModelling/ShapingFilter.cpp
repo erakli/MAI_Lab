@@ -1,4 +1,4 @@
-#include <exception>
+п»ї#include <exception>
 
 #include "WhiteNoise.h"
 
@@ -13,7 +13,7 @@ CShapingFilter::CShapingFilter(){
 	StartValues.setSize(SYSTEM_COORDINATES);
 	s_size = StartValues.getSize();
 	
-	/* Коэффициенты в числителе и знаменателе Формирующего Фильтра */
+	/* РљРѕСЌС„С„РёС†РёРµРЅС‚С‹ РІ С‡РёСЃР»РёС‚РµР»Рµ Рё Р·РЅР°РјРµРЅР°С‚РµР»Рµ Р¤РѕСЂРјРёСЂСѓСЋС‰РµРіРѕ Р¤РёР»СЊС‚СЂР° */
 	K = 0.0174147114037780;
 	T[0] = 1.261682186852e-8;
 	T[1] = 0.15897383780486;
@@ -27,21 +27,21 @@ CShapingFilter::CShapingFilter(){
 
 void CShapingFilter::addResult(CVector& X, TYPE t)
 {
-	CVector compile(X); // вектор результата
+	CVector compile(X); // РІРµРєС‚РѕСЂ СЂРµР·СѓР»СЊС‚Р°С‚Р°
 	
-	/*	добавляем выход из ФФ. так как этой координаты
-		нет в системе ДУ, то будем её учитывать здесь 
+	/*	РґРѕР±Р°РІР»СЏРµРј РІС‹С…РѕРґ РёР· Р¤Р¤. С‚Р°Рє РєР°Рє СЌС‚РѕР№ РєРѕРѕСЂРґРёРЅР°С‚С‹
+		РЅРµС‚ РІ СЃРёСЃС‚РµРјРµ Р”РЈ, С‚Рѕ Р±СѓРґРµРј РµС‘ СѓС‡РёС‚С‹РІР°С‚СЊ Р·РґРµСЃСЊ 
 		
 		y1 = K (T_1 x_2 + x_1)
 	*/
 	TYPE y1 = K * (T[0] * X[1] + X[0]);
-	compile.push_back(y1 + Mx);	// Прибавляем мат. ожидание требуемого процесса
+	compile.push_back(y1 + Mx);	// РџСЂРёР±Р°РІР»СЏРµРј РјР°С‚. РѕР¶РёРґР°РЅРёРµ С‚СЂРµР±СѓРµРјРѕРіРѕ РїСЂРѕС†РµСЃСЃР°
 
 	CModel::addResult(compile, t);
 }
 
 /*
-*	Генерация вектора (квази)Белого Шума по заданной частоте среза
+*	Р“РµРЅРµСЂР°С†РёСЏ РІРµРєС‚РѕСЂР° (РєРІР°Р·Рё)Р‘РµР»РѕРіРѕ РЁСѓРјР° РїРѕ Р·Р°РґР°РЅРЅРѕР№ С‡Р°СЃС‚РѕС‚Рµ СЃСЂРµР·Р°
 */
 void CShapingFilter::Generate_WhiteNoise(const TYPE omega)
 {
@@ -61,8 +61,8 @@ TYPE CShapingFilter::get_correlation_interval() const
 }
 
 /*
-*	Входной БШ для Формирующего Фильтра.
-*	Индекс - кратное интервалу корреляции целочисленное число - номер интервала
+*	Р’С…РѕРґРЅРѕР№ Р‘РЁ РґР»СЏ Р¤РѕСЂРјРёСЂСѓСЋС‰РµРіРѕ Р¤РёР»СЊС‚СЂР°.
+*	РРЅРґРµРєСЃ - РєСЂР°С‚РЅРѕРµ РёРЅС‚РµСЂРІР°Р»Сѓ РєРѕСЂСЂРµР»СЏС†РёРё С†РµР»РѕС‡РёСЃР»РµРЅРЅРѕРµ С‡РёСЃР»Рѕ - РЅРѕРјРµСЂ РёРЅС‚РµСЂРІР°Р»Р°
 */
 TYPE CShapingFilter::getWhiteNoise(cTYPE t)  const
 {
@@ -79,7 +79,7 @@ TYPE CShapingFilter::getWhiteNoise(cTYPE t)  const
 
 
 /*
-*	Формирующий фильтр
+*	Р¤РѕСЂРјРёСЂСѓСЋС‰РёР№ С„РёР»СЊС‚СЂ
 */
 void CShapingFilter::ShapingFilter(CVector &RightPart,
 	TYPE x1, TYPE x2, TYPE input) const
@@ -92,7 +92,7 @@ void CShapingFilter::ShapingFilter(CVector &RightPart,
 
 CVector CShapingFilter::getRight(const CVector &X, TYPE t) const
 {
-	// Входной БШ для Формирующего Фильтра.
+	// Р’С…РѕРґРЅРѕР№ Р‘РЁ РґР»СЏ Р¤РѕСЂРјРёСЂСѓСЋС‰РµРіРѕ Р¤РёР»СЊС‚СЂР°.
 	TYPE nu = getWhiteNoise(t);
 
 	CVector RightPart;

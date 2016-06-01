@@ -42,7 +42,7 @@
     <ClCompile Include="test_RandomProcessModelling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StatProcessing.cpp">
+    <ClCompile Include="StatAnalysis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="ShapingFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatProcessing.h">
+    <ClInclude Include="StatAnalysis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
