@@ -15,16 +15,59 @@ TYPE RationalApproximation(TYPE t)
 		(((d[2] * t + d[1])*t + d[0])*t + 1.0);
 }
 
+inline TYPE FisherTransition(TYPE r)
+{
+	return 0.5 * (log(1 + r) - log(1 - r));
+}
 
-/* * * * * * * * * * CStatProcessing * * * * * * * * * */
+inline TYPE FisherBackTransition(TYPE z)
+{
+	auto e_2z = exp(2 * z);
+	return (e_2z - 1) / (e_2z + 1);
+}
 
-CStatProcessing::CStatProcessing(const CVector* input_realization)
+/* * * * * * * * * * CStatAnalyzer * * * * * * * * * */
+
+CStatAnalyzer::CStatAnalyzer() 
+	: mean_estimation(0), var_estimation(0), accepted_correlation_estimates(0)
+{
+	RandomRealization = nullptr;
+	realization_size = 0;
+
+	got_mean = false;
+	got_var = false;
+	got_correlation_fcn = false;
+	got_norm_correlation_fcn = false;
+
+	got_mean_tol = false;
+	got_var_tol = false;
+	got_corr_tol = false;
+}
+
+CStatAnalyzer::CStatAnalyzer(const CVector* input_realization)
+	: mean_estimation(0), var_estimation(0)
+{
+	LoadNewRealization(input_realization);
+}
+
+void CStatAnalyzer::LoadNewRealization(const CVector* input_realization)
 {
 	RandomRealization = input_realization;
 	realization_size = RandomRealization->getSize();
+
+	got_mean = false;
+	got_var = false;
+	got_correlation_fcn = false;
+	got_norm_correlation_fcn = false;
+
+	got_mean_tol = false;
+	got_var_tol = false;
+	got_corr_tol = false;
+
+	accepted_correlation_estimates = 0;
 }
 
-TYPE CStatProcessing::LaplaceFcnArg(TYPE beta)
+TYPE CStatAnalyzer::LaplaceFcnArg(TYPE beta)
 {
 	auto
 		p = (1 + beta) / 2;
@@ -49,83 +92,180 @@ TYPE CStatProcessing::LaplaceFcnArg(TYPE beta)
 	}
 }
 
-TYPE CStatProcessing::MeanEstimation()
+TYPE CStatAnalyzer::MeanEstimation()
 {
-	TYPE sum(0);
+	if (!got_mean)
+	{
+		TYPE sum(0);
 
-	for (auto i = 0; i < realization_size; i++)
-		sum += (*RandomRealization)[i];
+		for (auto i = 0; i < realization_size; i++)
+			sum += (*RandomRealization)[i];
 
-	mean_estimation = sum / realization_size;
+		mean_estimation = sum / realization_size;
+
+		got_mean = true;
+	}
 
 	return mean_estimation;
 }
 
-TYPE CStatProcessing::VarEstimation()
+TYPE CStatAnalyzer::VarEstimation()
 {
-	// неэффективно, но что поделать
-	MeanEstimation();
+	if (!got_var)
+	{
+		MeanEstimation();
 
-	TYPE sum(0);
+		TYPE sum(0);
 
-	for (auto i = 0; i < realization_size; i++)
-		sum += pow((*RandomRealization)[i] - mean_estimation, 2);
+		for (auto i = 0; i < realization_size; i++)
+			sum += pow((*RandomRealization)[i] - mean_estimation, 2);
 
-	var_estimation = sum / (realization_size - 1);
+		var_estimation = sum / (realization_size - 1);
+
+		got_var = true;
+	}
 
 	return var_estimation;
 }
 
-CVector CStatProcessing::CorrelationFcnEstimation()
+CVector CStatAnalyzer::CorrelationFcnEstimation()
 {
-	MeanEstimation();
-
-	auto
-		k_max = realization_size - 120;
-
-	CVector K(k_max);
-	TYPE sum;
-
-	for (auto k = 0; k < k_max; k++)
+	if (!got_correlation_fcn)
 	{
-		sum = 0;
-		for (auto i = 0; i < realization_size - k; i++)
+		MeanEstimation();
+
+		auto
+			k_max = realization_size - 120;
+
+		correlation_fcn_estimation.resize(k_max);
+		TYPE sum;
+
+		for (auto k = 0; k < k_max; k++)
 		{
-			sum += 
-				((*RandomRealization)[i] - mean_estimation)
-				* ((*RandomRealization)[i + k] - mean_estimation);
+			sum = 0;
+			for (auto i = 0; i < realization_size - k; i++)
+			{
+				sum +=
+					((*RandomRealization)[i] - mean_estimation)
+					* ((*RandomRealization)[i + k] - mean_estimation);
+			}
+			correlation_fcn_estimation[k] = sum / (realization_size - k - 1);
 		}
-		K[k] = sum / (realization_size - k - 1);
+
+		got_correlation_fcn = true;
 	}
 
-	return K;
+	return correlation_fcn_estimation;
 }
 
-TYPE* CStatProcessing::MeanToleranceInterval(TYPE beta)
+CVector CStatAnalyzer::NormCorrelationFcnEstimation()
 {
-	MeanEstimation();
-	VarEstimation();
+	if (!got_norm_correlation_fcn)
+	{
+		CorrelationFcnEstimation();
 
-	auto 
-		sigma = sqrt(var_estimation / realization_size),
-		borders = sigma * LaplaceFcnArg(beta);
+		auto K_size = correlation_fcn_estimation.getSize();
 
-	mean_tolerance_interval[0] = mean_estimation - borders;
-	mean_tolerance_interval[1] = mean_estimation + borders;
+		norm_correlation_fcn_estimation.resize(K_size);
+
+		// начинаем с 0, 0-й элемент - дисперсия делённая на саму себя
+		for (auto i = 0; i < K_size; i++)
+			norm_correlation_fcn_estimation[i] =
+			correlation_fcn_estimation[i] / correlation_fcn_estimation[0];
+
+		got_norm_correlation_fcn = true;
+	}
+
+	return norm_correlation_fcn_estimation;
+}
+
+TYPE* CStatAnalyzer::MeanToleranceInterval(TYPE beta)
+{
+	if (!got_mean_tol)
+	{
+		MeanEstimation();
+		VarEstimation();
+
+		auto
+			sigma = sqrt(var_estimation / realization_size),
+			borders = sigma * LaplaceFcnArg(beta);
+
+		mean_tolerance_interval[0] = mean_estimation - borders;
+		mean_tolerance_interval[1] = mean_estimation + borders;
+
+		got_mean_tol = true;
+	}
 
 	return mean_tolerance_interval;
 }
 
-TYPE* CStatProcessing::VarToleranceInterval(TYPE beta)
+TYPE* CStatAnalyzer::VarToleranceInterval(TYPE beta)
 {
-	VarEstimation();
+	if (!got_var_tol)
+	{
+		VarEstimation();
 
-	auto
-		sigma = sqrt(2 / (realization_size - 1)) * var_estimation,
-		borders = sigma * LaplaceFcnArg(beta);
+		auto
+			sigma = sqrt(2 / TYPE(realization_size - 1)) * var_estimation,
+			borders = sigma * LaplaceFcnArg(beta);
 
-	var_tolerance_interval[0] = var_estimation - borders;
-	var_tolerance_interval[1] = var_estimation + borders;
+		var_tolerance_interval[0] = var_estimation - borders;
+		var_tolerance_interval[1] = var_estimation + borders;
+
+		got_var_tol = true;
+	}
 
 	return var_tolerance_interval;
+}
+
+CMatrix CStatAnalyzer::NormCorrelationFcnToleranceInterval(TYPE beta)
+{
+	if (!got_corr_tol)
+	{
+		NormCorrelationFcnEstimation();
+
+		auto
+			k_max = realization_size - 120;
+
+		CVector z_borders(k_max);
+
+		TYPE
+			sigma,
+			Laplace_fcn_arg = LaplaceFcnArg(beta);
+
+		for (auto k = 0; k < k_max; k++)
+		{
+			sigma = sqrt(1 / TYPE(realization_size - k - 3));
+			z_borders[k] = sigma * Laplace_fcn_arg;
+		}
+
+		// считаем сразу границы доверительного интервала для r
+		correlation_tolerance_interval.setSize(2, k_max);
+		TYPE z;
+
+		// начинаем с 1, так как у дисперсии будет логарифм от 0
+		for (auto i = 1; i < k_max; i++)
+		{
+			z = FisherTransition(norm_correlation_fcn_estimation[i]);
+
+			correlation_tolerance_interval[0][i] =
+				FisherBackTransition(z - z_borders[i]);
+
+			correlation_tolerance_interval[1][i] =
+				FisherBackTransition(z + z_borders[i]);
+
+			if (norm_correlation_fcn_estimation[i] > correlation_tolerance_interval[0][i]
+				&& norm_correlation_fcn_estimation[i] < correlation_tolerance_interval[1][i])
+				accepted_correlation_estimates++;
+		}
+
+		got_corr_tol = true;
+	}
+
+	return correlation_tolerance_interval;
+}
+
+int CStatAnalyzer::getAcceptedCorrEst() const
+{
+	return accepted_correlation_estimates;
 }

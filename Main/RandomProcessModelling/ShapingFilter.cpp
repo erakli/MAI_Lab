@@ -4,6 +4,23 @@
 
 #include "ShapingFilter.h"
 
+/* * * * * * * * * * Support Fcn * * * * * * * * * */
+
+inline TYPE ReferenceCorrelationFcn(TYPE tau)
+{
+	static 
+	const TYPE 
+		D = 0.01,
+		lambda = 0.3,
+		beta = 2 * PI;
+
+	return
+		D 
+		* exp(-lambda * abs(tau)) 
+		* (cos(beta * tau) + lambda / beta * sin(beta * abs(tau)));
+}
+
+
 /* * * * * * * * * * CShapingFilter * * * * * * * * * */
 
 #define SYSTEM_COORDINATES		2
@@ -104,4 +121,19 @@ CVector CShapingFilter::getRight(const CVector &X, TYPE t) const
 bool CShapingFilter::Stop_Calculation(TYPE, TYPE, CVector &, CVector &)
 {
 	return false;
+}
+
+CVector CShapingFilter::getReferenceCorrelationFcn(
+	TYPE correlation_interval, int k_max)
+{
+	CVector K(k_max);
+	TYPE tau;
+
+	for (auto k = 0; k < k_max; k++)
+	{
+		tau = correlation_interval * k;
+		K[k] = ReferenceCorrelationFcn(tau);
+	}
+
+	return K;
 }

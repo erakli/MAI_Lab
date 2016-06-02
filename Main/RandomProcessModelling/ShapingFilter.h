@@ -30,6 +30,10 @@ public:
 
 	CShapingFilter();
 
+	/*
+		Матрица результатов:	t, x1, x2, y1
+		y1 - выход из фильтра
+	*/
 	void addResult(CVector &X, TYPE t) override;
 
 	// генерация (квази)Белого Шума. Должна вызываться перед моделированием
@@ -40,5 +44,5 @@ public:
 
 	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
 
-	// вывод эталонной корреляционной функции
+	static CVector getReferenceCorrelationFcn(TYPE correlation_interval, int k_max);
 };
