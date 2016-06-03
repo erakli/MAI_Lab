@@ -1,5 +1,6 @@
 #include "Functions.h"
 
+#include <math.h>
 #include "Time.h"
 
 /*

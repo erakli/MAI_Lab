@@ -29,7 +29,7 @@ inline TYPE FisherBackTransition(TYPE z)
 /* * * * * * * * * * CStatAnalyzer * * * * * * * * * */
 
 CStatAnalyzer::CStatAnalyzer() 
-	: mean_estimation(0), var_estimation(0), accepted_correlation_estimates(0)
+	: mean_estimation(0), var_estimation(0)
 {
 	RandomRealization = nullptr;
 	realization_size = 0;
@@ -63,8 +63,6 @@ void CStatAnalyzer::LoadNewRealization(const CVector* input_realization)
 	got_mean_tol = false;
 	got_var_tol = false;
 	got_corr_tol = false;
-
-	accepted_correlation_estimates = 0;
 }
 
 TYPE CStatAnalyzer::LaplaceFcnArg(TYPE beta)
@@ -253,19 +251,10 @@ CMatrix CStatAnalyzer::NormCorrelationFcnToleranceInterval(TYPE beta)
 
 			correlation_tolerance_interval[1][i] =
 				FisherBackTransition(z + z_borders[i]);
-
-			if (norm_correlation_fcn_estimation[i] > correlation_tolerance_interval[0][i]
-				&& norm_correlation_fcn_estimation[i] < correlation_tolerance_interval[1][i])
-				accepted_correlation_estimates++;
 		}
 
 		got_corr_tol = true;
 	}
 
 	return correlation_tolerance_interval;
-}
-
-int CStatAnalyzer::getAcceptedCorrEst() const
-{
-	return accepted_correlation_estimates;
 }

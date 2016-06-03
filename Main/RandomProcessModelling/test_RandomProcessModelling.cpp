@@ -64,24 +64,47 @@ void MainProcess(
 	cout << " - File 1 opened: realization" << endl;
 	to_file(realization);
 
-	cout << " - File 2 opened: correlation function estimation" << endl;
-	to_file(analyzer.CorrelationFcnEstimation());
+	cout << " - File 2 opened: normalized estimation of correlation function" << endl;
+	CVector Correlation(analyzer.NormCorrelationFcnEstimation());
+	to_file(Correlation);
 
-	cout << " - File 3 opened: normalized correlation function"
-		<< " estimation and it's tolearnce borders" << endl;
-	CMatrix NormCorrelation;
-	NormCorrelation.push_back(analyzer.NormCorrelationFcnEstimation());
-	NormCorrelation.add_toEnd(analyzer.NormCorrelationFcnToleranceInterval(beta));
-	to_file(NormCorrelation.flip());
+	cout << " - File 3 opened: normalized reference correlation function and\nit's " 
+		<< "tolerance borders" << endl;
+	
+	auto correlation_fcn_size = Correlation.getSize();
 
-	cout << " - File 4 opened: reference correlation function" << endl;
-	to_file(
+	auto reference =
 		CShapingFilter::getReferenceCorrelationFcn(
-			interval, NormCorrelation[0].size()
-			)
+			interval, correlation_fcn_size
 		);
 
-	auto probability = analyzer.getAcceptedCorrEst() / TYPE(NormCorrelation[0].size());
+	// нормируем эталон
+	reference = reference * (1 / reference[0]);
+
+	// доверительный интервал эталонной функции
+	CStatAnalyzer ref_analyzer(&reference);
+	CMatrix borders(ref_analyzer.NormCorrelationFcnToleranceInterval(beta));
+
+	CMatrix RefWithBorders;
+	RefWithBorders.push_back(reference);
+	RefWithBorders.add_toEnd(borders);
+
+	to_file(RefWithBorders.flip());
+
+	// Вычисление вероятности попадания оценки корр. ф-ии в доверительный
+	// интервал эталонной кор. функции. всё нормализовано
+	int AcceptedCorrEst(0);
+	
+	for (auto i = 0; i < correlation_fcn_size; i++)
+	{
+		if (borders[0][i] < reference[i] && borders[1][i] > reference[i])
+		{
+			// прибавляем количество вошедших в интервал значений реализации
+			AcceptedCorrEst++;
+		}
+	}
+
+	auto probability = AcceptedCorrEst / TYPE(correlation_fcn_size);
 
 	cout << "\nProbability of true correlation estimates hit tolerance interval: " 
 		<< probability << endl;
