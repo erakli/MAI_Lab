@@ -37,6 +37,7 @@ private:
 
 	CMatrix
 		correlation_tolerance_interval;	// две границы - две строки матрицы
+
 public:
 	CStatAnalyzer();
 	CStatAnalyzer(const CVector *input_realization);
@@ -55,5 +56,4 @@ public:
 	TYPE* MeanToleranceInterval(TYPE beta);
 	TYPE* VarToleranceInterval(TYPE beta);
 	CMatrix NormCorrelationFcnToleranceInterval(TYPE beta);
-
 };

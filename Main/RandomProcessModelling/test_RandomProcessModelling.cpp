@@ -51,25 +51,33 @@ void MainProcess(
 	auto mean_borders = analyzer.MeanToleranceInterval(beta);
 
 	cout << "Mean estimation is " << mean << endl;
-	cout << "Mean tolearnce borders is ("
+	cout << "Mean tolerance borders is ("
 		<< mean_borders[0] << "; " << mean_borders[1] << ")\n" << endl;
 
 	auto var = analyzer.VarEstimation();
 	auto var_borders = analyzer.VarToleranceInterval(beta);
 
 	cout << "Variance estimation is " << var << endl;
-	cout << "Variance tolearnce borders is ("
+	cout << "Variance tolerance borders is ("
 		<< var_borders[0] << "; " << var_borders[1] << ")\n" << endl;
 
 	cout << " - File 1 opened: realization" << endl;
 	to_file(realization);
 
-	cout << " - File 2 opened: normalized estimation of correlation function" << endl;
+	cout << " - File 2 opened: normalized estimation of correlation functionand\n" 
+		<< "it's tolerance borders" << endl;
 	CVector Correlation(analyzer.NormCorrelationFcnEstimation());
-	to_file(Correlation);
 
-	cout << " - File 3 opened: normalized reference correlation function and\nit's " 
-		<< "tolerance borders" << endl;
+	// доверительный интервал оценки
+	CMatrix borders(analyzer.NormCorrelationFcnToleranceInterval(beta));
+
+	CMatrix EstWithBorders;
+	EstWithBorders.push_back(Correlation);
+	EstWithBorders.add_toEnd(borders);
+
+	to_file(EstWithBorders.flip());
+
+	cout << " - File 3 opened: normalized reference correlation function" << endl;
 	
 	auto correlation_fcn_size = Correlation.getSize();
 
@@ -81,18 +89,10 @@ void MainProcess(
 	// нормируем эталон
 	reference = reference * (1 / reference[0]);
 
-	// доверительный интервал эталонной функции
-	CStatAnalyzer ref_analyzer(&reference);
-	CMatrix borders(ref_analyzer.NormCorrelationFcnToleranceInterval(beta));
+	to_file(reference);
 
-	CMatrix RefWithBorders;
-	RefWithBorders.push_back(reference);
-	RefWithBorders.add_toEnd(borders);
-
-	to_file(RefWithBorders.flip());
-
-	// Вычисление вероятности попадания оценки корр. ф-ии в доверительный
-	// интервал эталонной кор. функции. всё нормализовано
+	// Вычисление вероятности попадания эталонной корр. ф-ии в доверительный
+	// интервал оценки кор. функции. всё нормализовано
 	int AcceptedCorrEst(0);
 	
 	for (auto i = 0; i < correlation_fcn_size; i++)
