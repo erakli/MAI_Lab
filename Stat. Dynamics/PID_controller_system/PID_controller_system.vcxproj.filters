@@ -16,12 +16,12 @@
     <Filter Include="Source Files\External">
       <UniqueIdentifier>{1153d819-5dcf-45e0-a6c0-b02203c97a1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\External">
+      <UniqueIdentifier>{f5ad6bf4-4bc7-4dd9-8a16-e7b52381e2dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PID_model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dorman-Prince_modified.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Main\Dorman-Prince\Integrator.cpp">
@@ -42,16 +42,28 @@
     <ClCompile Include="Stat_linearization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Main\RandomProcessModelling\WhiteNoise.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="forUIRS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Main\RandomProcessModelling\Dorman-Prince_modified.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PID_model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Dorman-Prince_modified.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Stat_linearization.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Main\RandomProcessModelling\WhiteNoise.h">
+      <Filter>Header Files\External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Main\RandomProcessModelling\Dorman-Prince_modified.h">
+      <Filter>Header Files\External</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

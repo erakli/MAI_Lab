@@ -15,10 +15,11 @@
 
 using namespace std;
 
+// ----------------- нумерация выходных файлов
+static short int FirstNum = 0, SecondNum = 0; 
+
 void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 					bool radians){
-
-	static short int FirstNum = 0, SecondNum = 0;
 
 	// ----------------- нумерация выходных файлов
 	char cFNum[2], cSNum[2];
@@ -104,8 +105,6 @@ void Dorman_to_file(const CMatrix &Result, const CDormanPrince &Integrator,
 
 void to_file(const CMatrix& Result, bool radians)
 {
-	static short int FirstNum = 0, SecondNum = 0;
-
 	// ----------------- нумерация выходных файлов
 	char cFNum[2], cSNum[2];
 
@@ -141,11 +140,11 @@ void to_file(const CMatrix& Result, bool radians)
 
 
 	/*
-	Множитель перевода радиан в градусы
+		Множитель перевода радиан в градусы
 
-	По умолчанию равен 1. Если результат вывода
-	выбран в градусах (radians = false), то результат
-	вывода будет в градусах
+		По умолчанию равен 1. Если результат вывода
+		выбран в градусах (radians = false), то результат
+		вывода будет в градусах
 	*/
 	TYPE rad2deg;
 	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
@@ -158,11 +157,16 @@ void to_file(const CMatrix& Result, bool radians)
 	{
 		if (!Result[i].empty())
 		{
-			fout << Result[i][0] << "	";	// время
-
-			for (int j = 1; j < ColCount - 1; j++)
+			for (int j = 0; j < ColCount - 1; j++)
 			{
-				fout << Result[i][j] * rad2deg << "	";
+				if (j == 0)
+				{
+					fout << Result[i][j] << "	";	// время
+				}
+				else
+				{
+					fout << Result[i][j] * rad2deg << "	";
+				}
 			}
 			fout << Result[i][ColCount - 1] * rad2deg;
 			fout << "\n";
@@ -177,6 +181,71 @@ void to_file(const CMatrix& Result, bool radians)
 	SecondNum++;
 }
 
+void to_file(const CVector& Result, bool radians)
+{
+	// ----------------- нумерация выходных файлов
+	char cFNum[2], cSNum[2];
+
+	if (SecondNum > 9)
+	{
+		SecondNum = 0;
+		FirstNum++;
+	}
+
+	cFNum[0] = FirstNum + '0';
+	cFNum[1] = 0;
+
+	cSNum[0] = SecondNum + '0';
+	cSNum[1] = 0;
+
+
+	// ----------------- формирование имени выходного файла
+	char FileName[14];
+
+	strcpy(FileName, FILE);
+	strcat(FileName, cFNum);
+	strcat(FileName, cSNum);
+	strcat(FileName, EXTENSION);
+
+
+	// ----------------- создание выходного файла
+	ofstream fout;
+	fout.open(FileName);
+	if (!fout.is_open())
+	{
+		throw std::exception();
+	}
+
+
+	/*
+		Множитель перевода радиан в градусы
+
+		По умолчанию равен 1. Если результат вывода
+		выбран в градусах (radians = false), то результат
+		вывода будет в градусах
+	*/
+	TYPE rad2deg;
+	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
+
+	fout.precision(20);
+
+	// ----------------- заполнение файла
+	int size = Result.getSize();
+	for (int i = 0; i < size; i++)
+	{
+		if (!Result.empty())
+		{
+			fout << Result[i] * rad2deg;
+			fout << "\n";
+		}
+	}
+
+	fout.close();
+
+	ShellExecuteA(nullptr, "open", FileName, nullptr, nullptr, SW_RESTORE);
+
+	SecondNum++;
+}
 
 void Read_from_file(const char* FileName, CMatrix& target, const UINT PredictSize)
 {

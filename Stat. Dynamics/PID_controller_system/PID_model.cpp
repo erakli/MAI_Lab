@@ -1,7 +1,7 @@
-#include <random>	// Для генерации Белого Шума
 #include <exception>
 
 #include "file_output.h"
+#include "WhiteNoise.h"
 
 #include "PID_model.h"
 
@@ -61,18 +61,9 @@ CPID_controller::CPID_controller(){
 */
 void CPID_controller::Generate_WhiteNoise(const TYPE omega)
 {
-	TYPE 
-		dt = 2 * PI / omega,	// интервал корреляции (квази)Белого Шума
-		Disp = 1 / dt;			// его же дисперсия
+	TYPE dt(0);
 
-	WhiteNoise.reserve(int((t1 - t0) / dt) + 3);
-
-	// генератор с гауссовским нормальным распределением СВ
-	std::default_random_engine generator;
-	std::normal_distribution<TYPE> distribution(0, sqrt(Disp));
-
-	for (UINT i = 0; i < WhiteNoise.capacity(); i++)
-		WhiteNoise.push_back(distribution(generator));
+	WhiteNoise = Get_WhiteNoise(omega, t0, t1, dt);
 
 	correlation_interval_WhiteNoise = dt;
 	WhiteNoise_got = true;
@@ -101,6 +92,9 @@ void CPID_controller::ModelWithLinearisation(bool got_linearisation, bool linear
 		CMatrix K(SYSTEM_COORDINATES, SYSTEM_COORDINATES);
 		for (auto i = 0; i < SYSTEM_COORDINATES; i++)
 			K[i][i] = DISP_IN_SETTLED_MODE;
+		K[0][0] = 4;
+		K[1][1] = 200;
+
 		CVector K_vectorized = CVector::SymmetricToVec(K);
 		auto K_size = K_vectorized.getSize();
 
@@ -195,7 +189,7 @@ void CPID_controller::ShapingFilter(CVector &RightPart,
 
 	RightPart.push_back(x2);
 	RightPart.push_back(
-		(input * K_ag - 2 * T_filter * xi_filter * x2 - x1) / pow(T_filter, 2)
+		(input * K_filter - 2 * T_filter * xi_filter * x2 - x1) / pow(T_filter, 2)
 		);
 }
 
@@ -406,7 +400,7 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 
 	/* Рассчёт правых частей системы ДУ */
 
-	/*CMatrix 
+	CMatrix 
 		K_out(K.getRowCount(), K.getColCount()), 
 		temp_matrix(K.getRowCount(), K.getColCount());
 
@@ -415,11 +409,11 @@ CVector CPID_controller::LinearizedSystem(const CVector& full_system_vec, cTYPE 
 	CMatrix::Mult(K, A1.flip(), temp_matrix);
 	CMatrix::Add(temp_matrix, K_out);
 	CMatrix::Mult(B_matrix.flip(), B_matrix, temp_matrix);
-	CMatrix::Add(temp_matrix, K_out);*/
+	CMatrix::Add(temp_matrix, K_out);
 
-	CMatrix K_out;
+	/*CMatrix K_out;
 
-	K_out = A1 * K + K * A1.flip() + B_matrix.flip() * B_matrix;
+	K_out = A1 * K + K * A1.flip() + B_matrix.flip() * B_matrix;*/
 
 	CVector dM, dX;
 
@@ -477,11 +471,3 @@ bool CPID_controller::Stop_Calculation(TYPE t, TYPE, CVector &PrevStep, CVector 
 //
 //	PostMessage(hWnd, WM_ADDPOINT, 0, (LPARAM)pStruct);
 //}
-
-CMatrix CPID_controller::getResult()
-{
-#ifdef LOOKUP_COEFF
-	to_file(coefficients);
-#endif
-	return CModel::getResult();
-};
