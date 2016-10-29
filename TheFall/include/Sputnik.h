@@ -2,16 +2,26 @@
 
 #include "Model.h"
 #include "Coordinates.h"
-#include "Earth_gravitation.h"
+#include "Force.h"
+
+#include <vector>
+
+typedef std::vector<const Force*> ForcesVector;
+
+
 
 class Sputnik : public Model
 {
-private:
-	Earth::GravitationField *gravitation;
 public:
+	Sputnik();
 	Sputnik(const Orbit::Kepler_elements &elements);
 	
-	void addForce(Earth::GravitationField &_field);
+	void AddForce(const Force* force);
+	void ClearForcesList();
 
-	CVector getRight(const CVector &X, TYPE t) const override;
+	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+
+private:
+	ForcesVector forces;
+	size_t forces_count;
 };

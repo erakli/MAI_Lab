@@ -1,24 +1,51 @@
 #include "SolarSystem.h"	// Для константы muEarth
 #include "Sputnik.h"
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/* * * Sputnik                                        * * * */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+using namespace Eigen;
+
+
+#define DEFAULT_FORCES_SIZE	5
+
+
+Sputnik::Sputnik() : forces_count(0)
+{
+}
 
 Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
 {
-	gravitation = nullptr;
+	StartValues = Kepler2Decart(elements);
+	s_size = StartValues.size();
 
-	StartValues.insert_toEnd(Orbit::Kepler2Decart(elements));
-	s_size = StartValues.getSize();
+	forces.reserve(DEFAULT_FORCES_SIZE);
+	forces_count = 0;
 }
 
-void Sputnik::addForce(Earth::GravitationField &_field)
+
+
+void Sputnik::AddForce(const Force* force)
 {
-	gravitation = &_field;
+	forces.push_back(force);
+	forces_count++;
 }
 
-CVector Sputnik::getRight(const CVector &X, TYPE t) const
+void Sputnik::ClearForcesList()
 {
-	return gravitation->getRight(X);
+	forces.clear();
+	forces.reserve(DEFAULT_FORCES_SIZE);
+	forces_count = 0;
+}
+
+
+
+VectorXd Sputnik::getRight(const VectorXd &X, TYPE t) const
+{
+	Vector6d right_part;
+	right_part.fill(0);
+
+	for (size_t i = 0; i < forces_count; i++)
+	{
+		right_part += forces[i]->getRight(X, t);
+	}
+
+	return right_part;
 }
