@@ -1,37 +1,29 @@
 #include "Constants.h"
 #include "SolarSystem.h"	// Для константы muEarth
-#include "Coordinates.h"
 #include "Gravitation.h"
 
-using namespace Earth;
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/* * * CGravitation_Field                              * * * */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-GravitationField::~GravitationField()
+Eigen::VectorXd GravitationField::getRight(const Eigen::VectorXd &X, TYPE t) const
 {
-}
-
-CVector GravitationField::getRight(const CVector& X) const
-{
-	CVector Res(VEC_SIZE * 2);
+	Vector6d Res;
 
 	TYPE
-		module = CVector::copyPart(X, 2).getLength(),
+		module = X.head(VEC_SIZE).norm(),
 		moduleX3 = pow(module, 3);
+
+	TYPE const_part = -CEarth::muEarth / moduleX3;
 
 	/*
 		Замена переменной, интегрируем второй
 		раз проинтегрированную 2 производную
 	*/
-	Res[0] = X[3];
-	Res[1] = X[4];
-	Res[2] = X[5];
+	Res(0) = X(3);
+	Res(1) = X(4);
+	Res(2) = X(5);
 
-	Res[3] = -CEarth::muEarth * X[0] / moduleX3;
-	Res[4] = -CEarth::muEarth * X[1] / moduleX3;
-	Res[5] = -CEarth::muEarth * X[2] / moduleX3;
+	Res(3) = X(0) * const_part;
+	Res(4) = X(1) * const_part;
+	Res(5) = X(2) * const_part;
 
 	return Res;
 }

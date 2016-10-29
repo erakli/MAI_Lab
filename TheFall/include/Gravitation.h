@@ -1,17 +1,12 @@
 #pragma once
 
-namespace Earth
-{
-/* * * * * * * Модели гравитационного поля Земли * * * * * * */
+#include "Force.h"
 
 /* 
 	Центральное поле
 */
-	class GravitationField
-	{
-	public:
-		virtual ~GravitationField();
-
-		virtual CVector getRight(const CVector &X) const;
-	};
-}
+class GravitationField : public Force
+{
+public:
+	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+};
