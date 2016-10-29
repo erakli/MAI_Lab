@@ -1,0 +1,58 @@
+#pragma once
+
+#include "Integrator.h"
+#include "LinearAlgebra.h"
+
+#define SIZE 7
+
+class DormanPrinceSolver : public Integrator
+{
+protected:
+	Eigen::VectorXd
+		c,				// вектор-столбец слева от таблицы
+		b,				// вектор-строка снизу таблицы
+		b1;				// вектор-строка ниже b
+	Eigen::MatrixXd A;	// так называемая нижне тругольная матрица Бутчера
+	Eigen::MatrixXd k;	// вспомогательные коэффициенты
+
+	TYPE
+		Error,		// Относительная вычислительная ошибка (локальная погрешность)
+		Eps_Max,	// максимальная относительная вычислительная ошибка 
+		Eps_Global;
+
+	Eigen::VectorXd
+		x0,			// начальные значения
+		x1, _x1;	// конечные для шага (4 и 5 порядка)
+
+	int x_size;		// длина вектора начальных значений
+
+	TYPE rounding_error;
+
+protected:
+	virtual TYPE StepCorrection(); // управление длиной шага интегрирования
+	virtual void getError();
+	TYPE RoundingError() const;
+
+	void set_k(int size);
+
+	Eigen::VectorXd ThickExtradition(TYPE &Teta, TYPE &Step); // плотная выдача
+
+	void set_c();
+	void setA();
+	void set_b();
+	void set_b1();
+
+	unsigned int iter; // счётчик количества итераций
+
+public:
+
+	DormanPrinceSolver();
+	void Run(Model &model) override;
+
+	void setEps_Max(const TYPE &arg);
+	void setEps(const TYPE &arg);
+
+	TYPE getEps_Max() const;
+	TYPE getEps_Global() const;
+	TYPE get_iter() const;
+};
