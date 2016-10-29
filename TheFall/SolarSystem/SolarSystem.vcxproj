@@ -128,13 +128,13 @@
   <ItemGroup>
     <ClInclude Include="..\include\Coordinates.h" />
     <ClInclude Include="..\include\SolarSystem.h" />
-    <ClInclude Include="..\include\SolarWatchTests.h" />
+    <ClInclude Include="..\include\SolarSystemTests.h" />
     <ClInclude Include="..\include\Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Coordinates.cpp" />
     <ClCompile Include="..\src\SolarSystem.cpp" />
-    <ClCompile Include="..\src\SolarWatchTests.cpp" />
+    <ClCompile Include="..\src\SolarSystemTests.cpp" />
     <ClCompile Include="..\src\test_SolarSystem.cpp" />
     <ClCompile Include="..\src\Time.cpp" />
   </ItemGroup>

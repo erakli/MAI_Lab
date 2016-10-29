@@ -17,10 +17,10 @@
     <ClInclude Include="..\include\Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\SolarWatchTests.h">
+    <ClInclude Include="..\include\Coordinates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Coordinates.h">
+    <ClInclude Include="..\include\SolarSystemTests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -34,10 +34,10 @@
     <ClCompile Include="..\src\test_SolarSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\SolarWatchTests.cpp">
+    <ClCompile Include="..\src\Coordinates.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Coordinates.cpp">
+    <ClCompile Include="..\src\SolarSystemTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,7 +8,7 @@
 #include "Time.h"
 #include "SolarSystem.h"
 
-#include "SolarWatchTests.h"
+#include "SolarSystemTests.h"
 
 using namespace std;
 using namespace Tests;
@@ -57,7 +57,7 @@ void Tests::TestCoordinates()
 	MyTime::Date date = { 2016, 6, 22, 0, 0, 0 };
 	TYPE 
 		JD = MyTime::Transformation::DateToJD(date),
-		lambda = Numbers::deg2rad(0);
+		lambda = deg2rad(0);
 
 	TYPE s = StarTime(JD, lambda);
 
@@ -67,8 +67,8 @@ void Tests::TestCoordinates()
 
 	Eigen::VectorXd vec(3);
 	vec[0] = 1;
-	vec[1] = Numbers::deg2rad(90);
-	vec[2] = Numbers::deg2rad(90);
+	vec[1] = deg2rad(90);
+	vec[2] = deg2rad(90);
 
 	Eigen::VectorXd result(Transform::Geographic2Fix(vec));
 
