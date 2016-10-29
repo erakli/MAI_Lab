@@ -6,7 +6,6 @@
 
 #include "Coordinates.h"
 
-//using namespace MyFunc;
 using namespace Eigen;
 
 /*
@@ -258,6 +257,8 @@ Matrix3d Orbit::OrientationMatrix(const Kepler_elements& elements)
 Vector6d Orbit::Kepler2Decart(const Kepler_elements& elements)
 {
 	Vector3d _position, _velocity;
+	_position.fill(0);
+	_velocity.fill(0);
 
 	TYPE big_axis;
 
