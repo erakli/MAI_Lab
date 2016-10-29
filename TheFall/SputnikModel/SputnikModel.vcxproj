@@ -69,14 +69,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Earth_gravitation.h" />
-    <ClInclude Include="..\include\Grav_field_coefficients.h" />
+    <ClInclude Include="..\include\Gravitation.h" />
     <ClInclude Include="..\include\Sputnik.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Earth_gravitation.cpp" />
+    <ClCompile Include="..\src\Gravitation.cpp" />
     <ClCompile Include="..\src\Sputnik.cpp" />
-    <ClCompile Include="..\src\test_Earth_grav_field.cpp" />
+    <ClCompile Include="..\src\test_SputnikModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SolarSystem\SolarSystem.vcxproj">
