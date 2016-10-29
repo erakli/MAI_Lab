@@ -17,6 +17,9 @@
     <ClInclude Include="..\include\Gravitation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Force.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Sputnik.cpp">
@@ -26,6 +29,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Gravitation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Force.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
