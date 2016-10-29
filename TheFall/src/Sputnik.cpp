@@ -2,10 +2,10 @@
 #include "Sputnik.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/* * * CSputnik                                        * * * */
+/* * * Sputnik                                        * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-CSputnik::CSputnik(const Orbit::Kepler_elements &elements)
+Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
 {
 	gravitation = nullptr;
 
@@ -13,12 +13,12 @@ CSputnik::CSputnik(const Orbit::Kepler_elements &elements)
 	s_size = StartValues.getSize();
 }
 
-void CSputnik::addForce(Earth::CGravitation_field &_field)
+void Sputnik::addForce(Earth::GravitationField &_field)
 {
 	gravitation = &_field;
 }
 
-CVector CSputnik::getRight(const CVector &X, TYPE t) const
+CVector Sputnik::getRight(const CVector &X, TYPE t) const
 {
 	return gravitation->getRight(X);
 }

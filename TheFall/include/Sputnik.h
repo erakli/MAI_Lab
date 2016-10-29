@@ -4,14 +4,14 @@
 #include "Coordinates.h"
 #include "Earth_gravitation.h"
 
-class CSputnik : public Model
+class Sputnik : public Model
 {
 private:
-	Earth::CGravitation_field *gravitation;
+	Earth::GravitationField *gravitation;
 public:
-	CSputnik(const Orbit::Kepler_elements &elements);
+	Sputnik(const Orbit::Kepler_elements &elements);
 	
-	void addForce(Earth::CGravitation_field &_field);
+	void addForce(Earth::GravitationField &_field);
 
 	CVector getRight(const CVector &X, TYPE t) const override;
 };
