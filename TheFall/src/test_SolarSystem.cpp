@@ -1,4 +1,4 @@
-#include "SolarWatchTests.h"
+#include "SolarSystemTests.h"
 
 int main()
 {
