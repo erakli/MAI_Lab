@@ -14,9 +14,4 @@ namespace MyFunc
 		};
 
 	}
-
-	namespace Pointers
-	{
-		pTYPE Resize(pTYPE pOldArray, const UINT &oldSize, const UINT &newSize);
-	}
 }

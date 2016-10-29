@@ -3,8 +3,6 @@
 typedef double				TYPE;
 typedef const double		cTYPE;
 
-#define pTYPE	double*
-
 typedef short int			SINT;
 
 #ifndef BYTE
