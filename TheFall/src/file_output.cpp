@@ -13,8 +13,6 @@
 #define FILE "output"
 #define EXTENSION ".txt"
 
-#define COLCOUNT 7
-
 using namespace std;
 using namespace Eigen;
 
@@ -250,66 +248,3 @@ void to_file(const VectorXd& Result, bool radians)
 
 	SecondNum++;
 }
-
-//void Read_from_file(const char* FileName, CMatrix& target, const UINT PredictSize)
-//{
-//	// ----------------- открытие входного файла
-//	ifstream file_in;
-//	file_in.open(FileName);
-//
-//	if (!file_in.is_open())
-//	{
-//		throw std::exception();
-//	}
-//
-//	// пытаемся предсказать размер входных данных
-//	target.reserve(PredictSize);
-//
-//	string 
-//		buffer,
-//		delitimer("	"),
-//		end_of_string;
-//
-//	string::size_type start_to_find, found;
-//
-//	while (true)
-//	{
-//		getline(file_in, buffer);
-//
-//		if (!file_in.eof())
-//		{
-//			CVector row_from_file;
-//			row_from_file.reserve(COLCOUNT);
-//
-//			start_to_find = 0;
-//
-//			while (true)
-//			{
-//				found = buffer.find(delitimer, start_to_find + 1);
-//				if (found != string::npos)
-//				{
-//					row_from_file.push_back(
-//						stod(
-//							buffer.substr(start_to_find, found - start_to_find)
-//						));
-//
-//					start_to_find = found;
-//				}
-//				else
-//				{
-//					// последний элемент добиваем
-//					row_from_file.push_back(
-//						stod(buffer.substr(start_to_find)));
-//					break;
-//				}
-//			}
-//
-//			target.push_back(row_from_file);
-//		}
-//		else
-//			break;
-//	}
-//
-//	file_in.close();
-//
-//}
