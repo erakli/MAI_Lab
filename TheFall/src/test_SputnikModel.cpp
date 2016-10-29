@@ -1,17 +1,19 @@
 #include <iostream>
 
+
+#include "DormanPrinceSolver.h"
 #include "file_output.h"
-#include "Integrator.h"
+
 #include "Time.h"		// для макросов времени
+#include "Gravitation.h"
 #include "Sputnik.h"
 
 #include "Functions.h"
 
 using namespace MyFunc;
-using namespace Earth;
 using namespace std;
 
-void Modelling(const TYPE duration, const Orbit::Kepler_elements &elements, GravitationField &field);
+void Modelling(const TYPE duration, const Orbit::Kepler_elements &elements, const Force * force);
 void Information(const Orbit::Kepler_elements &elements);
 
 int main()
@@ -25,23 +27,23 @@ int main()
 
 	TYPE duration = SECINDAY;
 
-	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, &central_field);
 
 	elements.i = deg2rad(90);
 	Information(elements);
 
-	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, &central_field);
 
 	elements.a = 500;
 	elements.i = 0;
 	Information(elements);
 
-	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, &central_field);
 
 	elements.i = deg2rad(90);
 	Information(elements);
 
-	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, &central_field);
 
 	elements.i = 0;
 	elements.a = 50000;
@@ -49,12 +51,12 @@ int main()
 
 	duration *= 7;
 
-	Modelling(duration, elements, central_field);
+	Modelling(duration, elements, &central_field);
 }
 
 
 void Modelling(const TYPE duration,
-	const Orbit::Kepler_elements &elements, GravitationField &field)
+               const Orbit::Kepler_elements &elements, const Force * force)
 {
 	DormanPrinceSolver Integrator;
 	Integrator.setEps_Max(1.0e-13);
@@ -63,7 +65,7 @@ void Modelling(const TYPE duration,
 	sputnik.set_t1(duration);
 	sputnik.setInterval(SECINMIN);
 
-	sputnik.addForce(field);
+	sputnik.AddForce(force);
 
 	Integrator.Run(sputnik);
 
