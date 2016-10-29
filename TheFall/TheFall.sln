@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TheFall", "TheFall\TheFall.vcxproj", "{F2E898D9-681E-4EA8-9C2D-0CB72BBDAA23}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Solver", "Solver\Solver.vcxproj", "{86A2F3DE-CD57-4A18-8530-1595E04E721D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SolarSystem", "SolarSystem\SolarSystem.vcxproj", "{8CA5B5A2-93E9-4C3B-8E65-819075CD8436}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86A2F3DE-CD57-4A18-8530-1595E04E721D} = {86A2F3DE-CD57-4A18-8530-1595E04E721D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicDependencies", "BasicDependencies\BasicDependencies.vcxproj", "{A29C7340-440D-471E-8881-244CAE62E710}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SputnikModel", "SputnikModel\SputnikModel.vcxproj", "{A6E52F9B-1702-4889-8EC7-1AB03B40FE7C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2E898D9-681E-4EA8-9C2D-0CB72BBDAA23}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F2E898D9-681E-4EA8-9C2D-0CB72BBDAA23}.Debug|Win32.Build.0 = Debug|Win32
+		{F2E898D9-681E-4EA8-9C2D-0CB72BBDAA23}.Release|Win32.ActiveCfg = Release|Win32
+		{F2E898D9-681E-4EA8-9C2D-0CB72BBDAA23}.Release|Win32.Build.0 = Release|Win32
+		{86A2F3DE-CD57-4A18-8530-1595E04E721D}.Debug|Win32.ActiveCfg = LibDebug|Win32
+		{86A2F3DE-CD57-4A18-8530-1595E04E721D}.Debug|Win32.Build.0 = LibDebug|Win32
+		{86A2F3DE-CD57-4A18-8530-1595E04E721D}.Release|Win32.ActiveCfg = LibRelease|Win32
+		{86A2F3DE-CD57-4A18-8530-1595E04E721D}.Release|Win32.Build.0 = LibRelease|Win32
+		{8CA5B5A2-93E9-4C3B-8E65-819075CD8436}.Debug|Win32.ActiveCfg = LibDebug|Win32
+		{8CA5B5A2-93E9-4C3B-8E65-819075CD8436}.Debug|Win32.Build.0 = LibDebug|Win32
+		{8CA5B5A2-93E9-4C3B-8E65-819075CD8436}.Release|Win32.ActiveCfg = LibRelease|Win32
+		{8CA5B5A2-93E9-4C3B-8E65-819075CD8436}.Release|Win32.Build.0 = LibRelease|Win32
+		{A29C7340-440D-471E-8881-244CAE62E710}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A29C7340-440D-471E-8881-244CAE62E710}.Debug|Win32.Build.0 = Debug|Win32
+		{A29C7340-440D-471E-8881-244CAE62E710}.Release|Win32.ActiveCfg = Release|Win32
+		{A29C7340-440D-471E-8881-244CAE62E710}.Release|Win32.Build.0 = Release|Win32
+		{A6E52F9B-1702-4889-8EC7-1AB03B40FE7C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A6E52F9B-1702-4889-8EC7-1AB03B40FE7C}.Debug|Win32.Build.0 = Debug|Win32
+		{A6E52F9B-1702-4889-8EC7-1AB03B40FE7C}.Release|Win32.ActiveCfg = Release|Win32
+		{A6E52F9B-1702-4889-8EC7-1AB03B40FE7C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
