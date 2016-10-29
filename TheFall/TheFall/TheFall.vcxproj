@@ -38,7 +38,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -63,41 +68,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="include\ArenstorfModel.h" />
-    <ClInclude Include="include\Constants.h" />
-    <ClInclude Include="include\Coordinates.h" />
-    <ClInclude Include="include\DormanPrinceSolver.h" />
-    <ClInclude Include="include\Earth_gravitation.h" />
-    <ClInclude Include="include\file_output.h" />
-    <ClInclude Include="include\Functions.h" />
-    <ClInclude Include="include\Grav_field_coefficients.h" />
-    <ClInclude Include="include\Integrator.h" />
-    <ClInclude Include="include\LinearAlgebra.h" />
-    <ClInclude Include="include\Model.h" />
-    <ClInclude Include="include\SolarSystem.h" />
-    <ClInclude Include="include\Sputnik.h" />
-    <ClInclude Include="include\TestSolarWatch.h" />
-    <ClInclude Include="include\Time.h" />
-    <ClInclude Include="include\Types.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\ArenstorfModel.cpp" />
-    <ClCompile Include="src\Coordinates.cpp" />
-    <ClCompile Include="src\DormanPrinceSolver.cpp" />
-    <ClCompile Include="src\Earth_gravitation.cpp" />
-    <ClCompile Include="src\file_output.cpp" />
-    <ClCompile Include="src\Functions.cpp" />
-    <ClCompile Include="src\Integrator.cpp" />
-    <ClCompile Include="src\Model.cpp" />
-    <ClCompile Include="src\SolarSystem.cpp" />
-    <ClCompile Include="src\Sputnik.cpp" />
-    <ClCompile Include="src\TestSolarWatch.cpp" />
-    <ClCompile Include="src\test_DormanPrince.cpp" />
-    <ClCompile Include="src\test_Earth_grav_field.cpp" />
-    <ClCompile Include="src\test_SolarWatch.cpp" />
-    <ClCompile Include="src\Time.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
