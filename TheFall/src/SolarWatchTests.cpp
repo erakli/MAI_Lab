@@ -8,7 +8,7 @@
 #include "Time.h"
 #include "SolarSystem.h"
 
-#include "TestSolarWatch.h"
+#include "SolarWatchTests.h"
 
 using namespace std;
 using namespace Tests;
