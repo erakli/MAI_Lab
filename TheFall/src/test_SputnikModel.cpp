@@ -7,19 +7,16 @@
 
 #include "Functions.h"
 
-using namespace MyFunc::Numbers;
+using namespace MyFunc;
 using namespace Earth;
 using namespace std;
 
-void Modelling(const TYPE duration, const Orbit::Kepler_elements &elements, CGravitation_field &field);
+void Modelling(const TYPE duration, const Orbit::Kepler_elements &elements, GravitationField &field);
 void Information(const Orbit::Kepler_elements &elements);
 
 int main()
 {
-	CGravitation_field central_field;
-	CNormal_field normal_field;
-	CNormal_spheric normal_spheric_field;
-	CAnomalous_spheric anomalous_spheric_field;
+	GravitationField central_field;
 
 	Orbit::Kepler_elements
 		elements = { 0, 0, 0, 200, 0, 0 };
@@ -29,34 +26,22 @@ int main()
 	TYPE duration = SECINDAY;
 
 	Modelling(duration, elements, central_field);
-	Modelling(duration, elements, normal_field);
-	Modelling(duration, elements, normal_spheric_field);
-	Modelling(duration, elements, anomalous_spheric_field);
 
 	elements.i = deg2rad(90);
 	Information(elements);
 
 	Modelling(duration, elements, central_field);
-	Modelling(duration, elements, normal_field);
-	Modelling(duration, elements, normal_spheric_field);
-	Modelling(duration, elements, anomalous_spheric_field);
 
 	elements.a = 500;
 	elements.i = 0;
 	Information(elements);
 
 	Modelling(duration, elements, central_field);
-	Modelling(duration, elements, normal_field);
-	Modelling(duration, elements, normal_spheric_field);
-	Modelling(duration, elements, anomalous_spheric_field);
 
 	elements.i = deg2rad(90);
 	Information(elements);
 
 	Modelling(duration, elements, central_field);
-	Modelling(duration, elements, normal_field);
-	Modelling(duration, elements, normal_spheric_field);
-	Modelling(duration, elements, anomalous_spheric_field);
 
 	elements.i = 0;
 	elements.a = 50000;
@@ -65,19 +50,16 @@ int main()
 	duration *= 7;
 
 	Modelling(duration, elements, central_field);
-	Modelling(duration, elements, normal_field);
-	Modelling(duration, elements, normal_spheric_field);
-	Modelling(duration, elements, anomalous_spheric_field);
 }
 
 
 void Modelling(const TYPE duration,
-	const Orbit::Kepler_elements &elements, CGravitation_field &field)
+	const Orbit::Kepler_elements &elements, GravitationField &field)
 {
 	DormanPrinceSolver Integrator;
 	Integrator.setEps_Max(1.0e-13);
 
-	CSputnik sputnik(elements);
+	Sputnik sputnik(elements);
 	sputnik.set_t1(duration);
 	sputnik.setInterval(SECINMIN);
 
