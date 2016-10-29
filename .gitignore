@@ -219,5 +219,7 @@ pip-log.txt
 ## My Ignored files
 #############
 
-LibDebug/
-LibRelease/
+[Ll]ib[Dd]ebug/
+[Ll]ib[Rr]elease/
+
+output??.txt
