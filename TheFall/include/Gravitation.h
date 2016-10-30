@@ -8,5 +8,5 @@
 class GravitationField : public Force
 {
 public:
-	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+	Eigen::Vector3d getRight(const Vector6d &X, TYPE t) const override;
 };

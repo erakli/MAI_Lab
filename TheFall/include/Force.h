@@ -8,5 +8,5 @@ class Force
 public:
 	virtual ~Force();
 
-	virtual Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const = 0;
+	virtual Eigen::Vector3d getRight(const Vector6d &X, TYPE t) const = 0;
 };
