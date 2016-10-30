@@ -69,11 +69,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\AerodynamicForce.h" />
     <ClInclude Include="..\include\Force.h" />
     <ClInclude Include="..\include\Gravitation.h" />
     <ClInclude Include="..\include\Sputnik.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AerodynamicForce.cpp" />
     <ClCompile Include="..\src\Force.cpp" />
     <ClCompile Include="..\src\Gravitation.cpp" />
     <ClCompile Include="..\src\Sputnik.cpp" />
