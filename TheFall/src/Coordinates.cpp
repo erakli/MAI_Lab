@@ -51,8 +51,8 @@ TYPE StarTime(const TYPE starTime, const TYPE t)
 //		t = (JD - midNight) * SECINDAY;	// t – время по шкале UTC в сек
 
 	return 
-		starTime + CEarth::angularVeloc * t;
-		//StarTime(midNight) + CEarth::angularVeloc * t + lambda;
+		starTime + Earth::angularVeloc * t;
+		//StarTime(midNight) + Earth::angularVeloc * t + lambda;
 }
 
 
@@ -143,7 +143,7 @@ namespace Transform
 		//	x * cos_lambda * cos_fi 
 		//	+ y * sin_lambda * cos_fi 
 		//	+ z * sin_fi 
-		//	- CEarth::meanRadius - H;
+		//	- Earth::meanRadius - H;
 		//Topo[2] = -x * cos_lambda * sin_fi - y * sin_lambda * sin_fi + z * cos_fi;
 
 		temp = RotMatrix(1, PI / 2.0 - fi) * RotMatrix(3, PI / 2.0 + lambda);
@@ -167,9 +167,9 @@ namespace Transform
 	Vector3d Geographic2Fix(const TYPE h, const TYPE fi, const TYPE lambda)
 	{
 		Vector3d Result;
-		Result(0) = (h + CEarth::meanRadius) * cos(fi) * cos(lambda);
-		Result(1) = (h + CEarth::meanRadius) * cos(fi) * sin(lambda);
-		Result(2) = (h + CEarth::meanRadius) * sin(fi);
+		Result(0) = (h + Earth::meanRadius) * cos(fi) * cos(lambda);
+		Result(1) = (h + Earth::meanRadius) * cos(fi) * sin(lambda);
+		Result(2) = (h + Earth::meanRadius) * sin(fi);
 
 		return Result;
 	}
@@ -183,9 +183,9 @@ namespace Transform
 			lambda(geographic(2));
 
 		Vector3d Result;
-		Result(0) = (h + CEarth::meanRadius) * cos(fi) * cos(lambda);
-		Result(1) = (h + CEarth::meanRadius) * cos(fi) * sin(lambda);
-		Result(2) = (h + CEarth::meanRadius) * sin(fi);
+		Result(0) = (h + Earth::meanRadius) * cos(fi) * cos(lambda);
+		Result(1) = (h + Earth::meanRadius) * cos(fi) * sin(lambda);
+		Result(2) = (h + Earth::meanRadius) * sin(fi);
 
 		return Result;
 	}
@@ -263,8 +263,8 @@ Vector6d Orbit::Kepler2Decart(const Kepler_elements& elements)
 	TYPE big_axis;
 
 	/* На случай, если орбиту задали менее радиуса Земли, прибавляем его */
-	if (elements.a < CEarth::meanRadius)
-		big_axis = elements.a + CEarth::meanRadius;
+	if (elements.a < Earth::meanRadius)
+		big_axis = elements.a + Earth::meanRadius;
 	else
 		big_axis = elements.a;
 
@@ -278,7 +278,7 @@ Vector6d Orbit::Kepler2Decart(const Kepler_elements& elements)
 
 
 	TYPE
-		sqrt_mu = sqrt(CEarth::muEarth / p);
+		sqrt_mu = sqrt(Earth::muEarth / p);
 
 	_velocity(0) = sqrt_mu * elements.e * sin_teta;
 	_velocity(1) = sqrt_mu * (1 + elements.e * cos_teta);
