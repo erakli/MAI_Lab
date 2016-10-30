@@ -6,7 +6,7 @@
 #define DAYS_IN_CURRENT_YEAR 366
 
 
-class CEarth : public Model
+class Earth : public Model
 {
 public:
 	static const TYPE
@@ -16,10 +16,10 @@ public:
 		ae;				// большая полуось ОЗЭ (общеземного эллипсоида), км
 
 	/* Господа конструкторы (+ по дате и позиции) */
-	CEarth();
-	CEarth(const TYPE JD);
-	CEarth(const Eigen::VectorXd &stateVector, const TYPE start);
-	CEarth(const CEarth &copy_earth);
+	Earth();
+	Earth(const TYPE JD);
+	Earth(const Eigen::VectorXd &stateVector, const TYPE start);
+	Earth(const Earth &copy_earth);
 
 	void addResult(const Eigen::VectorXd &X, TYPE t) override;
 

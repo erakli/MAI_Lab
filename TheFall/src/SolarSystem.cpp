@@ -8,18 +8,18 @@
 using namespace Eigen;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/* * * CEarth                                          * * * */
+/* * * Earth                                          * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 const TYPE
-	CEarth::muEarth = 398600.436,	// геоцентрическая гравитационная постоянная, [km^3/s^2]
-	CEarth::angularVeloc = 7.292115e-5,	// угловая скорость вращения, рад/с
-	CEarth::meanRadius = 6371.3,		// средний радиус для сферической земли, км
-	CEarth::ae = 6378.136;				// большая полуось ОЗЭ (общеземного эллипсоида), км
+	Earth::muEarth = 398600.436,	// геоцентрическая гравитационная постоянная, [km^3/s^2]
+	Earth::angularVeloc = 7.292115e-5,	// угловая скорость вращения, рад/с
+	Earth::meanRadius = 6371.3,		// средний радиус для сферической земли, км
+	Earth::ae = 6378.136;				// большая полуось ОЗЭ (общеземного эллипсоида), км
 
 /* Господа конструкторы (+ по дате и позиции) */
 
-CEarth::CEarth()
+Earth::Earth()
 {
 	StartValues.resize(6);	// гелиоцентрическое положение + скорость
 	s_size = StartValues.size();
@@ -39,7 +39,7 @@ CEarth::CEarth()
 	t1 = t0 + DAYS_IN_CURRENT_YEAR * SECINDAY;
 }
 
-CEarth::CEarth(const TYPE JD)
+Earth::Earth(const TYPE JD)
 {
 	StartValues.resize(6);	// гелиоцентрическое положение + скорость
 	s_size = StartValues.size();
@@ -107,7 +107,7 @@ CEarth::CEarth(const TYPE JD)
 	t1 = t0 + 365 * SECINDAY;
 }
 
-CEarth::CEarth(const VectorXd &stateVector, const TYPE start)
+Earth::Earth(const VectorXd &stateVector, const TYPE start)
 {
 	StartValues = stateVector;
 	s_size = StartValues.size();
@@ -116,7 +116,7 @@ CEarth::CEarth(const VectorXd &stateVector, const TYPE start)
 	t1 = t0 + 365 * SECINDAY;
 }
 
-CEarth::CEarth(const CEarth &copy_earth)
+Earth::Earth(const Earth &copy_earth)
 {
 	StartValues = copy_earth.StartValues;
 	s_size = StartValues.size();
@@ -129,7 +129,7 @@ CEarth::CEarth(const CEarth &copy_earth)
 /*
 	Храним время в конце вектора
 */
-void CEarth::addResult(const VectorXd& X, double t)
+void Earth::addResult(const VectorXd& X, double t)
 {
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << X, t;
@@ -141,7 +141,7 @@ void CEarth::addResult(const VectorXd& X, double t)
 	Правая часть ДУ невозмущённого кеплеровского движения
 	Земли вокруг Солнца
 */
-VectorXd CEarth::getRight(const VectorXd& X, TYPE t) const
+VectorXd Earth::getRight(const VectorXd& X, TYPE t) const
 {
 	VectorXd Res(s_size);
 
