@@ -22,6 +22,9 @@ public:
 	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
 
 private:
+	TYPE mass;
+	TYPE ballistic_coeff;
+
 	ForcesVector forces;
 	size_t forces_count;
 };
