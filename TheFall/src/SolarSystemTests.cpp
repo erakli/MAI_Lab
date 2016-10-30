@@ -107,8 +107,8 @@ void Tests::SolarSystem()
 	Init("SolarSystem");
 
 	cout 
-		<< "\nangularVeloc	=	" << scientific << CEarth::angularVeloc
-		<< "\nmeanRadius	=	" << fixed << CEarth::meanRadius;
+		<< "\nangularVeloc	=	" << scientific << Earth::angularVeloc
+		<< "\nmeanRadius	=	" << fixed << Earth::meanRadius;
 
 	Final();
 }
