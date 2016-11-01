@@ -35,7 +35,7 @@ public:
 
 	// генерация (квази)Белого Шума. Должна вызываться перед моделированием
 	void Generate_WhiteNoise(TYPE omega);
-	TYPE get_correlation_interval() const;
+	TYPE GetCorrelationInterval() const;
 
 	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
 

@@ -32,6 +32,8 @@ ShapingFilter::ShapingFilter()
 {
 	StartValues.resize(SYSTEM_COORDINATES);
 	s_size = StartValues.size();
+
+	StartValues.fill(0);
 	
 	/* Коэффициенты в числителе и знаменателе Формирующего Фильтра */
 	K = 0.071167241475998;
@@ -69,7 +71,7 @@ void ShapingFilter::Generate_WhiteNoise(TYPE omega)
 {
 	TYPE dt(0);
 
-	WhiteNoise = Get_WhiteNoise(omega, t0, t1, dt);
+	WhiteNoise = GetWhiteNoise(omega, t0, t1, dt);
 
 	correlation_interval_WhiteNoise = dt;
 	WhiteNoise_got = true;
@@ -77,7 +79,7 @@ void ShapingFilter::Generate_WhiteNoise(TYPE omega)
 	//lookUp_of_WhiteNoise.push_back(WhiteNoise);
 }
 
-TYPE ShapingFilter::get_correlation_interval() const
+TYPE ShapingFilter::GetCorrelationInterval() const
 {
 	return correlation_interval_WhiteNoise;
 }
@@ -112,7 +114,7 @@ VectorXd ShapingFilter::getRight(const VectorXd &X, TYPE t) const
 
 	TYPE y = (-2 * T[1] * xi * x2 - x1 + nu) / pow(T[1], 2);
 
-	VectorXd RightPart;
+	VectorXd RightPart(SYSTEM_COORDINATES);
 	RightPart << x2, y;
 
 	return RightPart;
