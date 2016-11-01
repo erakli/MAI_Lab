@@ -4,7 +4,8 @@
 #include <math.h>
 
 
-Eigen::VectorXd SetValues(TYPE *values){
+Eigen::VectorXd SetValues(TYPE *values)
+{
 	Eigen::VectorXd Res(SIZE);
 	for (int i = 0; i < SIZE; i++)
 	{
@@ -139,7 +140,8 @@ void DormanPrinceSolver::Run(Model &model)
 /*
 ------------- Вычисление k-элементов
 */
-void DormanPrinceSolver::set_k(int size){
+void DormanPrinceSolver::set_k(int size)
+{
 	k.fill(0);
 	k.row(0) = p_model->getRight(x0, t);
 
@@ -175,7 +177,8 @@ void DormanPrinceSolver::set_k(int size){
 ------------- Плотная выдача.
 	Необходима для записи результатов на подшагах.
 */
-Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step){
+Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
+{
 	TYPE sqrTeta;
 
 	sqrTeta = pow(Teta, 2); // квадрат от тета
@@ -222,7 +225,8 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step){
 /*
 ------------- Коррекция текущего шага на основе погрешности
 */
-TYPE DormanPrinceSolver::StepCorrection(){
+TYPE DormanPrinceSolver::StepCorrection()
+{
 	TYPE min_part =
 		std::min<TYPE>
 		(5.0, pow(Error / Eps_Max, 0.2) / 0.9);
@@ -233,8 +237,8 @@ TYPE DormanPrinceSolver::StepCorrection(){
 /*
 ------------- Получение локальной погрешности
 */
-void DormanPrinceSolver::getError(){
-
+void DormanPrinceSolver::getError()
+{
 	// числитель и знаменатель дроби под корнем
 	Eigen::VectorXd numerator(x_size), denominator(x_size), fraction(x_size);
 
@@ -256,7 +260,8 @@ void DormanPrinceSolver::getError(){
 
 }
 
-TYPE DormanPrinceSolver::RoundingError() const{
+TYPE DormanPrinceSolver::RoundingError() const
+{
 	TYPE v(1), u(1);
 
 	while (1 + v > 1)
@@ -269,12 +274,14 @@ TYPE DormanPrinceSolver::RoundingError() const{
 }
 
 // -------------- вспомогательные коэффициенты
-void DormanPrinceSolver::set_c(){
+void DormanPrinceSolver::set_c()
+{
 	TYPE prep[SIZE] = { 0, 0.2, 0.3, 0.8, 8.0 / 9.0, 1.0, 1.0 };
 	c = SetValues(prep);
 }
 
-void DormanPrinceSolver::setA(){
+void DormanPrinceSolver::setA()
+{
 	TYPE prep[SIZE][SIZE] =
 	{
 		{},
@@ -297,13 +304,15 @@ void DormanPrinceSolver::setA(){
 	}
 }
 
-void DormanPrinceSolver::set_b(){
+void DormanPrinceSolver::set_b()
+{
 	TYPE prep[SIZE] =
 	{ 35.0 / 384, 0, 500.0 / 1113, 125.0 / 192, -2187.0 / 6784, 11.0 / 84, 0 };
 	b = SetValues(prep);
 }
 
-void DormanPrinceSolver::set_b1(){
+void DormanPrinceSolver::set_b1()
+{
 	TYPE prep[SIZE] =
 	{ 5179.0 / 57600, 0, 7571.0 / 16695, 393.0 / 640, -92097.0 / 339200, 187.0 / 2100, 1.0 / 40 };
 	b1 = SetValues(prep);
@@ -311,22 +320,27 @@ void DormanPrinceSolver::set_b1(){
 
 
 // ------------ инкапсуляция
-void DormanPrinceSolver::setEps_Max(const TYPE &arg){
+void DormanPrinceSolver::setEps_Max(const TYPE &arg)
+{
 	Eps_Max = arg;
 }
 
-void DormanPrinceSolver::setEps(const TYPE &arg){
+void DormanPrinceSolver::setEps(const TYPE &arg)
+{
 	Error = arg;
 }
 
-TYPE DormanPrinceSolver::getEps_Max() const{
+TYPE DormanPrinceSolver::getEps_Max() const
+{
 	return Eps_Max;
 }
 
-TYPE DormanPrinceSolver::get_iter() const{
+TYPE DormanPrinceSolver::get_iter() const
+{
 	return iter;
 }
 
-TYPE DormanPrinceSolver::getEps_Global() const{
+TYPE DormanPrinceSolver::getEps_Global() const
+{
 	return Eps_Global;
 }
