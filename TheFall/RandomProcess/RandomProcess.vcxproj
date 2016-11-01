@@ -136,6 +136,11 @@
     <ClCompile Include="..\src\test_RandomProcess.cpp" />
     <ClCompile Include="..\src\WhiteNoise.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Solver\Solver.vcxproj">
+      <Project>{86a2f3de-cd57-4a18-8530-1595e04e721d}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

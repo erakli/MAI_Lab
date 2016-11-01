@@ -28,10 +28,10 @@
     <ClCompile Include="..\src\ShapingFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\test_RandomProcess.cpp">
+    <ClCompile Include="..\src\DormanPrinceSolver_fixed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\DormanPrinceSolver_fixed.cpp">
+    <ClCompile Include="..\src\test_RandomProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
