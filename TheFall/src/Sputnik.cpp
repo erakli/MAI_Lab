@@ -64,15 +64,19 @@ void Sputnik::ClearForcesList()
 
 VectorXd Sputnik::getRight(const VectorXd &X, TYPE t) const
 {
+	Vector3d cur_force;
 	Vector3d forces_sum;
 	forces_sum.fill(0);
 
 	for (size_t i = 0; i < forces_count; i++)
 	{
-		forces_sum += forces[i]->getRight(X, t);
+		cur_force = forces[i]->getRight(X, t);
+		if (i > 0)
+			cur_force /= mass;
+		forces_sum += cur_force;
 	}
 
-	Vector6d right_part;
+	VectorXd right_part(VEC_SIZE * 2);
 	right_part << X.tail(VEC_SIZE), forces_sum;
 
 	return right_part;
