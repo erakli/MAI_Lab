@@ -6,7 +6,7 @@
 
 #include <vector>
 
-typedef std::vector<const Force*> ForcesVector;
+typedef std::vector<Force*> ForcesVector;
 
 
 
@@ -16,9 +16,9 @@ public:
 	Sputnik();
 	Sputnik(const Orbit::Kepler_elements &elements);
 	
-	void AddForce(const Force* force);
-	void Init(int argc = 0, void** argv = nullptr) override;	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	void Init(int argc = 0, void** argv = nullptr) override;	// инициализация модели
 
+	void AddForce(Force* force);
 	void ClearForcesList();
 
 	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;

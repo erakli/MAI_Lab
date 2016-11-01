@@ -26,7 +26,6 @@ Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
 
 
 
-void Sputnik::AddForce(const Force* force)
 void Sputnik::Init(int argc, void** argv)
 {
 	const int arg_count = 2;
@@ -48,6 +47,7 @@ void Sputnik::Init(int argc, void** argv)
 
 
 
+void Sputnik::AddForce(Force* force)
 {
 	forces.push_back(force);
 	forces_count++;
