@@ -29,6 +29,13 @@ public:
 	Eigen::Vector3d getRight(const Vector6d &X, TYPE t) const override;
 
 private:
+	TYPE ballistic_coeff;
+
 	DensityModelParams density_params[ATMO_LAYERS];
+	Eigen::VectorXd random_process_realization;
+
+
 	TYPE GetDensity(const Eigen::Vector3d& X, TYPE t) const;
+
+	void GenerateRandomRealization(TYPE t1);
 };

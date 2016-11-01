@@ -3,6 +3,10 @@
 #include "Constants.h"
 #include <SolarSystem.h>
 
+#include "DormanPrinceSolver_fixed.h"
+#include "ShapingFilter.h"
+#include <Eigen/src/Core/util/ForwardDeclarations.h>
+
 using namespace Eigen;
 
 
@@ -19,6 +23,7 @@ DensityModelParams::DensityModelParams()
 
 AerodynamicForce::AerodynamicForce()
 {
+	ballistic_coeff = 0.0;
 
 	density_params[0].height = 0.0;
 	density_params[1].height = 2.0e+4;
@@ -87,7 +92,8 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 	Vector3d atmospheric_veloc;
 	atmospheric_veloc = veloc - earth_ang_veloc.cross(pos);
 
-	TYPE scalar_part = atmospheric_veloc.norm() * GetDensity(pos) / 2.0;
+	TYPE scalar_part = 
+		atmospheric_veloc.norm() * GetDensity(pos, t) * ballistic_coeff / 2.0;
 
 	Vector3d right_part;
 	right_part = scalar_part * atmospheric_veloc;
@@ -96,12 +102,59 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 }
 
 
-
-TYPE AerodynamicForce::GetDensity(const Vector3d& X) const
+// TODO: необходимо получать плотность не в зависимости от времени, а от углового
+// смещения
+TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 {
 	TYPE height = X.norm() - Earth::meanRadius;
 
-	TYPE density;
+	int layer;
+
+	for (layer = 0; layer < ATMO_LAYERS; layer++)
+		if (density_params[layer].height > height)
+		{
+			layer--;
+			if (layer < 0)
+				layer = 0;
+			break;
+		}
+
+	TYPE layer_dist = height - density_params[layer].height;
+	TYPE e = exp(
+		density_params[layer].k1 * pow(layer_dist, 2) - 
+		density_params[layer].k2 * layer_dist
+		);
+	TYPE density = 
+		density_params[layer].A * (1 + random_process_realization(int(t))) * e;
 
 	return density;
+}
+
+
+
+void AerodynamicForce::GenerateRandomRealization(TYPE t1)
+{
+	ShapingFilter shaping_filter;
+	DormanPrinceSolver_fixed integrator;
+	TYPE omega = 1.0e+2;	// частота генерации Белого Шума
+
+	shaping_filter.setInterval(1);
+	shaping_filter.set_t1(t1);
+	shaping_filter.Generate_WhiteNoise(omega);
+
+	integrator.setEps_Max(1.0e-13);
+	integrator.SetCorrelationInterval(shaping_filter.GetCorrelationInterval());
+
+	integrator.Run(shaping_filter);
+
+	VectorList random_process(shaping_filter.getResult());
+
+	random_process_realization.resize(random_process.size());
+
+	for (VectorList::const_iterator iter = random_process.begin();
+		iter != random_process.end();
+		++iter)
+	{
+		random_process_realization << *iter;
+	}
 }
