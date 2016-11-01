@@ -24,7 +24,6 @@ VectorXd GetWhiteNoise(TYPE omega, TYPE t0, TYPE t1, TYPE &dt)
 	// генератор с гауссовским нормальным распределением СВ
 	default_random_engine generator;
 	normal_distribution<TYPE> distribution(0, sqrt(Disp));
-	TYPE temp;
 
 	for (size_t i = 0; i < vector_size; i++)
 		WhiteNoise(i) = distribution(generator);
