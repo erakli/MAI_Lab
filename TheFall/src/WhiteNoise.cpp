@@ -11,7 +11,7 @@ using namespace Eigen;
 /*
 *	Генерация вектора (квази)Белого Шума по заданной частоте среза
 */
-VectorXd Get_WhiteNoise(TYPE omega, TYPE t0, TYPE t1, TYPE &dt)
+VectorXd GetWhiteNoise(TYPE omega, TYPE t0, TYPE t1, TYPE &dt)
 {
 	dt = 2 * PI / omega;		// интервал корреляции (квази)Белого Шума
 	TYPE Disp = 1 / dt;			// его же дисперсия
@@ -24,9 +24,10 @@ VectorXd Get_WhiteNoise(TYPE omega, TYPE t0, TYPE t1, TYPE &dt)
 	// генератор с гауссовским нормальным распределением СВ
 	default_random_engine generator;
 	normal_distribution<TYPE> distribution(0, sqrt(Disp));
+	TYPE temp;
 
 	for (size_t i = 0; i < vector_size; i++)
-		WhiteNoise << distribution(generator);
+		WhiteNoise(i) = distribution(generator);
 
 	return WhiteNoise;
 }
