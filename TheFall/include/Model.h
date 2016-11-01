@@ -32,6 +32,8 @@ public:
 	Model& operator=(const Model& right);
 
 public:
+	virtual void Init(int argc = 0, void** argv = nullptr);	// инициализация модели
+
 	virtual Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const = 0;
 
 	virtual bool Stop_Calculation(

@@ -17,6 +17,8 @@ public:
 	Sputnik(const Orbit::Kepler_elements &elements);
 	
 	void AddForce(const Force* force);
+	void Init(int argc = 0, void** argv = nullptr) override;	// ������������� ������
+
 	void ClearForcesList();
 
 	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;

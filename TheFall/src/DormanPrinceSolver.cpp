@@ -46,7 +46,7 @@ DormanPrinceSolver::DormanPrinceSolver()
 void DormanPrinceSolver::Run(Model &model)
 {
 	p_model = &model; // Храним адрес модели для внутренних нужд
-	p_model->Init();
+	p_model->Init(0, nullptr);
 
 	// инициализируем время начальным его значением из модели
 	t = p_model->get_t0();

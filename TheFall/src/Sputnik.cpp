@@ -27,6 +27,27 @@ Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
 
 
 void Sputnik::AddForce(const Force* force)
+void Sputnik::Init(int argc, void** argv)
+{
+	const int arg_count = 2;
+	void** args = new void*[arg_count];
+
+	const int param_count = 2;
+	TYPE params[param_count] = { t1, ballistic_coeff };
+
+	args[0] = (void*)&param_count;
+	args[1] = (void*)&params;
+	
+	for (size_t i = 0; i < forces_count; i++)
+	{
+		forces[i]->Init(arg_count, args);
+	}
+
+	delete [] args;
+}
+
+
+
 {
 	forces.push_back(force);
 	forces_count++;

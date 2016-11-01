@@ -68,6 +68,12 @@ Model& Model::operator=(const Model& right)
 
 
 
+void Model::Init(int argc, void** argv)
+{
+}
+
+
+
 bool Model::Stop_Calculation(
 	TYPE t, TYPE Step, VectorXd& PrevStep, VectorXd& CurStep)
 {
