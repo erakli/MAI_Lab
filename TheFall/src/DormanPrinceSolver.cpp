@@ -31,7 +31,7 @@ DormanPrinceSolver::DormanPrinceSolver()
 	setA();
 
 	step = 1.0e-3;
-	Error = 1.0e-5;
+//	Error = 1.0e-5;
 	Eps_Max = 1.0e-17;
 	Eps_Global = 0;
 
@@ -46,6 +46,7 @@ DormanPrinceSolver::DormanPrinceSolver()
 void DormanPrinceSolver::Run(Model &model)
 {
 	p_model = &model; // ’раним адрес модели дл€ внутренних нужд
+	p_model->Init();
 
 	// инициализируем врем€ начальным его значением из модели
 	t = p_model->get_t0();
@@ -61,7 +62,7 @@ void DormanPrinceSolver::Run(Model &model)
 		tout = t;			// ƒл€ плотной выдачи
 
 	TYPE NewStep;			// храним знание о новом шаге на эту итерацию
-
+	TYPE Error;
 	UINT local_iter(0);
 
 	/*
@@ -101,8 +102,8 @@ void DormanPrinceSolver::Run(Model &model)
 		x1 = x0 + sum * step;
 		_x1 = x0 + sum_1 * step;
 
-		getError();
-		NewStep = StepCorrection();	// «апомнили шаг до конца этой итерации
+		Error = getError();
+		NewStep = StepCorrection(Error);	// «апомнили шаг до конца этой итерации
 		//if (NewStep > rounding_error)
 		step = NewStep;
 		//else
@@ -225,7 +226,7 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
 /*
 -------------  оррекци€ текущего шага на основе погрешности
 */
-TYPE DormanPrinceSolver::StepCorrection()
+TYPE DormanPrinceSolver::StepCorrection(TYPE Error)
 {
 	TYPE min_part =
 		std::min<TYPE>
@@ -237,7 +238,7 @@ TYPE DormanPrinceSolver::StepCorrection()
 /*
 ------------- ѕолучение локальной погрешности
 */
-void DormanPrinceSolver::getError()
+TYPE DormanPrinceSolver::getError()
 {
 	// числитель и знаменатель дроби под корнем
 	Eigen::VectorXd numerator(x_size), denominator(x_size), fraction(x_size);
@@ -256,7 +257,7 @@ void DormanPrinceSolver::getError()
 	}
 
 	// воспользовались нахождением длины вектора
-	Error = fraction.norm() / sqrt(TYPE(x_size));
+	return fraction.norm() / sqrt(TYPE(x_size));
 
 }
 
@@ -325,10 +326,10 @@ void DormanPrinceSolver::setEps_Max(const TYPE &arg)
 	Eps_Max = arg;
 }
 
-void DormanPrinceSolver::setEps(const TYPE &arg)
-{
-	Error = arg;
-}
+//void DormanPrinceSolver::setEps(const TYPE &arg)
+//{
+//	Error = arg;
+//}
 
 TYPE DormanPrinceSolver::getEps_Max() const
 {

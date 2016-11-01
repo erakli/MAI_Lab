@@ -16,7 +16,7 @@ protected:
 	Eigen::MatrixXd k;	// вспомогательные коэффициенты
 
 	TYPE
-		Error,		// Относительная вычислительная ошибка (локальная погрешность)
+//		Error,		// Относительная вычислительная ошибка (локальная погрешность)
 		Eps_Max,	// максимальная относительная вычислительная ошибка 
 		Eps_Global;
 
@@ -29,8 +29,8 @@ protected:
 	TYPE rounding_error;
 
 protected:
-	virtual TYPE StepCorrection(); // управление длиной шага интегрирования
-	virtual void getError();
+	virtual TYPE StepCorrection(TYPE Error); // управление длиной шага интегрирования
+	virtual TYPE getError();
 	TYPE RoundingError() const;
 
 	void set_k(int size);
@@ -50,7 +50,7 @@ public:
 	void Run(Model &model) override;
 
 	void setEps_Max(const TYPE &arg);
-	void setEps(const TYPE &arg);
+//	void setEps(const TYPE &arg);
 
 	TYPE getEps_Max() const;
 	TYPE getEps_Global() const;
