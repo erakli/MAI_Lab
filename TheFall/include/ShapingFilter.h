@@ -3,8 +3,6 @@
 
 #include "Model.h"
 
-using namespace Eigen;
-
 class ShapingFilter : public Model
 {
 private:
@@ -20,7 +18,7 @@ private:
 	TYPE correlation_interval_WhiteNoise;
 
 	// реализация Белого Шума на всё время моделирования с заданным интервалом корреляции
-	VectorXd WhiteNoise;
+	Eigen::VectorXd WhiteNoise;
 	bool WhiteNoise_got;	// была ли получена реализация Белого Шума
 
 	TYPE getWhiteNoise(TYPE t) const;
@@ -33,7 +31,7 @@ public:
 		Матрица результатов:	t, x1, x2, y1
 		y1 - выход из фильтра
 	*/
-	void addResult(const VectorXd &X, TYPE t) override;
+	void addResult(const Eigen::VectorXd &X, TYPE t) override;
 
 	// генерация (квази)Белого Шума. Должна вызываться перед моделированием
 	void Generate_WhiteNoise(TYPE omega);
