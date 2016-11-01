@@ -23,6 +23,9 @@ class AerodynamicForce : public Force
 {
 public:
 	AerodynamicForce();
+
+	void Init(int argc, void** argv) override;
+
 	Eigen::Vector3d getRight(const Vector6d &X, TYPE t) const override;
 
 private:

@@ -59,6 +59,23 @@ AerodynamicForce::AerodynamicForce()
 
 
 
+void AerodynamicForce::Init(int argc, void** argv)
+{
+	if (argc != 2)
+		return;
+
+	int param_count = *(static_cast<int*>(argv[0]));
+	TYPE* params = static_cast<TYPE*>(argv[1]);
+
+	if (param_count != 2)
+		return;
+
+	GenerateRandomRealization(params[0]);
+	ballistic_coeff = params[1];
+}
+
+
+
 Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 {
 	Vector3d pos, veloc;
