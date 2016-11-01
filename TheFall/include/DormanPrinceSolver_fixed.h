@@ -12,8 +12,8 @@ private:
 		Перегружаем коррекцию шага, чтобы она удовлетворяла условиям 
 		формирования белого шума
 	*/
-	TYPE StepCorrection() override;
-	void getError() override;
+	TYPE StepCorrection(TYPE Error) override;
+	TYPE getError() override;
 public:
 	DormanPrinceSolver_fixed();
 	DormanPrinceSolver_fixed(const TYPE correlation_interval);

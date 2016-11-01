@@ -1,6 +1,6 @@
 #include "DormanPrinceSolver_fixed.h"
 
-#define STEP_CORRECTION
+//#define STEP_CORRECTION
 
 DormanPrinceSolver_fixed::DormanPrinceSolver_fixed()
 {
@@ -19,7 +19,7 @@ void DormanPrinceSolver_fixed::SetCorrelationInterval(const TYPE correlation_int
 	this->correlation_interval = correlation_interval;
 }
 
-TYPE DormanPrinceSolver_fixed::StepCorrection()
+TYPE DormanPrinceSolver_fixed::StepCorrection(TYPE Error)
 {
 #ifdef STEP_CORRECTION
 	TYPE NewStep = DormanPrinceSolver::StepCorrection();
@@ -33,10 +33,12 @@ TYPE DormanPrinceSolver_fixed::StepCorrection()
 #endif
 }
 
-void DormanPrinceSolver_fixed::getError()
+TYPE DormanPrinceSolver_fixed::getError()
 {
 	//CDormanPrince::getError();
 	
-	if (Error > Eps_Max)
-		Error = 0;
+	//if (Error > Eps_Max)
+	//	Error = 0;
+
+	return 0;
 }
