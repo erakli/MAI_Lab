@@ -1,8 +1,11 @@
 ﻿#pragma once
 
+
 #include "Model.h"
 
-class CShapingFilter : public CModel
+using namespace Eigen;
+
+class ShapingFilter : public Model
 {
 private:
 	TYPE
@@ -17,32 +20,26 @@ private:
 	TYPE correlation_interval_WhiteNoise;
 
 	// реализация Белого Шума на всё время моделирования с заданным интервалом корреляции
-	CVector WhiteNoise;
+	VectorXd WhiteNoise;
 	bool WhiteNoise_got;	// была ли получена реализация Белого Шума
 
-	TYPE getWhiteNoise(cTYPE t) const;
-
-private:
-	void ShapingFilter(CVector &RightPart,
-		TYPE x1, TYPE x2, TYPE input) const;
+	TYPE getWhiteNoise(TYPE t) const;
 
 public:
 
-	CShapingFilter();
+	ShapingFilter();
 
 	/*
 		Матрица результатов:	t, x1, x2, y1
 		y1 - выход из фильтра
 	*/
-	void addResult(CVector &X, TYPE t) override;
+	void addResult(const VectorXd &X, TYPE t) override;
 
 	// генерация (квази)Белого Шума. Должна вызываться перед моделированием
-	void Generate_WhiteNoise(const TYPE omega);
+	void Generate_WhiteNoise(TYPE omega);
 	TYPE get_correlation_interval() const;
 
-	CVector getRight(const CVector &X, TYPE t) const override;
+	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
 
-	bool Stop_Calculation(TYPE t, TYPE Step, CVector &PrevStep, CVector &CurStep) override;
-
-	static CVector getReferenceCorrelationFcn(TYPE correlation_interval, int k_max);
+	static Eigen::VectorXd getReferenceCorrelationFcn(TYPE correlation_interval, int k_max);
 };

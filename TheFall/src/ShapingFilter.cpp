@@ -1,50 +1,54 @@
-﻿#include <exception>
+﻿#include "ShapingFilter.h"
 
+#include "Constants.h"
 #include "WhiteNoise.h"
 
-#include "ShapingFilter.h"
+#include <exception>
+
+using namespace Eigen;
 
 /* * * * * * * * * * Support Fcn * * * * * * * * * */
 
 inline TYPE ReferenceCorrelationFcn(TYPE tau)
 {
-	static 
-	const TYPE 
+	static
+	const TYPE
 		D = 0.01,
-		lambda = 0.3,
-		beta = 2 * PI;
+		lambda = 1.0e-3,
+		beta = 2 * PI / 100;
 
 	return
 		D 
 		* exp(-lambda * abs(tau)) 
-		* (cos(beta * tau) + lambda / beta * sin(beta * abs(tau)));
+		* cos(beta * tau);
 }
 
 
-/* * * * * * * * * * CShapingFilter * * * * * * * * * */
+/* * * * * * * * * * ShapingFilter * * * * * * * * * */
 
 #define SYSTEM_COORDINATES		2
 
-CShapingFilter::CShapingFilter(){
-
-	StartValues.setSize(SYSTEM_COORDINATES);
-	s_size = StartValues.getSize();
+ShapingFilter::ShapingFilter()
+{
+	StartValues.resize(SYSTEM_COORDINATES);
+	s_size = StartValues.size();
 	
 	/* Коэффициенты в числителе и знаменателе Формирующего Фильтра */
-	K = 0.0174147114037780;
-	T[0] = 1.261682186852e-8;
-	T[1] = 0.15897383780486;
-	xi = 0.047692151341457;
+	K = 0.071167241475998;
+	T[0] = 15.913478971148;
+	T[1] = 15.913478971148;
+	xi = 0.015913478970986;
 
-	Mx = 3;
+	Mx = 0;
 
 	correlation_interval_WhiteNoise = 0;
 	WhiteNoise_got = false;
 }
 
-void CShapingFilter::addResult(CVector& X, TYPE t)
+void ShapingFilter::addResult(const VectorXd &X, TYPE t)
 {
-	CVector compile(X); // вектор результата
+	VectorXd compile; // вектор результата
+	compile.resize(X.size() + 1);
 	
 	/*	добавляем выход из ФФ. так как этой координаты
 		нет в системе ДУ, то будем её учитывать здесь 
@@ -52,15 +56,16 @@ void CShapingFilter::addResult(CVector& X, TYPE t)
 		y1 = K (T_1 x_2 + x_1)
 	*/
 	TYPE y1 = K * (T[0] * X[1] + X[0]);
-	compile.push_back(y1 + Mx);	// Прибавляем мат. ожидание требуемого процесса
 
-	CModel::addResult(compile, t);
+	compile << X, y1 + Mx;	// Прибавляем мат. ожидание требуемого процесса
+
+	Model::addResult(compile, t);
 }
 
 /*
 *	Генерация вектора (квази)Белого Шума по заданной частоте среза
 */
-void CShapingFilter::Generate_WhiteNoise(const TYPE omega)
+void ShapingFilter::Generate_WhiteNoise(TYPE omega)
 {
 	TYPE dt(0);
 
@@ -72,16 +77,18 @@ void CShapingFilter::Generate_WhiteNoise(const TYPE omega)
 	//lookUp_of_WhiteNoise.push_back(WhiteNoise);
 }
 
-TYPE CShapingFilter::get_correlation_interval() const
+TYPE ShapingFilter::get_correlation_interval() const
 {
 	return correlation_interval_WhiteNoise;
 }
+
+
 
 /*
 *	Входной БШ для Формирующего Фильтра.
 *	Индекс - кратное интервалу корреляции целочисленное число - номер интервала
 */
-TYPE CShapingFilter::getWhiteNoise(cTYPE t)  const
+TYPE ShapingFilter::getWhiteNoise(TYPE t)  const
 {
 	if (!WhiteNoise_got)
 	{
@@ -95,38 +102,28 @@ TYPE CShapingFilter::getWhiteNoise(cTYPE t)  const
 }
 
 
-/*
-*	Формирующий фильтр
-*/
-void CShapingFilter::ShapingFilter(CVector &RightPart,
-	TYPE x1, TYPE x2, TYPE input) const
-{
-	RightPart.push_back(x2);
-	RightPart.push_back(
-		(-2 * T[1] * xi * x2 - x1 + input) / pow(T[1], 2)
-		);
-}
 
-CVector CShapingFilter::getRight(const CVector &X, TYPE t) const
+VectorXd ShapingFilter::getRight(const VectorXd &X, TYPE t) const
 {
 	// Входной БШ для Формирующего Фильтра.
 	TYPE nu = getWhiteNoise(t);
+	TYPE x1 = X(0);
+	TYPE x2 = X(1);
 
-	CVector RightPart;
-	ShapingFilter(RightPart, X[0], X[1], nu);
+	TYPE y = (-2 * T[1] * xi * x2 - x1 + nu) / pow(T[1], 2);
+
+	VectorXd RightPart;
+	RightPart << x2, y;
 
 	return RightPart;
 }
 
-bool CShapingFilter::Stop_Calculation(TYPE, TYPE, CVector &, CVector &)
-{
-	return false;
-}
 
-CVector CShapingFilter::getReferenceCorrelationFcn(
+
+VectorXd ShapingFilter::getReferenceCorrelationFcn(
 	TYPE correlation_interval, int k_max)
 {
-	CVector K(k_max);
+	VectorXd K(k_max);
 	TYPE tau;
 
 	for (auto k = 0; k < k_max; k++)
