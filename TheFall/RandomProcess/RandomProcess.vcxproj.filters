@@ -17,12 +17,21 @@
     <ClInclude Include="..\include\ShapingFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\DormanPrinceSolver_fixed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\WhiteNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ShapingFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test_RandomProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DormanPrinceSolver_fixed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

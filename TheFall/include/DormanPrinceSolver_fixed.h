@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Integrator.h"
+#include "DormanPrinceSolver.h"
 
-class CDormanPrince_modified : public CDormanPrince
+class DormanPrinceSolver_fixed : public DormanPrinceSolver
 {
 private:
 	// интервал корреляции, в котором мы имеем постоянное значение реализации Случайного Процесса
@@ -15,8 +15,8 @@ private:
 	TYPE StepCorrection() override;
 	void getError() override;
 public:
-	CDormanPrince_modified();
-	CDormanPrince_modified(const TYPE correlation_interval);
+	DormanPrinceSolver_fixed();
+	DormanPrinceSolver_fixed(const TYPE correlation_interval);
 
-	void set_correlation_interval(const TYPE correlation_interval);
+	void SetCorrelationInterval(const TYPE correlation_interval);
 };

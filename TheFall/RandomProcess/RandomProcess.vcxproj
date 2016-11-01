@@ -126,11 +126,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\DormanPrinceSolver_fixed.h" />
     <ClInclude Include="..\include\ShapingFilter.h" />
     <ClInclude Include="..\include\WhiteNoise.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\DormanPrinceSolver_fixed.cpp" />
     <ClCompile Include="..\src\ShapingFilter.cpp" />
+    <ClCompile Include="..\src\test_RandomProcess.cpp" />
     <ClCompile Include="..\src\WhiteNoise.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
