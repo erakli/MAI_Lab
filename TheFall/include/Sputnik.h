@@ -23,6 +23,17 @@ public:
 
 	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
 
+	bool Stop_Calculation(
+		TYPE t, TYPE Step, const Eigen::VectorXd &PrevStep, const Eigen::VectorXd &CurStep)
+		override;
+
+public:
+	TYPE GetMass() const;
+	void SetMass(TYPE new_mass);
+
+	TYPE GetBallisticCoeff() const;
+	void SetBallisticCoeff(TYPE new_ballistic_coeff);
+
 private:
 	TYPE mass;
 	TYPE ballistic_coeff;

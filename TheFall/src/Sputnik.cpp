@@ -14,8 +14,7 @@ Sputnik::Sputnik() : mass(0), ballistic_coeff(0), forces_count(0)
 
 Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
 {
-	StartValues = Kepler2Decart(elements);
-	s_size = StartValues.size();
+	Model::SetStartValuesSize(Kepler2Decart(elements));
 
 	mass = 0;
 	ballistic_coeff = 0;
@@ -28,6 +27,8 @@ Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
 
 void Sputnik::Init(int argc, void** argv)
 {
+	Model::Init();
+
 	const int arg_count = 2;
 	void** args = new void*[arg_count];
 
@@ -79,4 +80,38 @@ VectorXd Sputnik::getRight(const VectorXd &X, TYPE t) const
 	right_part << X.tail(VEC_SIZE), forces_sum;
 
 	return right_part;
+}
+
+
+
+bool Sputnik::Stop_Calculation(
+	TYPE t, TYPE Step, const VectorXd& PrevStep, const VectorXd& CurStep)
+{
+	TYPE norm = PrevStep.head(VEC_SIZE).norm();
+	if ((norm - Earth::meanRadius) < 0)
+		return true;
+
+	return false;
+}
+
+
+
+TYPE Sputnik::GetMass() const
+{
+	return mass;
+}
+
+void Sputnik::SetMass(TYPE new_mass)
+{
+	mass = new_mass;
+}
+
+TYPE Sputnik::GetBallisticCoeff() const
+{
+	return ballistic_coeff;
+}
+
+void Sputnik::SetBallisticCoeff(TYPE new_ballistic_coeff)
+{
+	ballistic_coeff = new_ballistic_coeff;
 }
