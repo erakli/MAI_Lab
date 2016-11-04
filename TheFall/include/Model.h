@@ -61,5 +61,6 @@ public:
 
 protected:
 	virtual void SetStartValuesSize(size_t new_size, size_t result_line_expansion_by = 1);
+	virtual void SetStartValuesSize(const Eigen::VectorXd& new_start_values, size_t result_line_expansion_by = 1);
 	void SetResultSize();
 };

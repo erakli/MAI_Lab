@@ -169,6 +169,12 @@ void Model::SetStartValuesSize(size_t new_size, size_t result_line_expansion_by)
 	result_line_length = new_size + result_line_expansion_by; // +1 для времени
 }
 
+void Model::SetStartValuesSize(const VectorXd& new_start_values, size_t result_line_expansion_by)
+{
+	SetStartValuesSize(new_start_values.size(), result_line_expansion_by);
+	StartValues = new_start_values;
+}
+
 
 
 void Model::SetResultSize()
