@@ -136,19 +136,21 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 {
 	ShapingFilter shaping_filter;
 	DormanPrinceSolver_fixed integrator;
-	TYPE omega = 1.0e+2;	// частота генерации Белого Шума
 
-	shaping_filter.setInterval(1);
+#define CORRELATION_INTERVAL 10.0
+
+	TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
+
+	shaping_filter.setInterval(CORRELATION_INTERVAL);
 	shaping_filter.set_t1(t1);
 	shaping_filter.Generate_WhiteNoise(omega);
 
-	integrator.setEps_Max(1.0e-13);
-	integrator.SetCorrelationInterval(shaping_filter.GetCorrelationInterval());
+//	integrator.setEps_Max(1.0e-13);
+	integrator.SetCorrelationInterval(CORRELATION_INTERVAL);
 
 	integrator.Run(shaping_filter);
 
 	VectorList random_process(shaping_filter.getResult());
-
 	random_process_realization.resize(random_process.size());
 
 	for (VectorList::const_iterator iter = random_process.begin();
