@@ -7,17 +7,12 @@ DormanPrinceSolver_fixed::DormanPrinceSolver_fixed()
 	correlation_interval = 0;
 }
 
-DormanPrinceSolver_fixed::DormanPrinceSolver_fixed(const TYPE correlation_interval)
+DormanPrinceSolver_fixed::DormanPrinceSolver_fixed(TYPE correlation_interval)
 {
-	step = correlation_interval; // начальный шаг делаем равным интервалу корреляции
-	this->correlation_interval = correlation_interval;
+	SetCorrelationInterval(correlation_interval);
 }
 
-void DormanPrinceSolver_fixed::SetCorrelationInterval(const TYPE correlation_interval)
-{
-	step = correlation_interval;
-	this->correlation_interval = correlation_interval;
-}
+
 
 TYPE DormanPrinceSolver_fixed::StepCorrection(TYPE Error)
 {
@@ -41,4 +36,17 @@ TYPE DormanPrinceSolver_fixed::getError()
 	//	Error = 0;
 
 	return 0;
+}
+
+
+
+void DormanPrinceSolver_fixed::SetCorrelationInterval(TYPE correlation_interval)
+{
+	step = correlation_interval; // начальный шаг делаем равным интервалу корреляции
+	this->correlation_interval = correlation_interval;
+}
+
+TYPE DormanPrinceSolver_fixed::GetCorrelationInterval() const
+{
+	return correlation_interval;
 }
