@@ -97,7 +97,7 @@ void GravitationTest()
 void AerodynamicForceTest()
 {
 	Orbit::Kepler_elements
-		elements = { 0, 0, 0, 200, 0, 0 };
+		elements = { 0, 0, 0, 100, 0, 0 };
 
 	DormanPrinceSolver Integrator;
 	GravitationField central_field;
@@ -106,8 +106,11 @@ void AerodynamicForceTest()
 
 	Information(elements);
 
-	TYPE duration = SECINDAY;	
+	TYPE duration = SECINDAY * 3;	
 	
+	sputnik.SetMass(50);
+	sputnik.SetBallisticCoeff(1.4);
+
 	sputnik.set_t1(duration);
 	sputnik.setInterval(SECINMIN);
 
