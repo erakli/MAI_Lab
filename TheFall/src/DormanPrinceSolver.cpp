@@ -81,9 +81,8 @@ void DormanPrinceSolver::Run(Model &model)
 
 		set_k(x_size);
 
-		Eigen::VectorXd sum(x_size), sum_1(x_size);
-		sum.fill(0);
-		sum_1.fill(0);
+		Eigen::VectorXd sum = Eigen::VectorXd::Zero(x_size);
+		Eigen::VectorXd sum_1 = Eigen::VectorXd::Zero(x_size);
 
 		for (int i = 0; i < x_size; i++) // проходим по элементам вектора Х
 		{
@@ -153,8 +152,7 @@ void DormanPrinceSolver::set_k(int size)
 		// инициализируем элементы-векторы вектора вспомогательных коэфф.
 		//k[s].setSize(size);
 
-		Eigen::VectorXd set_k_sum(size);
-		set_k_sum.fill(0);
+		Eigen::VectorXd set_k_sum = Eigen::VectorXd::Zero(size);;
 
 		for (int i = 0; i < s; i++) // проходим по строкам A, складывая их
 		{
@@ -208,8 +206,7 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
 		(-3.0 / 10.0 + Teta * (29.0 / 30.0 + Teta * (-17.0 / 24.0))) / 7.0;
 
 
-	Eigen::VectorXd sum(x_size);
-	sum.fill(0);
+	Eigen::VectorXd sum = Eigen::VectorXd::Zero(x_size);;
 
 	for (int i = 0; i < x_size; i++)
 	{
@@ -294,7 +291,7 @@ void DormanPrinceSolver::setA()
 		{ 35.0 / 384, 0, 500.0 / 1113, 125.0 / 192, -2187.0 / 6784, 11.0 / 84, 0 }
 	};
 
-	A.fill(0);
+	A = Eigen::VectorXd::Zero(x_size);
 
 	for (int i = 0; i < SIZE; i++)
 	{

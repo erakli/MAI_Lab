@@ -33,7 +33,7 @@ ShapingFilter::ShapingFilter()
 	StartValues.resize(SYSTEM_COORDINATES);
 	s_size = StartValues.size();
 
-	StartValues.fill(0);
+	StartValues = VectorXd::Zero();
 	
 	/* Коэффициенты в числителе и знаменателе Формирующего Фильтра */
 	K = 0.071167241475998;

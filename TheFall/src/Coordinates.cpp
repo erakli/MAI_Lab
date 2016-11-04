@@ -256,9 +256,8 @@ Matrix3d Orbit::OrientationMatrix(const Kepler_elements& elements)
 */
 Vector6d Orbit::Kepler2Decart(const Kepler_elements& elements)
 {
-	Vector3d _position, _velocity;
-	_position.fill(0);
-	_velocity.fill(0);
+	Vector3d _position = Vector3d::Zero();
+	Vector3d _velocity = Vector3d::Zero();;
 
 	TYPE big_axis;
 
