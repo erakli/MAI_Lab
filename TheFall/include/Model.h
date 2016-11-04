@@ -39,7 +39,7 @@ public:
 	virtual Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const = 0;
 
 	virtual bool Stop_Calculation(
-		TYPE t, TYPE Step, Eigen::VectorXd &PrevStep, Eigen::VectorXd &CurStep);
+		TYPE t, TYPE Step, const Eigen::VectorXd &PrevStep, const Eigen::VectorXd &CurStep);
 
 public:
 	virtual void addResult(const Eigen::VectorXd &X, TYPE t);

@@ -81,7 +81,7 @@ void Model::Init(int argc, void** argv)
 
 
 bool Model::Stop_Calculation(
-	TYPE t, TYPE Step, VectorXd& PrevStep, VectorXd& CurStep)
+	TYPE t, TYPE Step, const VectorXd& PrevStep, const VectorXd& CurStep)
 {
 	return false;
 }
