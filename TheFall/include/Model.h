@@ -19,6 +19,7 @@ protected:
 
 	Eigen::MatrixXd Result;	// двунаправленный список
 	size_t last_result_idx;
+	size_t result_line_length;
 
 	// Остановка интегрирования при малых изменениях приращения координаты
 	TYPE stop_condition;
@@ -59,5 +60,6 @@ public:
 	void set_t1(TYPE arg);	
 
 protected:
+	virtual void SetStartValuesSize(size_t new_size, size_t result_line_expansion_by = 1);
 	void SetResultSize();
 };

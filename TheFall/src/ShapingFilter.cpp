@@ -30,10 +30,7 @@ inline TYPE ReferenceCorrelationFcn(TYPE tau)
 
 ShapingFilter::ShapingFilter()
 {
-	StartValues.resize(SYSTEM_COORDINATES);
-	s_size = StartValues.size();
-
-	StartValues = VectorXd::Zero();
+	Model::SetStartValuesSize(SYSTEM_COORDINATES, 2);
 	
 	/* Коэффициенты в числителе и знаменателе Формирующего Фильтра */
 	K = 0.071167241475998;

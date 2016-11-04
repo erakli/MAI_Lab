@@ -4,8 +4,7 @@ using namespace Eigen;
 
 ArenstorfModel::ArenstorfModel(int variant)
 {
-	StartValues.resize(4);
-	s_size = StartValues.size();
+	Model::SetStartValuesSize(4);
 
 	m = 0.012277471;
 	M = 1 - m;

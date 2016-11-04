@@ -13,6 +13,7 @@ Model::Model()
 	set_t1(5);
 
 	last_result_idx = 0;
+	result_line_length = 0;
 
 	stop_condition = 1.0e-5;
 	stop_count = 0;
@@ -23,7 +24,6 @@ Model::Model()
 Model::Model(const Model& other)
 {
 	StartValues = other.StartValues;
-
 	s_size = other.s_size;
 
 	Interval = other.Interval;
@@ -32,6 +32,7 @@ Model::Model(const Model& other)
 
 	Result = other.Result;
 	last_result_idx = other.last_result_idx;
+	result_line_length = other.result_line_length;
 
 	stop_condition = other.stop_condition;
 	stop_count = other.stop_count;
@@ -52,7 +53,6 @@ Model& Model::operator=(const Model& right)
 		return *this;
 
 	StartValues = right.StartValues;
-
 	s_size = right.s_size;
 
 	Interval = right.Interval;
@@ -60,6 +60,8 @@ Model& Model::operator=(const Model& right)
 	t1 = right.t1;
 
 	Result = right.Result;
+	last_result_idx = right.last_result_idx;
+	result_line_length = right.result_line_length;
 
 	stop_condition = right.stop_condition;
 	stop_count = right.stop_count;
@@ -160,6 +162,15 @@ void Model::set_t1(TYPE arg)
 
 
 
+void Model::SetStartValuesSize(size_t new_size, size_t result_line_expansion_by)
+{
+	StartValues = VectorXd::Zero(new_size);
+	s_size = new_size;
+	result_line_length = new_size + result_line_expansion_by; // +1 для времени
+}
+
+
+
 void Model::SetResultSize()
 {
 	if (t0 > t1)
@@ -172,8 +183,8 @@ void Model::SetResultSize()
 	if (t0 == t1)
 		t1 += 1;
 
-	size_t result_size = size_t(ceil((t1 - t0) / Interval));
+	size_t result_size = size_t(ceil((t1 - t0) / Interval)) + 1;
 
-	Result = MatrixXd::Zero(result_size, s_size + 1);	// +1 для времени
+	Result = MatrixXd::Zero(result_size, result_line_length);
 	last_result_idx = 0;
 }
