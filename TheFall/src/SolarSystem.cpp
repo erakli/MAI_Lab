@@ -134,7 +134,8 @@ void Earth::addResult(const VectorXd& X, double t)
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << X, t;
 
-	Result.push_back(compile);
+	Result.row(last_result_idx) = compile;
+	last_result_idx++;
 }
 
 /*
