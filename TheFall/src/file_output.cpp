@@ -19,7 +19,7 @@ using namespace Eigen;
 // ----------------- нумерация выходных файлов
 static short int FirstNum = 0, SecondNum = 0; 
 
-void Dorman_to_file(const VectorList &Result, const DormanPrinceSolver &Integrator,
+void Dorman_to_file(const MatrixXd &Result, const DormanPrinceSolver &Integrator,
 					bool radians){
 
 	// ----------------- нумерация выходных файлов
@@ -71,24 +71,28 @@ void Dorman_to_file(const VectorList &Result, const DormanPrinceSolver &Integrat
 	fout.precision(20);
 
 	// ----------------- заполнение файла
-	VectorXd vector;
-	int ColCount = Result.begin()->size();
+	//VectorXd vector;
+	//int ColCount = Result.begin()->size();
 
-	for (	VectorList::const_iterator line = Result.begin(); 
-			line != Result.end(); 
-			++line)
-	{
-		vector = *line;
-		fout << vector(0) << "	";	// время
+	//for (	VectorList::const_iterator line = Result.begin(); 
+	//		line != Result.end(); 
+	//		++line)
+	//{
+	//	vector = *line;
+	//	fout << vector(0) << "	";	// время
 
-		for (int j = 1; j < ColCount - 1; j++)
-		{
-			fout << vector(j) * rad2deg << "	";
-		}
+	//	for (int j = 1; j < ColCount - 1; j++)
+	//	{
+	//		fout << vector(j) * rad2deg << "	";
+	//	}
 
-		fout << vector(ColCount - 1) * rad2deg;
-		fout << "\n";
-	}
+	//	fout << vector(ColCount - 1) * rad2deg;
+	//	fout << "\n";
+	//}
+
+	MatrixXd output_matrix(Result);
+	output_matrix.rightCols(Result.cols() - 1) *= rad2deg;
+	fout << output_matrix;
 
 	fout.close();
 
@@ -110,7 +114,7 @@ void Dorman_to_file(const VectorList &Result, const DormanPrinceSolver &Integrat
 }
 
 
-void to_file(const VectorList& Result, bool radians)
+void to_file(const MatrixXd& Result, bool radians)
 {
 	// ----------------- нумерация выходных файлов
 	char cFNum[2], cSNum[2];
@@ -159,24 +163,28 @@ void to_file(const VectorList& Result, bool radians)
 	fout.precision(20);
 
 	// ----------------- заполнение файла
-	VectorXd vector;
-	int ColCount = Result.begin()->size();
+	//VectorXd vector;
+	//int ColCount = Result.begin()->size();
 
-	for (	VectorList::const_iterator line = Result.begin();
-			line != Result.end();
-			++line)
-	{
-		vector = *line;
-		fout << vector(0) << "	";	// время
+	//for (	VectorList::const_iterator line = Result.begin(); 
+	//		line != Result.end(); 
+	//		++line)
+	//{
+	//	vector = *line;
+	//	fout << vector(0) << "	";	// время
 
-		for (int j = 1; j < ColCount - 1; j++)
-		{
-			fout << vector(j) * rad2deg << "	";
-		}
+	//	for (int j = 1; j < ColCount - 1; j++)
+	//	{
+	//		fout << vector(j) * rad2deg << "	";
+	//	}
 
-		fout << vector(ColCount - 1) * rad2deg;
-		fout << "\n";
-	}
+	//	fout << vector(ColCount - 1) * rad2deg;
+	//	fout << "\n";
+	//}
+
+	MatrixXd output_matrix(Result);
+	output_matrix.rightCols(Result.cols() - 1) *= rad2deg;
+	fout << output_matrix;
 
 	fout.close();
 

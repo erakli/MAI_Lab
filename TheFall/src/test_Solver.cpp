@@ -45,7 +45,7 @@ int main(){
 	}
 
 	// делаем вывод результатов в файл
-	VectorList Result(Model.getResult());
+	Eigen::MatrixXd Result(Model.getResult());
 
 	Dorman_to_file(Result, Dorman);
 };

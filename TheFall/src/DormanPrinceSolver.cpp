@@ -152,7 +152,7 @@ void DormanPrinceSolver::set_k(int size)
 		// инициализируем элементы-векторы вектора вспомогательных коэфф.
 		//k[s].setSize(size);
 
-		Eigen::VectorXd set_k_sum = Eigen::VectorXd::Zero(size);;
+		Eigen::VectorXd set_k_sum = Eigen::VectorXd::Zero(size);
 
 		for (int i = 0; i < s; i++) // проходим по строкам A, складывая их
 		{
@@ -291,7 +291,7 @@ void DormanPrinceSolver::setA()
 		{ 35.0 / 384, 0, 500.0 / 1113, 125.0 / 192, -2187.0 / 6784, 11.0 / 84, 0 }
 	};
 
-	A = Eigen::VectorXd::Zero(x_size);
+	A.fill(0);
 
 	for (int i = 0; i < SIZE; i++)
 	{

@@ -9,8 +9,10 @@ Model::Model()
 	s_size = 0;
 
 	Interval = 0.1; 
-	t0 = 0;
-	t1 = 5;
+	set_t0(0);
+	set_t1(5);
+
+	last_result_idx = 0;
 
 	stop_condition = 1.0e-5;
 	stop_count = 0;
@@ -29,6 +31,7 @@ Model::Model(const Model& other)
 	t1 = other.t1;
 
 	Result = other.Result;
+	last_result_idx = other.last_result_idx;
 
 	stop_condition = other.stop_condition;
 	stop_count = other.stop_count;
@@ -70,6 +73,7 @@ Model& Model::operator=(const Model& right)
 
 void Model::Init(int argc, void** argv)
 {
+	SetResultSize();
 }
 
 
@@ -87,22 +91,24 @@ void Model::addResult(const VectorXd &X, TYPE t)
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << t, X;
 
-	Result.push_back(compile);
+	Result.row(last_result_idx) = compile;
+	last_result_idx++;
 }
 
-VectorList Model::getResult() const
+MatrixXd Model::getResult() const
 {
-	return VectorList(Result);
+	return Result;
 }
 
 VectorXd Model::getLastResult() const
 {
-	return Result.back();
+	return Result.row(last_result_idx);
 }
 
 void Model::clearResult()
 {
-	Result.clear();
+	Result.resize(0, 0);
+	last_result_idx = 0;
 }
 
 
@@ -150,4 +156,24 @@ TYPE Model::get_t1() const
 void Model::set_t1(TYPE arg)
 {
 	t1 = arg;
+}
+
+
+
+void Model::SetResultSize()
+{
+	if (t0 > t1)
+	{
+		TYPE temp = t0;
+		t0 = t1;
+		t1 = temp;
+	}
+
+	if (t0 == t1)
+		t1 += 1;
+
+	size_t result_size = size_t(ceil((t1 - t0) / Interval));
+
+	Result = MatrixXd::Zero(result_size, s_size + 1);	// +1 для времени
+	last_result_idx = 0;
 }

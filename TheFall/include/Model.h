@@ -17,7 +17,8 @@ protected:
 		t0, 
 		t1;
 
-	VectorList Result;	// двунаправленный список
+	Eigen::MatrixXd Result;	// двунаправленный список
+	size_t last_result_idx;
 
 	// Остановка интегрирования при малых изменениях приращения координаты
 	TYPE stop_condition;
@@ -41,7 +42,7 @@ public:
 
 public:
 	virtual void addResult(const Eigen::VectorXd &X, TYPE t);
-	VectorList getResult() const;
+	Eigen::MatrixXd getResult() const;
 	Eigen::VectorXd getLastResult() const;
 	void clearResult();
 
@@ -56,4 +57,7 @@ public:
 
 	TYPE get_t1() const;
 	void set_t1(TYPE arg);	
+
+protected:
+	void SetResultSize();
 };

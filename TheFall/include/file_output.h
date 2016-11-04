@@ -6,6 +6,6 @@
 
 #define DELAY 1000
 
-void Dorman_to_file(const VectorList &Result, const DormanPrinceSolver &Integrator, bool radians = true);
-void to_file(const VectorList &Result, bool radians = true);
+void Dorman_to_file(const Eigen::MatrixXd &Result, const DormanPrinceSolver &Integrator, bool radians = true);
+void to_file(const Eigen::MatrixXd &Result, bool radians = true);
 void to_file(const Eigen::VectorXd &Result, bool radians = true);
