@@ -10,6 +10,9 @@
 using namespace Eigen;
 
 
+#define CORRELATION_INTERVAL 10.0
+
+
 
 DensityModelParams::DensityModelParams()
 {
@@ -125,7 +128,8 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 		density_params[layer].k2 * layer_dist
 		);
 	TYPE density = 
-		density_params[layer].A * (1 + random_process_realization(int(t))) * e;
+		density_params[layer].A * 
+		(1 + random_process_realization(int(t / CORRELATION_INTERVAL))) * e;
 
 	return density;
 }
@@ -137,12 +141,10 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 	ShapingFilter shaping_filter;
 	DormanPrinceSolver_fixed integrator;
 
-#define CORRELATION_INTERVAL 10.0
-
 	TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
 
 	shaping_filter.setInterval(CORRELATION_INTERVAL);
-	shaping_filter.set_t1(t1);
+	shaping_filter.set_t1(t1 + CORRELATION_INTERVAL);
 	shaping_filter.Generate_WhiteNoise(omega);
 
 //	integrator.setEps_Max(1.0e-13);
