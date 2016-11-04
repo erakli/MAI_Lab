@@ -16,7 +16,8 @@ private:
 	TYPE getError() override;
 public:
 	DormanPrinceSolver_fixed();
-	DormanPrinceSolver_fixed(const TYPE correlation_interval);
+	DormanPrinceSolver_fixed(TYPE correlation_interval);
 
-	void SetCorrelationInterval(const TYPE correlation_interval);
+	void SetCorrelationInterval(TYPE correlation_interval);
+	TYPE GetCorrelationInterval() const;
 };
