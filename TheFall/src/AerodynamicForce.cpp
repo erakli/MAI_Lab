@@ -5,7 +5,6 @@
 
 #include "DormanPrinceSolver_fixed.h"
 #include "ShapingFilter.h"
-#include <Eigen/src/Core/util/ForwardDeclarations.h>
 
 using namespace Eigen;
 
