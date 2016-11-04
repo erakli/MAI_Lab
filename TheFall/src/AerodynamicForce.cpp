@@ -152,13 +152,17 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 
 	integrator.Run(shaping_filter);
 
-	VectorList random_process(shaping_filter.getResult());
-	random_process_realization.resize(random_process.size());
+	//VectorList random_process(shaping_filter.getResult());
+	//random_process_realization.resize(random_process.size());
+	random_process_realization = shaping_filter.getResult().rightCols(1);
 
-	for (VectorList::const_iterator iter = random_process.begin();
-		iter != random_process.end();
-		++iter)
-	{
-		random_process_realization << *iter;
-	}
+	// TODO: в random_process_realization необходимо положить только последний столбец
+	// random_process
+
+	//for (VectorList::const_iterator iter = random_process.begin();
+	//	iter != random_process.end();
+	//	++iter)
+	//{
+	//	random_process_realization << (*iter).tail(1);
+	//}
 }
