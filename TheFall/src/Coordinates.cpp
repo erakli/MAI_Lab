@@ -19,7 +19,7 @@ using namespace Eigen;
 		Угол ориентации гринвичского меридиана, соответствующего
 		периоду 0 - 2Pi, по отношению к направлению в ТВР в радианах.
 */
-TYPE StarTime(const TYPE JD)
+TYPE StarTime(TYPE JD)
 {
 	TYPE
 		d = JD - J2000,				// количество дней с 01.01.2000
@@ -43,7 +43,7 @@ TYPE StarTime(const TYPE JD)
 
 	результат в радианах
 */
-TYPE StarTime(const TYPE starTime, const TYPE t)
+TYPE StarTime(TYPE starTime, TYPE t)
 //TYPE StarTime(const TYPE JD, const TYPE lambda)
 {
 //	TYPE
@@ -65,7 +65,7 @@ namespace Transform
 
 		угол - в радианах
 	*/
-	Matrix3d RotMatrix(const BYTE axis, const TYPE angle)
+	Matrix3d RotMatrix(BYTE axis, TYPE angle)
 	{
 		TYPE
 			cos_t = cos(angle),
@@ -164,7 +164,7 @@ namespace Transform
 
 		[h, fi, lambda] - высота, широта, долгота
 	*/
-	Vector3d Geographic2Fix(const TYPE h, const TYPE fi, const TYPE lambda)
+	Vector3d Geographic2Fix(TYPE h, TYPE fi, TYPE lambda)
 	{
 		Vector3d Result;
 		Result(0) = (h + Earth::meanRadius) * cos(fi) * cos(lambda);
