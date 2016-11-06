@@ -16,6 +16,8 @@ namespace Transform
 	Eigen::Vector3d Geographic2Fix(const Eigen::Vector3d &geographic);
 
 	Eigen::Vector3d Decart2Spher(const Eigen::Vector3d &fix);
+
+	Eigen::Vector2d Topo2Horiz(const Eigen::Vector3d &topo_vector, const Eigen::Vector3d &center_topo);
 }
 
 namespace Orbit

@@ -190,13 +190,15 @@ namespace Transform
 		return Result;
 	}
 
+
+
 	/*
-		Переход от декартовых координат к сферическим
-
-		углы в радианах
-
-		[ro, fi, lambda] - радиус-вектор, широта, долгота
-	*/
+			Переход от декартовых координат к сферическим
+	
+			углы в радианах
+	
+			[ro, fi, lambda] - радиус-вектор, широта, долгота
+		*/
 	Vector3d Decart2Spher(const Vector3d& fix)
 	{
 		auto
@@ -211,6 +213,34 @@ namespace Transform
 		Result(2) = atan2(y, x);
 
 		return Result;
+	}
+
+
+
+	Vector2d Topo2Horiz(const Vector3d& topo_vector, const Vector3d& center_topo)
+	{
+		TYPE center_fi = center_topo(1);
+		TYPE center_lambda = center_topo(2);
+		TYPE lambda = topo_vector(2);
+
+		TYPE cos_lambda = cos(center_lambda - lambda);
+		TYPE cos_fi = cos(center_fi);
+
+		TYPE y = cos_lambda * cos_fi - 0.15126;
+		TYPE x = sqrt(1 - pow(cos_lambda, 2) * pow(cos_fi, 2));
+
+		TYPE elevation = atan2(y, x);
+
+		y = tan(center_lambda - lambda);
+		x = sin(center_fi);
+
+		TYPE azimuth = atan2(y, x);
+
+		Vector2d result;
+		result(0) = elevation;
+		result(1) = azimuth;
+
+		return result;
 	}
 }
 
