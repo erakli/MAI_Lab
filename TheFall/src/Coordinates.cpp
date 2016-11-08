@@ -217,35 +217,7 @@ namespace Transform
 
 
 
-	Vector2d Topo2Horiz(const Vector3d& topo_vector, const Vector3d& center_topo)
-	{
-		TYPE center_fi = center_topo(1);
-		TYPE center_lambda = center_topo(2);
-		TYPE lambda = topo_vector(2);
-
-		TYPE cos_lambda = cos(center_lambda - lambda);
-		TYPE cos_fi = cos(center_fi);
-
-		TYPE y = cos_lambda * cos_fi - 0.15126;
-		TYPE x = sqrt(1 - pow(cos_lambda, 2) * pow(cos_fi, 2));
-
-		TYPE elevation = atan2(y, x);
-
-		y = tan(center_lambda - lambda);
-		x = sin(center_fi);
-
-		TYPE azimuth = atan2(y, x);
-
-		Vector2d result;
-		result(0) = elevation;
-		result(1) = azimuth;
-
-		return result;
-	}
-
-
-
-	Eigen::Vector2d Fix2Horiz(const Vector3d &to_find_fix_vec, const Vector3d &center_spher_pos)
+	Vector2d Fix2Horiz(const Vector3d &to_find_fix_vec, const Vector3d &center_spher_pos)
 	{
 		Vector3d center_fix_vec = Geographic2Fix(center_spher_pos);
 
@@ -253,14 +225,22 @@ namespace Transform
 		TYPE cos_z = center_fix_vec.dot(vision_line) / (center_fix_vec.norm() * vision_line.norm());
 
 		TYPE z = acos(cos_z);
-		TYPE elevation = PI - z;
+		TYPE elevation = PI_HALF - z;
 
 		Vector3d vision_line_topo = Fix2Topo(vision_line, center_spher_pos);
-		Vector3d projection_on_LHP;
+		Vector3d projection_on_LHP = vision_line_topo;
+		projection_on_LHP(2) = 0.0;		// y_t = 0.0
 
-		TYPE cos_az;
+		// скалярное произведение проекции вектора линии визирования на МГП
+		// и орта x_t (направление на север)
+		Vector3d topo_north_vec(0.0, 1.0, 0.0);
+		TYPE cos_az = projection_on_LHP.dot(topo_north_vec) / projection_on_LHP.norm();
+		TYPE azimuth = acos(cos_az);
 
-		// TODO: stopped here
+		if (projection_on_LHP(0) < 0)	// z_t < 0 (азимут против часовой)
+			azimuth *= -1.0;
+
+		return Vector2d(elevation, azimuth);
 	}
 }
 
