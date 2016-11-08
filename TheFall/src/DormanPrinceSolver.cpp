@@ -206,7 +206,7 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
 		(-3.0 / 10.0 + Teta * (29.0 / 30.0 + Teta * (-17.0 / 24.0))) / 7.0;
 
 
-	Eigen::VectorXd sum = Eigen::VectorXd::Zero(x_size);;
+	Eigen::VectorXd sum = Eigen::VectorXd::Zero(x_size);
 
 	for (int i = 0; i < x_size; i++)
 	{
