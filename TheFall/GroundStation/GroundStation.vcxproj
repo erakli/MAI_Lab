@@ -75,6 +75,11 @@
     <ClCompile Include="..\src\GroundStation.cpp" />
     <ClCompile Include="..\src\test_GroundControl.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SputnikModel\SputnikModel.vcxproj">
+      <Project>{a6e52f9b-1702-4889-8ec7-1ab03b40fe7c}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
