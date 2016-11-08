@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <math.h>
 
+#ifdef DEBUG
+#include <iostream>
+using namespace std;
+#endif
 
 Eigen::VectorXd SetValues(TYPE *values)
 {
@@ -64,6 +68,13 @@ void DormanPrinceSolver::Run(Model &model)
 	TYPE NewStep;			// храним знание о новом шаге на эту итерацию
 	TYPE Error;
 	UINT local_iter(0);
+
+#ifdef DEBUG
+	cout << endl << endl;
+	cout << "DormanPrinceSolver::Run" << endl;
+	cout << "	t_end = " << t_end << endl;
+	cout << "	x0: " << x0.transpose() << endl;
+#endif
 
 	/*
 		основной цикл вычисления
