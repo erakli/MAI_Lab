@@ -1,5 +1,6 @@
 #pragma once
 
 #define PI			3.14159265358979323846
+#define PI_HALF		1.57079632679489661923
 
 #define VEC_SIZE	3
