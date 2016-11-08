@@ -17,7 +17,11 @@ namespace Transform
 
 	Eigen::Vector3d Decart2Spher(const Eigen::Vector3d &fix);
 
+	// не стоит использовать
 	Eigen::Vector2d Topo2Horiz(const Eigen::Vector3d &topo_vector, const Eigen::Vector3d &center_topo);
+
+	// оба аргумента должны быть в одной СК
+	Eigen::Vector2d Fix2Horiz(const Eigen::Vector3d &to_find_vec, const Eigen::Vector3d &center_spher_pos);
 }
 
 namespace Orbit

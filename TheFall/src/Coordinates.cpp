@@ -242,6 +242,26 @@ namespace Transform
 
 		return result;
 	}
+
+
+
+	Eigen::Vector2d Fix2Horiz(const Vector3d &to_find_fix_vec, const Vector3d &center_spher_pos)
+	{
+		Vector3d center_fix_vec = Geographic2Fix(center_spher_pos);
+
+		Vector3d vision_line = to_find_fix_vec - center_fix_vec;
+		TYPE cos_z = center_fix_vec.dot(vision_line) / (center_fix_vec.norm() * vision_line.norm());
+
+		TYPE z = acos(cos_z);
+		TYPE elevation = PI - z;
+
+		Vector3d vision_line_topo = Fix2Topo(vision_line, center_spher_pos);
+		Vector3d projection_on_LHP;
+
+		TYPE cos_az;
+
+		// TODO: stopped here
+	}
 }
 
 
@@ -287,7 +307,7 @@ Matrix3d Orbit::OrientationMatrix(const Kepler_elements& elements)
 Vector6d Orbit::Kepler2Decart(const Kepler_elements& elements)
 {
 	Vector3d _position = Vector3d::Zero();
-	Vector3d _velocity = Vector3d::Zero();;
+	Vector3d _velocity = Vector3d::Zero();
 
 	TYPE big_axis;
 
