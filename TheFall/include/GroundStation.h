@@ -5,11 +5,11 @@
 
 struct GroundStation
 {
-	Eigen::Vector3d _topo_position;
+	Eigen::Vector3d _geographic_pos;
 	TYPE _vision_zone_angle;	// [рад]
 
 	Eigen::MatrixXd observations;
 
 	GroundStation();
-	GroundStation(const Eigen::Vector3d &topo_position, TYPE vision_zone_angle);
+	GroundStation(const Eigen::Vector3d &geographic_pos, TYPE vision_zone_angle);
 };
