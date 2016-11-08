@@ -7,6 +7,7 @@
 
 #include "Time.h"		// для макросов времени
 #include "Coordinates.h"
+#include "SolarSystem.h"
 
 #include "Gravitation.h"
 #include "AerodynamicForce.h"
@@ -46,13 +47,14 @@ int main()
 	{
 		cur_topo_position(2) = lambda_start + StarTime(start_time, sec);
 
-		sputnik_fix_pos = sputnik_orbit.segment(1, VEC_SIZE);
+		sputnik_fix_pos = sputnik_orbit.row(sec).segment(1, VEC_SIZE);
 		sputnik_topo_pos = Fix2Topo(sputnik_fix_pos, cur_topo_position);
 
 		sputnik_horizontal_pos = Topo2Horiz(sputnik_topo_pos, cur_topo_position);
 		ground_station.observations.row(sec) = sputnik_horizontal_pos * (180.0 / PI);
 	}
 
+	to_file(sputnik_orbit);
 	to_file(ground_station.observations);
 }
 
@@ -74,11 +76,11 @@ void Information(const Orbit::Kepler_elements &elements)
 
 MatrixXd GenerateSputnikOrbit(TYPE duration)
 {
-	TYPE alpha_height = 970;
-	TYPE pi_height = 140;
+	TYPE alpha_height = 970 + Earth::meanRadius;
+	TYPE pi_height = 140 + Earth::meanRadius;
 
 	TYPE a = (alpha_height + pi_height) / 2.0;
-	TYPE e = (alpha_height + pi_height) / (alpha_height + pi_height);
+	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
 
 	Orbit::Kepler_elements
 		elements = { 0, deg2rad(42), 0, a, e, 0 };
