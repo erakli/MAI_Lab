@@ -107,26 +107,29 @@ void Tests::TestFix2Horiz()
 		center_geographic[1] = deg2rad(45 * fi);
 		center_geographic[2] = deg2rad(0);
 
-		cout << "\ncenter_geographic:	" << center_geographic.transpose();
-
 		center_fix = Transform::Geographic2Fix(center_geographic);
 
-		for (int count = 0; count < VEC_SIZE; count++)
-		{
-			cout << "\nnum of coordinates to change:	" << count + 1 << endl;
-			for (size_t i = 0; i <= count; i++)
-			{
-				to_find_vec = center_fix;
-				TYPE temp;
-				for (int j = -1; j < 2; j++)
-				{
-					temp = to_find_vec(i);
-					to_find_vec(i) += j;
+		cout << "\ncenter_geographic:	" << center_geographic.transpose();
+		cout << "\ncenter_fix:	" << center_fix.transpose();
+		cout << endl;
 
-					cout << "\nto_find_vec:	" << to_find_vec.transpose();
-					cout << "\nFix2Horiz:	" << (Transform::Fix2Horiz(to_find_vec, center_geographic) * DEG_IN_RAD).transpose();
-					to_find_vec(i) = temp;
-				}
+		for (int i = 0; i < VEC_SIZE; i++)
+		{
+			cout << "\ncoordinate to change:	" << i + 1 << endl;
+
+			to_find_vec = center_fix;
+			for (int k = -1; k < 2; k++)
+			{
+				if (k == 0) 
+					k++;
+
+				to_find_vec(i) += k;
+
+				cout << "\n	to_find_vec:	" << to_find_vec.transpose();
+				cout << "\n	Fix2Horiz:	" << (Transform::Fix2Horiz(to_find_vec, center_geographic) * DEG_IN_RAD).transpose();
+				cout << endl;
+
+				to_find_vec = center_fix;
 			}
 
 			cout << endl;
