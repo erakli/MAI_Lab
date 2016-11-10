@@ -107,6 +107,11 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LibRelease|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>DEBUG</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\ArenstorfModel.h" />
     <ClInclude Include="..\include\DormanPrinceSolver.h" />
