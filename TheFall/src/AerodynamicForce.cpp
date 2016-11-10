@@ -9,6 +9,12 @@
 using namespace Eigen;
 
 
+#ifdef DEBUG
+#include <iostream>
+using namespace std;
+#endif
+
+
 #define CORRELATION_INTERVAL 10.0
 
 
