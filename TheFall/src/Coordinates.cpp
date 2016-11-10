@@ -71,6 +71,12 @@ namespace Transform
 			cos_t = cos(angle),
 			sin_t = sin(angle);
 
+		if (abs(cos_t) < 1.0e-16)
+			cos_t = 0.0;
+
+		if (abs(sin_t) < 1.0e-16)
+			sin_t = 0.0;
+
 		// создаем матрицу поворота
 		//	CMatrix R(VEC_SIZE, VEC_SIZE);
 		Matrix3d R;
