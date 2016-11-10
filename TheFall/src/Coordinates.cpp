@@ -157,7 +157,7 @@ namespace Transform
 		//temp = temp * RotMatrix(3, -fi);
 
 		Topo = temp * fix_vector;
-		Topo[2] -= H;
+		Topo[2] -= h + Earth::meanRadius;
 
 		return Topo;
 	}
