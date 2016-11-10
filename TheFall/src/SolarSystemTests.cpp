@@ -65,26 +65,69 @@ void Tests::TestCoordinates()
 	cout << "\nlambda = " << fixed << lambda << endl;
 	cout << "\nStarTime = " << fixed << s << endl;
 
-	Eigen::VectorXd vec(3);
-	vec[0] = 1;
-	vec[1] = deg2rad(90);
-	vec[2] = deg2rad(90);
+	Eigen::Vector3d vec_geographic;
+	vec_geographic[0] = 0;
+	vec_geographic[1] = deg2rad(0);
+	vec_geographic[2] = deg2rad(0);
 
-	Eigen::VectorXd result(Transform::Geographic2Fix(vec));
+	Eigen::Vector3d result_fix(Transform::Geographic2Fix(vec_geographic));
 
-	cout << "\nOriginal:	"; Show(vec);
-	cout << "\nGeographic2Fix:	"; Show(result);
+	cout << "\nOriginal:	"; Show(vec_geographic);
+	cout << "\nGeographic2Fix:	"; Show(result_fix);
 
-	cout << "\n\nFix2Topo" << endl;
-
-	Eigen::VectorXd dot(3);
-	dot[0] = 1;
+	Eigen::Vector3d dot;
+	dot[0] = 1 + Earth::meanRadius;
 	dot[1] = 0;
-	dot[2] = 1;
+	dot[2] = 0;
 
-	result = Transform::Fix2Topo(dot, vec);
+	Eigen::Vector3d result_topo = Transform::Fix2Topo(dot, vec_geographic);
 
-	cout << "\nFix2Topo:	"; Show(result);
+	cout << "\ndot:		"; Show(dot);
+	cout << "\nFix2Topo:	"; Show(result_topo);
+
+	Eigen::Vector2d result_horiz = Transform::Fix2Horiz(dot, vec_geographic);
+
+	cout << "\nFix2Horiz:	"; Show(result_horiz * DEG_IN_RAD);
+
+	Final();
+}
+
+void Tests::TestFix2Horiz()
+{
+	Init("TestFix2Horiz");
+
+	Eigen::Vector3d center_geographic;
+	Eigen::Vector3d center_fix;
+	Eigen::Vector3d to_find_vec;
+
+	for (int fi = -2; fi < 3; fi++)
+	{
+		center_geographic[0] = 0;
+		center_geographic[1] = deg2rad(45 * fi);
+		center_geographic[2] = deg2rad(0);
+
+		cout << "\ncenter_geographic:	"; Show(center_geographic);
+
+		center_fix = Transform::Geographic2Fix(center_geographic);
+
+		for (int count = 0; count < VEC_SIZE; count++)
+		{
+			for (size_t i = 0; i < count; i++)
+			{
+				to_find_vec = center_fix;
+				TYPE temp;
+				for (int j = -1; j < 2; j++)
+				{
+					temp = to_find_vec(i);
+					to_find_vec(i) = j;
+
+					cout << "\nto_find_vec:		"; Show(to_find_vec);
+					cout << "\nFix2Horiz:	"; Show(Transform::Fix2Horiz(to_find_vec, center_geographic) * DEG_IN_RAD);
+					to_find_vec(i) = temp;
+				}
+			}
+		}
+	}	
 
 	Final();
 }

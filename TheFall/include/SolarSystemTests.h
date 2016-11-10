@@ -8,6 +8,8 @@ namespace Tests
 	void Final();
 
 	void TestCoordinates();
+	void TestFix2Horiz();
+
 	void TestTime();
 	void SolarSystem();
 }
