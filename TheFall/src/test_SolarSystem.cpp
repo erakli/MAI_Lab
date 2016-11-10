@@ -1,7 +1,5 @@
 #include "SolarSystemTests.h"
-
-#include <iostream>
-using namespace std;
+#include <cstdlib>
 
 int main()
 {
@@ -10,6 +8,5 @@ int main()
 	Tests::TestFix2Horiz();
 	Tests::SolarSystem();
 
-	cout << "\nPress any key to exit...";
-	int a; cin >> a;
+	system("pause");
 }
