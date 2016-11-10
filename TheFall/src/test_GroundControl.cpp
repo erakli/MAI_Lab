@@ -27,40 +27,60 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 int main()
 {
 	TYPE duration = SECINDAY / 2.0;
+	size_t num_of_results = int(ceil(duration) + 1);
 
 	MatrixXd sputnik_orbit = GenerateSputnikOrbit(duration);
 
 	GroundStation ground_station;
 	ground_station._geographic_pos << 0, deg2rad(18), deg2rad(173);
-	ground_station._vision_zone_angle = deg2rad(150);
-	ground_station.observations.resize(int(ceil(duration) + 1), 2);
+	ground_station._vision_zone_angle = PI_HALF - deg2rad(75);
+	ground_station.observations.resize(num_of_results, 3);
 
 	Vector3d cur_geographic_pos = ground_station._geographic_pos;
-//	MatrixXd fix_positions;
-//	fix_positions.resize(int(ceil(duration) + 1), 3);
+	MatrixXd fix_positions(num_of_results, 3);
 
 	Vector3d sputnik_fix_pos;
 	Vector2d sputnik_horiz_pos;
 
+	Vector3d result;
+
 	TYPE lambda_start = ground_station._geographic_pos(2);
 	TYPE start_time = 0.0;
 
-	for (size_t sec = 0; sec < int(ceil(duration) + 1); sec++)
+	size_t num_of_observations = 0;
+
+	for (size_t sec = 0; sec < num_of_results; sec++)
 	{
-		cur_geographic_pos(2) = lambda_start + StarTime(start_time, sec);
+//		cur_geographic_pos(2) = lambda_start + StarTime(start_time, sec);
 
 		sputnik_fix_pos = sputnik_orbit.row(sec).segment(1, VEC_SIZE);
 		sputnik_horiz_pos = Fix2Horiz(sputnik_fix_pos, cur_geographic_pos);
 
-		// TODO: добавить проверку на попадание элевации в конус видимости НИП
+		// проверку на попадание элевации в конус видимости НИП
+		if (sputnik_horiz_pos(0) >= ground_station._vision_zone_angle)
+		{
+			result << sputnik_orbit(sec, 0), sputnik_horiz_pos * DEG_IN_RAD;
 
-		ground_station.observations.row(sec) = sputnik_horiz_pos * (180.0 / PI);
-//		fix_positions.row(sec) = Geographic2Fix(cur_geographic_pos);
+			ground_station.observations.row(num_of_observations) = result;
+			num_of_observations++;
+		}
+		fix_positions.row(sec) = Geographic2Fix(cur_geographic_pos);
 	}
 
+	ground_station.observations.conservativeResize(num_of_observations, NoChange);
+
+	cout << endl << "Finished" << endl;
+
+	cout << " * Saving sputnik_orbit" << endl;
 	to_file(sputnik_orbit);
+
+	cout << " * Saving observations" << endl;
 	to_file(ground_station.observations);
-	//to_file(fix_positions);
+
+	cout << " * Saving fix_positions" << endl;
+	to_file(fix_positions);
+
+	system("pause");
 }
 
 
@@ -108,6 +128,8 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 
 	Integrator.setEps_Max(1.0e-13);
 	Integrator.Run(sputnik);
+
+	cout << endl << "sputnik_orbit generated" << endl;
 
 	return sputnik.getResult();
 }
