@@ -152,7 +152,7 @@ namespace Transform
 		//	- Earth::meanRadius - H;
 		//Topo[2] = -x * cos_lambda * sin_fi - y * sin_lambda * sin_fi + z * cos_fi;
 
-		temp = RotMatrix(1, PI / 2.0 - fi) * RotMatrix(3, PI / 2.0 + lambda);
+		temp = RotMatrix(1, PI_HALF - fi) * RotMatrix(3, PI_HALF + lambda);
 		//temp = RotMatrix(2, -PI / 2.0) * RotMatrix(1, lambda - PI / 2.0);
 		//temp = temp * RotMatrix(3, -fi);
 
