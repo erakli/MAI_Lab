@@ -125,10 +125,10 @@ namespace Transform
 		x - на Север по долготе
 		y - по местной нормали
 	*/
-	Vector3d Fix2Topo(const Vector3d &fix_vector, const Vector3d &center_SpherPos)
+	Vector3d Fix2Topo(const Vector3d &fix_vector, const Vector3d &center_geographic)
 	{
 		TYPE
-			H(center_SpherPos(0)), fi(center_SpherPos(1)), lambda(center_SpherPos(2));
+			h(center_geographic(0)), fi(center_geographic(1)), lambda(center_geographic(2));
 		//x(fix_vector[0]), y(fix_vector[1]), z(fix_vector[2]);
 
 		/*TYPE
@@ -217,9 +217,9 @@ namespace Transform
 
 
 
-	Vector2d Fix2Horiz(const Vector3d &to_find_fix_vec, const Vector3d &center_spher_pos)
+	Vector2d Fix2Horiz(const Vector3d &to_find_fix_vec, const Vector3d &center_geographic)
 	{
-		Vector3d center_fix_vec = Geographic2Fix(center_spher_pos);
+		Vector3d center_fix_vec = Geographic2Fix(center_geographic);
 
 		Vector3d vision_line = to_find_fix_vec - center_fix_vec;
 		TYPE cos_z = center_fix_vec.dot(vision_line) / (center_fix_vec.norm() * vision_line.norm());
@@ -227,7 +227,7 @@ namespace Transform
 		TYPE z = acos(cos_z);
 		TYPE elevation = PI_HALF - z;
 
-		Vector3d vision_line_topo = Fix2Topo(vision_line, center_spher_pos);
+		Vector3d vision_line_topo = Fix2Topo(to_find_fix_vec, center_geographic);
 		Vector3d projection_on_LHP = vision_line_topo;
 		projection_on_LHP(2) = 0.0;		// y_t = 0.0
 

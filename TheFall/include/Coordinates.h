@@ -10,7 +10,7 @@ namespace Transform
 {
 	Eigen::Matrix3d RotMatrix(BYTE axis, TYPE angle);
 
-	Eigen::Vector3d Fix2Topo(const Eigen::Vector3d &fix_vector, const Eigen::Vector3d &center_SpherPos);
+	Eigen::Vector3d Fix2Topo(const Eigen::Vector3d &fix_vector, const Eigen::Vector3d &center_geographic);
 
 	Eigen::Vector3d Geographic2Fix(TYPE h, TYPE fi, TYPE lambda);
 	Eigen::Vector3d Geographic2Fix(const Eigen::Vector3d &geographic);
@@ -18,7 +18,7 @@ namespace Transform
 	Eigen::Vector3d Decart2Spher(const Eigen::Vector3d &fix);
 
 	// результат - углы в радианах [h, az] - элевация и азимут
-	Eigen::Vector2d Fix2Horiz(const Eigen::Vector3d &to_find_fix_vec, const Eigen::Vector3d &center_spher_pos);
+	Eigen::Vector2d Fix2Horiz(const Eigen::Vector3d &to_find_fix_vec, const Eigen::Vector3d &center_geographic);
 }
 
 namespace Orbit
