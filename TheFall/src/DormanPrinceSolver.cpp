@@ -146,6 +146,13 @@ void DormanPrinceSolver::Run(Model &model)
 		x0 = x1; // на выход отдаЄм результат 4 пор€дка (принима€ его основным)
 		t += NewStep;
 	}
+
+#ifdef DEBUG
+	cout << endl;
+	cout << "	Eps_Global = " << Eps_Global << endl;
+	cout << "	t = " << t << endl;
+	cout << "finished" << endl << endl;
+#endif
 }
 
 /*
@@ -248,6 +255,8 @@ TYPE DormanPrinceSolver::StepCorrection(TYPE Error)
 */
 TYPE DormanPrinceSolver::getError()
 {
+	static TYPE sqrt_x_size = sqrt(TYPE(x_size));
+
 	// числитель и знаменатель дроби под корнем
 	Eigen::VectorXd numerator(x_size), denominator(x_size), fraction(x_size);
 
@@ -265,8 +274,7 @@ TYPE DormanPrinceSolver::getError()
 	}
 
 	// воспользовались нахождением длины вектора
-	return fraction.norm() / sqrt(TYPE(x_size));
-
+	return fraction.norm() / sqrt_x_size;
 }
 
 TYPE DormanPrinceSolver::RoundingError() const
