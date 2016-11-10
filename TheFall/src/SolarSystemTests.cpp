@@ -99,7 +99,7 @@ void Tests::TestFix2Horiz()
 	Eigen::Vector3d center_fix;
 	Eigen::Vector3d to_find_vec;
 
-	for (int fi = 0; fi < 1; fi++)
+	for (int fi = 0; fi < 3; fi++)
 	{
 		cout << endl;
 
@@ -124,6 +124,7 @@ void Tests::TestFix2Horiz()
 					k++;
 
 				to_find_vec(i) += k;
+				to_find_vec((i + 1) % VEC_SIZE) += k;
 
 				cout << "\n	to_find_vec:	" << to_find_vec.transpose();
 				cout << "\n	Fix2Horiz:	" << (Transform::Fix2Horiz(to_find_vec, center_geographic) * DEG_IN_RAD).transpose();
