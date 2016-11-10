@@ -5,6 +5,12 @@
 using namespace Eigen;
 
 
+#ifdef DEBUG
+#include <iostream>
+using namespace std;
+#endif
+
+
 #define DEFAULT_FORCES_SIZE	5
 
 

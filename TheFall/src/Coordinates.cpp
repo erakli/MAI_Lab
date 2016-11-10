@@ -8,6 +8,11 @@
 
 using namespace Eigen;
 
+#ifdef DEBUG
+#include <iostream>
+using namespace std;
+#endif
+
 /*
 	Звёздным временем называется часовой угол точки весеннего
 	равноденствия (ТВР). Вычисление текущего гринвичского
