@@ -1,7 +1,6 @@
 #include <iostream>
 
-#include "file_output.h"
-
+#include <Constants.h>
 #include "Functions.h"
 
 #include "Coordinates.h"
@@ -100,32 +99,37 @@ void Tests::TestFix2Horiz()
 	Eigen::Vector3d center_fix;
 	Eigen::Vector3d to_find_vec;
 
-	for (int fi = -2; fi < 3; fi++)
+	for (int fi = 0; fi < 1; fi++)
 	{
+		cout << endl;
+
 		center_geographic[0] = 0;
 		center_geographic[1] = deg2rad(45 * fi);
 		center_geographic[2] = deg2rad(0);
 
-		cout << "\ncenter_geographic:	"; Show(center_geographic);
+		cout << "\ncenter_geographic:	" << center_geographic.transpose();
 
 		center_fix = Transform::Geographic2Fix(center_geographic);
 
 		for (int count = 0; count < VEC_SIZE; count++)
 		{
-			for (size_t i = 0; i < count; i++)
+			cout << "\nnum of coordinates to change:	" << count + 1 << endl;
+			for (size_t i = 0; i <= count; i++)
 			{
 				to_find_vec = center_fix;
 				TYPE temp;
 				for (int j = -1; j < 2; j++)
 				{
 					temp = to_find_vec(i);
-					to_find_vec(i) = j;
+					to_find_vec(i) += j;
 
-					cout << "\nto_find_vec:		"; Show(to_find_vec);
-					cout << "\nFix2Horiz:	"; Show(Transform::Fix2Horiz(to_find_vec, center_geographic) * DEG_IN_RAD);
+					cout << "\nto_find_vec:	" << to_find_vec.transpose();
+					cout << "\nFix2Horiz:	" << (Transform::Fix2Horiz(to_find_vec, center_geographic) * DEG_IN_RAD).transpose();
 					to_find_vec(i) = temp;
 				}
 			}
+
+			cout << endl;
 		}
 	}	
 
