@@ -237,14 +237,20 @@ namespace Transform
 		Vector3d projection_on_LHP = vision_line_topo;
 		projection_on_LHP(2) = 0.0;		// y_t = 0.0
 
-		// скалярное произведение проекции вектора линии визирования на МГП
-		// и орта x_t (направление на север)
-		Vector3d topo_north_vec(0.0, 1.0, 0.0);
-		TYPE cos_az = projection_on_LHP.dot(topo_north_vec) / projection_on_LHP.norm();
-		TYPE azimuth = acos(cos_az);
+		TYPE azimuth = 0.0;
 
-		if (projection_on_LHP(0) < 0)	// z_t < 0 (азимут против часовой)
-			azimuth *= -1.0;
+		TYPE projection_norm = projection_on_LHP.norm();
+		if (projection_norm != 0.0)
+		{
+			// скалярное произведение проекции вектора линии визирования на МГП
+			// и орта x_t (направление на север)
+			Vector3d topo_north_vec(0.0, 1.0, 0.0);
+			TYPE cos_az = projection_on_LHP.dot(topo_north_vec) / projection_norm;
+			TYPE azimuth = acos(cos_az);
+
+			if (projection_on_LHP(0) < 0)	// z_t < 0 (азимут против часовой)
+				azimuth *= -1.0;
+		}
 
 		return Vector2d(elevation, azimuth);
 	}
