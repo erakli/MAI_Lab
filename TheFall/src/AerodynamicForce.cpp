@@ -33,6 +33,8 @@ AerodynamicForce::AerodynamicForce()
 {
 	ballistic_coeff = 0.0;
 
+	randomnicities = true;
+
 	density_params[0].height = 0.0;
 	density_params[1].height = 20.0 * 1000;
 	density_params[2].height = 60.0 * 1000;
@@ -68,6 +70,11 @@ AerodynamicForce::AerodynamicForce()
 	density_params[5].k2 = 0.1547e-4;
 	density_params[6].k2 = 0.9280e-5;
 	density_params[7].k2 = 0.9540e-5;
+}
+
+AerodynamicForce::AerodynamicForce(bool has_randomnicities) : AerodynamicForce()
+{
+	randomnicities = has_randomnicities;
 }
 
 
@@ -110,8 +117,7 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 }
 
 
-// TODO: необходимо получать плотность не в зависимости от времени, а от углового
-// смещения
+
 TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 {
 	// TODO: перевели в м
@@ -126,17 +132,16 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 				layer--;
 			break;
 		}
-	
-	// TODO: определиться с км и м
 
 	TYPE layer_dist = height - density_params[layer].height;
 	TYPE e = exp(
 		density_params[layer].k1 * pow(layer_dist, 2) - 
 		density_params[layer].k2 * layer_dist
 		);
-	TYPE density = 
-		density_params[layer].A * 
-		(1 + random_process_realization(int(t / CORRELATION_INTERVAL))) * e;
+	TYPE density = density_params[layer].A * e;
+
+	if (randomnicities == true)
+		density = 1 + random_process_realization(int(t / CORRELATION_INTERVAL));
 
 	return density;
 }
@@ -145,31 +150,21 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 
 void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 {
-	ShapingFilter shaping_filter;
-	DormanPrinceSolver_fixed integrator;
+	if (randomnicities == true)
+	{
+		ShapingFilter shaping_filter;
+		DormanPrinceSolver_fixed integrator;
 
-	TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
+		TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
 
-	shaping_filter.setInterval(CORRELATION_INTERVAL);
-	shaping_filter.set_t1(t1 + CORRELATION_INTERVAL);
-	shaping_filter.Generate_WhiteNoise(omega);
+		shaping_filter.setInterval(CORRELATION_INTERVAL);
+		shaping_filter.set_t1(t1 + CORRELATION_INTERVAL);
+		shaping_filter.Generate_WhiteNoise(omega);
 
-//	integrator.setEps_Max(1.0e-13);
-	integrator.SetCorrelationInterval(CORRELATION_INTERVAL);
+		integrator.SetCorrelationInterval(CORRELATION_INTERVAL);
 
-	integrator.Run(shaping_filter);
+		integrator.Run(shaping_filter);
 
-	//VectorList random_process(shaping_filter.getResult());
-	//random_process_realization.resize(random_process.size());
-	random_process_realization = shaping_filter.getResult().rightCols(1);
-
-	// TODO: в random_process_realization необходимо положить только последний столбец
-	// random_process
-
-	//for (VectorList::const_iterator iter = random_process.begin();
-	//	iter != random_process.end();
-	//	++iter)
-	//{
-	//	random_process_realization << (*iter).tail(1);
-	//}
+		random_process_realization = shaping_filter.getResult().rightCols(1);
+	}
 }

@@ -23,6 +23,7 @@ class AerodynamicForce : public Force
 {
 public:
 	AerodynamicForce();
+	AerodynamicForce(bool has_randomnicities);
 
 	void Init(int argc, void** argv) override;
 
@@ -31,9 +32,10 @@ public:
 private:
 	TYPE ballistic_coeff;
 
+	bool randomnicities;
+
 	DensityModelParams density_params[ATMO_LAYERS];
 	Eigen::VectorXd random_process_realization;
-
 
 	TYPE GetDensity(const Eigen::Vector3d& X, TYPE t) const;
 
