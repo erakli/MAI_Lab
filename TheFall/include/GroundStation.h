@@ -1,15 +1,19 @@
 #pragma once
 
-#include "Types.h"
-#include "LinearAlgebra.h"
+#include "ObservationModel.h"
 
-struct GroundStation
+class GroundStation : public ObservationModel
 {
+public:
+	GroundStation();
+	GroundStation(const Eigen::Vector3d &geographic_pos, TYPE vision_zone_angle);
+
+	Eigen::VectorXd MakeObservation(const Eigen::VectorXd & X, TYPE t) const override;
+	void SaveObservation(const Eigen::VectorXd & X, TYPE t) override;
+
 	Eigen::Vector3d _geographic_pos;
 	TYPE _vision_zone_angle;	// [рад]
 
-	Eigen::MatrixXd observations;
-
-	GroundStation();
-	GroundStation(const Eigen::Vector3d &geographic_pos, TYPE vision_zone_angle);
+private:
+	TYPE start_star_time;
 };
