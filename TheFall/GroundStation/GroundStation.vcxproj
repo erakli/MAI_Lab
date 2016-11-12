@@ -73,9 +73,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\GroundStation.cpp" />
-    <ClCompile Include="..\src\test_GroundControl.cpp" />
+    <ClCompile Include="..\src\test_GroundStation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LeastSquareMethod\LeastSquareMethod.vcxproj">
+      <Project>{2f308fac-5a84-4f1f-a268-7666f51d03c2}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\SputnikModel\SputnikModel.vcxproj">
       <Project>{a6e52f9b-1702-4889-8ec7-1ab03b40fe7c}</Project>
     </ProjectReference>

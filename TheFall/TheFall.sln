@@ -20,6 +20,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RandomProcess", "RandomProc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GroundStation", "GroundStation\GroundStation.vcxproj", "{C780343C-4864-4D84-81A3-1815EE0F6E47}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeastSquareMethod", "LeastSquareMethod\LeastSquareMethod.vcxproj", "{2F308FAC-5A84-4F1F-A268-7666F51D03C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -54,6 +56,10 @@ Global
 		{C780343C-4864-4D84-81A3-1815EE0F6E47}.Debug|Win32.Build.0 = Debug|Win32
 		{C780343C-4864-4D84-81A3-1815EE0F6E47}.Release|Win32.ActiveCfg = Release|Win32
 		{C780343C-4864-4D84-81A3-1815EE0F6E47}.Release|Win32.Build.0 = Release|Win32
+		{2F308FAC-5A84-4F1F-A268-7666F51D03C2}.Debug|Win32.ActiveCfg = LibDebug|Win32
+		{2F308FAC-5A84-4F1F-A268-7666F51D03C2}.Debug|Win32.Build.0 = LibDebug|Win32
+		{2F308FAC-5A84-4F1F-A268-7666F51D03C2}.Release|Win32.ActiveCfg = Release|Win32
+		{2F308FAC-5A84-4F1F-A268-7666F51D03C2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
