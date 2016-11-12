@@ -49,6 +49,8 @@ int main()
 
 	size_t num_of_observations = 0;
 
+	// TODO: переписать с учётом нового интерфейса ObsercationModel
+
 	for (size_t sec = 0; sec < num_of_results; sec++)
 	{
 //		cur_geographic_pos(2) = lambda_start + StarTime(start_time, sec);
