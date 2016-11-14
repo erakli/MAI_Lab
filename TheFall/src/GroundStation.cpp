@@ -42,7 +42,7 @@ void GroundStation::SaveObservation(const VectorXd& X, TYPE t)
 {
 	Vector2d sputnik_horiz_pos = MakeObservation(X, t);
 
-	// проверку на попадание элевации в конус видимости НИП
+	// проверка на попадание элевации в конус видимости НИП
 	if (sputnik_horiz_pos(0) >= _vision_zone_angle)
 	{
 		ObservationModel::SaveObservation(sputnik_horiz_pos, t);
