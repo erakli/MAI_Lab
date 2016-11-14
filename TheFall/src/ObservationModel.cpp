@@ -23,7 +23,9 @@ void ObservationModel::Init(size_t observations_size)
 
 void ObservationModel::SaveObservation(const VectorXd& X, TYPE t)
 {
-	observations.row(num_of_observations) << t, X;
+	VectorXd new_line(X.size() + 1);	// +1 для времени
+	new_line << t, X;
+	observations.row(num_of_observations) = new_line;
 	num_of_observations++;
 }
 
