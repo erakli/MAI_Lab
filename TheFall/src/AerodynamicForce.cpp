@@ -141,9 +141,10 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 	TYPE density = density_params[layer].A * e;
 
 	if (randomnicities == true)
-		density = 1 + random_process_realization(int(t / CORRELATION_INTERVAL));
+		density *= 1 + random_process_realization(int(t / CORRELATION_INTERVAL));
 
-	return density;
+	// TODO: перевели в кг/км^3
+	return density * 1.0e-3;
 }
 
 
