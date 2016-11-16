@@ -2,6 +2,8 @@
 
 using namespace Eigen;
 
+
+
 ObservationModel::ObservationModel()
 {
 	num_of_observations = 0;
@@ -10,7 +12,7 @@ ObservationModel::ObservationModel()
 
 ObservationModel::~ObservationModel()
 {
-	
+
 }
 
 
@@ -36,4 +38,16 @@ MatrixXd ObservationModel::GetObservations() const
 	MatrixXd trimmed_matrix = observations;
 	trimmed_matrix.conservativeResize(num_of_observations, NoChange);
 	return trimmed_matrix;
+}
+
+
+
+MatrixXd ObservationModel::GetRandomErrorParams() const
+{
+	return random_error_params;
+}
+
+VectorXd ObservationModel::GetRandomErrorParams(size_t param_num) const
+{
+	return random_error_params.col(param_num);
 }
