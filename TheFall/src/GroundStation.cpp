@@ -5,11 +5,17 @@ using namespace Eigen;
 using namespace Transform;
 
 #define OBSERVATION_COORDINATES 2
+#define DISTRIBUTION_PARAMS	2
 
 GroundStation::GroundStation() : ObservationModel()
 {
-	observation_vec_size = OBSERVATION_COORDINATES;
+	// установки базовой модели
+	observation_vec_size = OBSERVATION_COORDINATES + 1;
 
+	random_error_params.resize(OBSERVATION_COORDINATES, DISTRIBUTION_PARAMS);
+	// TODO: дописать заполнение матрицы параметров
+
+	// собственные установки
 	_geographic_pos = Vector3d::Zero();
 	_vision_zone_angle = 0.0;
 
@@ -17,14 +23,10 @@ GroundStation::GroundStation() : ObservationModel()
 }
 
 GroundStation::GroundStation(const Vector3d& geographic_pos, TYPE vision_zone_angle)
-	: ObservationModel()
+	: GroundStation()
 {
-	observation_vec_size = OBSERVATION_COORDINATES;
-
 	_geographic_pos = geographic_pos;
 	_vision_zone_angle = vision_zone_angle;
-
-	start_star_time = 0.0;
 }
 
 
@@ -47,4 +49,28 @@ void GroundStation::SaveObservation(const VectorXd& X, TYPE t)
 	{
 		ObservationModel::SaveObservation(sputnik_horiz_pos, t);
 	}
+}
+
+
+
+Vector3d GroundStation::GetGeographicPos() const
+{
+	return _geographic_pos;
+}
+
+void GroundStation::SetGeographicPos(const VectorXd& new_geographic_pos)
+{
+	_geographic_pos = new_geographic_pos;
+}
+
+
+
+TYPE GroundStation::GetVisionZoneAngle() const
+{
+	return _vision_zone_angle;
+}
+
+void GroundStation::SetVisionZoneAngle(TYPE new_vision_zone_angle)
+{
+	_vision_zone_angle = new_vision_zone_angle;
 }
