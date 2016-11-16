@@ -95,7 +95,13 @@ bool Sputnik::Stop_Calculation(
 {
 	TYPE norm = PrevStep.head(VEC_SIZE).norm();
 	if ((norm - Earth::meanRadius) < 0)
+	{
+#ifdef DEBUG
+		cout << "Touchdown!" << endl;
+		system("pause");
+#endif
 		return true;
+	}
 
 	return false;
 }
