@@ -18,8 +18,8 @@ private:
 	TYPE correlation_interval_WhiteNoise;
 
 	// реализация Белого Шума на всё время моделирования с заданным интервалом корреляции
-	Eigen::VectorXd WhiteNoise;
-	bool WhiteNoise_got;	// была ли получена реализация Белого Шума
+	Eigen::VectorXd m_white_noise;
+	bool white_noise_got;	// была ли получена реализация Белого Шума
 
 	TYPE getWhiteNoise(TYPE t) const;
 

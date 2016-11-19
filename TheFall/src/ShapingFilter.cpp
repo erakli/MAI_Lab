@@ -41,7 +41,7 @@ ShapingFilter::ShapingFilter()
 	Mx = 0;
 
 	correlation_interval_WhiteNoise = 0;
-	WhiteNoise_got = false;
+	white_noise_got = false;
 }
 
 void ShapingFilter::addResult(const VectorXd &X, TYPE t)
@@ -68,12 +68,12 @@ void ShapingFilter::Generate_WhiteNoise(TYPE omega)
 {
 	TYPE dt(0);
 
-	WhiteNoise = GetWhiteNoise(omega, t0, t1, dt);
+	m_white_noise = GetWhiteNoise(omega, t0, t1, dt);
 
 	correlation_interval_WhiteNoise = dt;
-	WhiteNoise_got = true;
+	white_noise_got = true;
 
-	//lookUp_of_WhiteNoise.push_back(WhiteNoise);
+	//lookUp_of_WhiteNoise.push_back(m_white_noise);
 }
 
 TYPE ShapingFilter::GetCorrelationInterval() const
@@ -89,7 +89,7 @@ TYPE ShapingFilter::GetCorrelationInterval() const
 */
 TYPE ShapingFilter::getWhiteNoise(TYPE t)  const
 {
-	if (!WhiteNoise_got)
+	if (!white_noise_got)
 	{
 		throw std::exception("WhiteNoise hasn't been generated");
 	}
@@ -97,7 +97,7 @@ TYPE ShapingFilter::getWhiteNoise(TYPE t)  const
 	TYPE index_WN;
 	modf(t / correlation_interval_WhiteNoise, &index_WN);
 
-	return WhiteNoise[int(index_WN)];
+	return m_white_noise[int(index_WN)];
 }
 
 
