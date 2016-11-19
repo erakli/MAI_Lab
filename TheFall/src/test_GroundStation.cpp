@@ -138,16 +138,16 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 	sputnik.SetMass(50);
 	sputnik.SetBallisticCoeff(1.4);
 
-	sputnik.set_t1(duration);
-	sputnik.setInterval(1);
+	sputnik.Set_t1(duration);
+	sputnik.SetInterval(1);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
 
-	Integrator.setEps_Max(1.0e-13);
+	Integrator.SetEpsMax(1.0e-13);
 	Integrator.Run(sputnik);
 
 	cout << endl << "sputnik_orbit generated" << endl;
 
-	return sputnik.getResult();
+	return sputnik.GetResult();
 }
