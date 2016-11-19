@@ -23,25 +23,25 @@ Eigen::VectorXd SetValues(TYPE *values)
 DormanPrinceSolver::DormanPrinceSolver()
 {
 	// инициализируем все коэффициенты
-	c.resize(SIZE);
-	A.resize(SIZE, SIZE);
-	b.resize(SIZE);
-	b1.resize(SIZE);
+	m_c.resize(SIZE);
+	m_A.resize(SIZE, SIZE);
+	m_b.resize(SIZE);
+	m_b1.resize(SIZE);
 
 	// заполняем
-	set_c();
-	set_b();
-	set_b1();
-	setA();
+	Set_c();
+	Set_b();
+	Set_b1();
+	SetA();
 
 	step = 1.0e-3;
 //	Error = 1.0e-5;
-	Eps_Max = 1.0e-17;
-	Eps_Global = 0;
+	m_eps_max = 1.0e-17;
+	m_eps_global = 0;
 
 	iter = 0; // количество итераций
 
-	rounding_error = RoundingError();	// ошибка округления
+	m_rounding_error = RoundingError();	// ошибка округления
 }
 
 /*
@@ -53,21 +53,24 @@ void DormanPrinceSolver::Run(Model &model)
 	p_model->Init(0, nullptr);
 
 	// инициализируем время начальным его значением из модели
-	t = p_model->get_t0();
-	x0 = p_model->getStart();
+	t = p_model->Get_t0();
+	x0 = p_model->GetStart();
 
 	// вычисляем размер фазового вектора
 	x_size = x0.size();
 
-	k.resize(SIZE, x_size);
+	m_k.resize(SIZE, x_size);
 
 	TYPE
-		t_end = p_model->get_t1(),
+		t_end = p_model->Get_t1(),
 		tout = t;			// Для плотной выдачи
 
-	TYPE NewStep;			// храним знание о новом шаге на эту итерацию
-	TYPE Error;
+	TYPE new_step;			// храним знание о новом шаге на эту итерацию
+	TYPE error;
 	UINT local_iter(0);
+
+	Eigen::VectorXd sum(x_size);
+	Eigen::VectorXd sum_1(x_size);
 
 #ifdef DEBUG
 	cout << endl << endl;
@@ -90,17 +93,17 @@ void DormanPrinceSolver::Run(Model &model)
 		else
 			break;
 
-		set_k(x_size);
+		SetK(x_size);
 
-		Eigen::VectorXd sum = Eigen::VectorXd::Zero(x_size);
-		Eigen::VectorXd sum_1 = Eigen::VectorXd::Zero(x_size);
+		sum.fill(0.0);
+		sum_1.fill(0.0);
 
 		for (int i = 0; i < x_size; i++) // проходим по элементам вектора Х
 		{
 			for (int j = 0; j < SIZE; j++) // собираем воедино все k
 			{
-				sum(i) += b(j) * k(j, i);
-				sum_1(i) += b1(j) * k(j, i);
+				sum(i) += m_b(j) * m_k(j, i);
+				sum_1(i) += m_b1(j) * m_k(j, i);
 			}
 		}
 
@@ -112,44 +115,48 @@ void DormanPrinceSolver::Run(Model &model)
 		x1 = x0 + sum * step;
 		_x1 = x0 + sum_1 * step;
 
-		Error = getError();
-		NewStep = StepCorrection(Error);	// Запомнили шаг до конца этой итерации
+		error = GetError();
+		new_step = StepCorrection(error);	// Запомнили шаг до конца этой итерации
 		//if (NewStep > rounding_error)
-		step = NewStep;
+		step = new_step;
 		//else
-		//	step = Eps_Max;	// TODO: тут надо подумать, что в случае 0 шага делать
+		//	step = m_eps_max;	// TODO: тут надо подумать, что в случае 0 шага делать
 
 		// если мы не довольны ошибкой, уточняем шаг с текущим t
-		if (Error > Eps_Max) continue; // ------------------- основной перевалочный пункт
+		if (error > m_eps_max) // ------------------- основной перевалочный пункт
+			continue; 
 
-		Eps_Global += Error; // считаем глобальную погрешность как сумму локальных
+		m_eps_global += error; // считаем глобальную погрешность как сумму локальных
 
 		local_iter = 0; // обнуляем счётчик количества итераций при успехе шага
 
 		// если приращение координаты менее заданного условия прерываем процесс
-		if (p_model->Stop_Calculation(t, NewStep, x0, x1)) break;
+		if (p_model->StopCalculation(t, new_step, x0, x1))
+		{
+			break;
+		}
 
 		/*
 			Плотная выдача. Результаты уходят в матрицу
 			результатов модели
 		*/
 		TYPE Teta;
-		Eigen::VectorXd Xout; // сюда записываются значения с учётом коэф. плотной выдачи
-		while ((tout < t + NewStep) && (tout <= t_end))
+		Eigen::VectorXd xout; // сюда записываются значения с учётом коэф. плотной выдачи
+		while ((tout < t + new_step) && (tout <= t_end))
 		{
-			Teta = (tout - t) / NewStep;
-			Xout = ThickExtradition(Teta, NewStep);
-			p_model->addResult(Xout, tout);
-			tout += p_model->getInterval();
+			Teta = (tout - t) / new_step;
+			xout = ThickExtradition(Teta, new_step);
+			p_model->AddResult(xout, tout);
+			tout += p_model->GetInterval();
 		}
 
 		x0 = x1; // на выход отдаём результат 4 порядка (принимая его основным)
-		t += NewStep;
+		t += new_step;
 	}
 
 #ifdef DEBUG
 	cout << endl;
-	cout << "	Eps_Global = " << Eps_Global << endl;
+	cout << "	m_eps_global = " << m_eps_global << endl;
 	cout << "	t = " << t << endl;
 	cout << "finished" << endl << endl;
 #endif
@@ -158,21 +165,22 @@ void DormanPrinceSolver::Run(Model &model)
 /*
 ------------- Вычисление k-элементов
 */
-void DormanPrinceSolver::set_k(int size)
+void DormanPrinceSolver::SetK(int size)
 {
-	k.fill(0);
-	k.row(0) = p_model->getRight(x0, t);
+	m_k.fill(0.0);
+	m_k.row(0) = p_model->GetRight(x0, t);
 
 	Eigen::VectorXd arg;
+	Eigen::VectorXd set_k_sum(size);
 
 	for (int s = 1; s < SIZE; s++) // двигаемся по вектору вниз (по строкам)
 	{
 		// инициализируем элементы-векторы вектора вспомогательных коэфф.
 		//k[s].setSize(size);
 
-		Eigen::VectorXd set_k_sum = Eigen::VectorXd::Zero(size);
+		set_k_sum.fill(0.0);
 
-		for (int i = 0; i < s; i++) // проходим по строкам A, складывая их
+		for (int i = 0; i < s; i++) // проходим по строкам m_A, складывая их
 		{
 			/*
 				гуляем по вектор функциям.
@@ -181,12 +189,12 @@ void DormanPrinceSolver::set_k(int size)
 			*/
 			for (int j = 0; j < size; j++)
 			{
-				set_k_sum(j) += A(s, i) * k(i, j);
+				set_k_sum(j) += m_A(s, i) * m_k(i, j);
 			}
 		}
 
 		arg = x0 + set_k_sum * step;
-		k.row(s) = p_model->getRight(arg, t + c(s) * step);
+		m_k.row(s) = p_model->GetRight(arg, t + m_c(s) * step);
 	}
 }
 
@@ -194,7 +202,7 @@ void DormanPrinceSolver::set_k(int size)
 ------------- Плотная выдача.
 	Необходима для записи результатов на подшагах.
 */
-Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
+Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE Step)
 {
 	TYPE sqrTeta;
 
@@ -230,7 +238,7 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
 	{
 		for (int j = 0; j < b_size; j++)
 		{
-			sum(i) += b(j) * k(j, i);
+			sum(i) += b(j) * m_k(j, i);
 		}
 	}
 
@@ -243,9 +251,7 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE &Step)
 */
 TYPE DormanPrinceSolver::StepCorrection(TYPE Error)
 {
-	TYPE min_part =
-		std::min<TYPE>
-		(5.0, pow(Error / Eps_Max, 0.2) / 0.9);
+	TYPE min_part = std::min<TYPE>(5.0, pow(Error / m_eps_max, 0.2) / 0.9);
 
 	return step / std::max<TYPE>(0.1, min_part);
 }
@@ -253,23 +259,21 @@ TYPE DormanPrinceSolver::StepCorrection(TYPE Error)
 /*
 ------------- Получение локальной погрешности
 */
-TYPE DormanPrinceSolver::getError()
+TYPE DormanPrinceSolver::GetError()
 {
-	static TYPE sqrt_x_size = sqrt(TYPE(x_size));
+	static const TYPE sqrt_x_size = sqrt(TYPE(x_size));
+	static TYPE scalar_in_max = 2.0 * m_rounding_error / m_eps_max;
 
 	// числитель и знаменатель дроби под корнем
 	Eigen::VectorXd numerator(x_size), denominator(x_size), fraction(x_size);
 
 	//TYPE u = RoundingError(); // вычисление ошибки округления
 
+	numerator = step * (x1 - _x1);
+
 	for (int i = 0; i < x_size; i++)
 	{
-		numerator(i) = step * (x1(i) - _x1(i));
-		denominator(i) =
-			std::max<TYPE>(
-			std::max<TYPE>(1.0e-5, abs(x1(i))),
-			std::max<TYPE>(abs(x0(i)), 2.0 * rounding_error / Eps_Max)
-			);
+		denominator(i) = std::max<TYPE>({ 1.0e-5, abs(x1(i)), abs(x0(i)), scalar_in_max });
 		fraction(i) = numerator(i) / denominator(i);
 	}
 
@@ -291,13 +295,13 @@ TYPE DormanPrinceSolver::RoundingError() const
 }
 
 // -------------- вспомогательные коэффициенты
-void DormanPrinceSolver::set_c()
+void DormanPrinceSolver::Set_c()
 {
 	TYPE prep[SIZE] = { 0, 0.2, 0.3, 0.8, 8.0 / 9.0, 1.0, 1.0 };
-	c = SetValues(prep);
+	m_c = SetValues(prep);
 }
 
-void DormanPrinceSolver::setA()
+void DormanPrinceSolver::SetA()
 {
 	TYPE prep[SIZE][SIZE] =
 	{
@@ -310,36 +314,36 @@ void DormanPrinceSolver::setA()
 		{ 35.0 / 384, 0, 500.0 / 1113, 125.0 / 192, -2187.0 / 6784, 11.0 / 84, 0 }
 	};
 
-	A.fill(0);
+	m_A.fill(0.0);
 
 	for (int i = 0; i < SIZE; i++)
 	{
 		for (int j = 0; j < i; j++)
 		{
-			A(i, j) = prep[i][j];
+			m_A(i, j) = prep[i][j];
 		}
 	}
 }
 
-void DormanPrinceSolver::set_b()
+void DormanPrinceSolver::Set_b()
 {
 	TYPE prep[SIZE] =
 	{ 35.0 / 384, 0, 500.0 / 1113, 125.0 / 192, -2187.0 / 6784, 11.0 / 84, 0 };
-	b = SetValues(prep);
+	m_b = SetValues(prep);
 }
 
-void DormanPrinceSolver::set_b1()
+void DormanPrinceSolver::Set_b1()
 {
 	TYPE prep[SIZE] =
 	{ 5179.0 / 57600, 0, 7571.0 / 16695, 393.0 / 640, -92097.0 / 339200, 187.0 / 2100, 1.0 / 40 };
-	b1 = SetValues(prep);
+	m_b1 = SetValues(prep);
 }
 
 
 // ------------ инкапсуляция
-void DormanPrinceSolver::setEps_Max(const TYPE &arg)
+void DormanPrinceSolver::SetEpsMax(const TYPE &arg)
 {
-	Eps_Max = arg;
+	m_eps_max = arg;
 }
 
 //void DormanPrinceSolver::setEps(const TYPE &arg)
@@ -347,17 +351,17 @@ void DormanPrinceSolver::setEps_Max(const TYPE &arg)
 //	Error = arg;
 //}
 
-TYPE DormanPrinceSolver::getEps_Max() const
+TYPE DormanPrinceSolver::GetEpsMax() const
 {
-	return Eps_Max;
+	return m_eps_max;
 }
 
-TYPE DormanPrinceSolver::get_iter() const
+TYPE DormanPrinceSolver::GetIter() const
 {
 	return iter;
 }
 
-TYPE DormanPrinceSolver::getEps_Global() const
+TYPE DormanPrinceSolver::GetEpsGlobal() const
 {
-	return Eps_Global;
+	return m_eps_global;
 }
