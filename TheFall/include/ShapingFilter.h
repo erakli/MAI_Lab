@@ -31,13 +31,13 @@ public:
 		Матрица результатов:	t, x1, x2, y1
 		y1 - выход из фильтра
 	*/
-	void addResult(const Eigen::VectorXd &X, TYPE t) override;
+	void AddResult(const Eigen::VectorXd &X, TYPE t) override;
 
 	// генерация (квази)Белого Шума. Должна вызываться перед моделированием
 	void Generate_WhiteNoise(TYPE omega);
 	TYPE GetCorrelationInterval() const;
 
-	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+	Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const override;
 
 	static Eigen::VectorXd getReferenceCorrelationFcn(TYPE correlation_interval, int k_max);
 };

@@ -44,7 +44,7 @@ ShapingFilter::ShapingFilter()
 	white_noise_got = false;
 }
 
-void ShapingFilter::addResult(const VectorXd &X, TYPE t)
+void ShapingFilter::AddResult(const VectorXd &X, TYPE t)
 {
 	VectorXd compile; // вектор результата
 	compile.resize(X.size() + 1);
@@ -58,7 +58,7 @@ void ShapingFilter::addResult(const VectorXd &X, TYPE t)
 
 	compile << X, y1 + Mx;	// Прибавляем мат. ожидание требуемого процесса
 
-	Model::addResult(compile, t);
+	Model::AddResult(compile, t);
 }
 
 /*
@@ -102,7 +102,7 @@ TYPE ShapingFilter::getWhiteNoise(TYPE t)  const
 
 
 
-VectorXd ShapingFilter::getRight(const VectorXd &X, TYPE t) const
+VectorXd ShapingFilter::GetRight(const VectorXd &X, TYPE t) const
 {
 	// Входной БШ для Формирующего Фильтра.
 	TYPE nu = getWhiteNoise(t);
