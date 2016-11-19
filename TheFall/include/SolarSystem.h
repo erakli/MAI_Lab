@@ -21,9 +21,9 @@ public:
 	Earth(const Eigen::VectorXd &stateVector, const TYPE start);
 	Earth(const Earth &copy_earth);
 
-	void addResult(const Eigen::VectorXd &X, TYPE t) override;
+	void AddResult(const Eigen::VectorXd &X, TYPE t) override;
 
-	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+	Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const override;
 };
 
 

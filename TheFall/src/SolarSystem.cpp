@@ -121,15 +121,15 @@ Earth::Earth(const Earth &copy_earth)
 	m_start_values = copy_earth.m_start_values;
 	s_size = m_start_values.size();
 
-	t0 = copy_earth.get_t0();
-	t1 = copy_earth.get_t1();
+	t0 = copy_earth.Get_t0();
+	t1 = copy_earth.Get_t1();
 }
 
 
 /*
 	Храним время в конце вектора
 */
-void Earth::addResult(const VectorXd& X, double t)
+void Earth::AddResult(const VectorXd& X, double t)
 {
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << X, t;
@@ -142,7 +142,7 @@ void Earth::addResult(const VectorXd& X, double t)
 	Правая часть ДУ невозмущённого кеплеровского движения
 	Земли вокруг Солнца
 */
-VectorXd Earth::getRight(const VectorXd& X, TYPE t) const
+VectorXd Earth::GetRight(const VectorXd& X, TYPE t) const
 {
 	VectorXd Res(s_size);
 
