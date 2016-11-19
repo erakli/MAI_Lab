@@ -12,5 +12,5 @@ public:
 	int orbit; // Âûבמנ מנבטעû (לאכאÿ/במכüראÿ)
 
 	ArenstorfModel(int variant);
-	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+	Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const override;
 };

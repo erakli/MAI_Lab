@@ -28,7 +28,7 @@ ArenstorfModel::ArenstorfModel(int variant)
 
 
 
-VectorXd ArenstorfModel::getRight(const VectorXd &X, TYPE t) const
+VectorXd ArenstorfModel::GetRight(const VectorXd &X, TYPE t) const
 {
 	TYPE
 		R[2] =
