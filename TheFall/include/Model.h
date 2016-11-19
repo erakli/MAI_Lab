@@ -36,28 +36,28 @@ public:
 public:
 	virtual void Init(int argc = 0, void** argv = nullptr);	// инициализация модели
 
-	virtual Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const = 0;
+	virtual Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const = 0;
 
-	virtual bool Stop_Calculation(
-		TYPE t, TYPE Step, const Eigen::VectorXd &PrevStep, const Eigen::VectorXd &CurStep);
+	virtual bool StopCalculation(
+		TYPE t, TYPE step, const Eigen::VectorXd &prev_step, const Eigen::VectorXd &cur_step);
 
 public:
-	virtual void addResult(const Eigen::VectorXd &X, TYPE t);
-	Eigen::MatrixXd getResult() const;
-	Eigen::VectorXd getLastResult() const;
-	void clearResult();
+	virtual void AddResult(const Eigen::VectorXd &X, TYPE t);
+	Eigen::MatrixXd GetResult() const;
+	Eigen::VectorXd GetLastResult() const;
+	void ClearResult();
 
-	Eigen::VectorXd getStart() const;
-	void setStart(const Eigen::VectorXd &arg);
+	Eigen::VectorXd GetStart() const;
+	void SetStart(const Eigen::VectorXd &arg);
 
-	TYPE getInterval() const;
-	void setInterval(TYPE arg);
+	TYPE GetInterval() const;
+	void SetInterval(TYPE arg);
 
-	TYPE get_t0() const;
-	void set_t0(TYPE arg);
+	TYPE Get_t0() const;
+	void Set_t0(TYPE arg);
 
-	TYPE get_t1() const;
-	void set_t1(TYPE arg);	
+	TYPE Get_t1() const;
+	void Set_t1(TYPE arg);	
 
 protected:
 	virtual void SetStartValuesSize(size_t new_size, size_t result_line_expansion_by = 1);

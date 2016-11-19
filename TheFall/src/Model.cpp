@@ -80,7 +80,7 @@ void Model::Init(int argc, void** argv)
 
 
 
-bool Model::Stop_Calculation(
+bool Model::StopCalculation(
 	TYPE t, TYPE Step, const VectorXd& PrevStep, const VectorXd& CurStep)
 {
 	return false;
@@ -88,7 +88,7 @@ bool Model::Stop_Calculation(
 
 
 
-void Model::addResult(const VectorXd &X, TYPE t)
+void Model::AddResult(const VectorXd &X, TYPE t)
 {
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << t, X;
@@ -97,17 +97,17 @@ void Model::addResult(const VectorXd &X, TYPE t)
 	last_result_idx++;
 }
 
-MatrixXd Model::getResult() const
+MatrixXd Model::GetResult() const
 {
 	return m_result;
 }
 
-VectorXd Model::getLastResult() const
+VectorXd Model::GetLastResult() const
 {
 	return m_result.row(last_result_idx);
 }
 
-void Model::clearResult()
+void Model::ClearResult()
 {
 	m_result.resize(0, 0);
 	last_result_idx = 0;
@@ -115,47 +115,47 @@ void Model::clearResult()
 
 
 
-VectorXd Model::getStart() const
+VectorXd Model::GetStart() const
 {
 	return m_start_values;
 }
 
-void Model::setStart(const VectorXd &arg)
+void Model::SetStart(const VectorXd &arg)
 {
 	m_start_values = arg;
 }
 
 
 
-TYPE Model::getInterval() const{
+TYPE Model::GetInterval() const{
 	return m_interval;
 }
 
-void Model::setInterval(TYPE arg)
+void Model::SetInterval(TYPE arg)
 {
 	m_interval = arg;
 }
 
 
 
-TYPE Model::get_t0() const
+TYPE Model::Get_t0() const
 {
 	return t0;
 }
 
-void Model::set_t0(TYPE arg)
+void Model::Set_t0(TYPE arg)
 {
 	t0 = arg;
 }
 
 
 
-TYPE Model::get_t1() const
+TYPE Model::Get_t1() const
 {
 	return t1;
 }
 
-void Model::set_t1(TYPE arg)
+void Model::Set_t1(TYPE arg)
 {
 	t1 = arg;
 }
