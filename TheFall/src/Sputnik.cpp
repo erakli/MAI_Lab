@@ -98,6 +98,7 @@ bool Sputnik::StopCalculation(
 	{
 #ifdef DEBUG
 		cout << "Touchdown!" << endl;
+		cout << endl;
 		system("pause");
 #endif
 		return true;
