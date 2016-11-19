@@ -8,7 +8,7 @@ private:
 	TYPE m, M;
 
 public:
-	TYPE Period;  // Период обращения конкретной орбиты
+	TYPE m_period;  // Период обращения конкретной орбиты
 	int orbit; // Выбор орбиты (малая/большая)
 
 	ArenstorfModel(int variant);
