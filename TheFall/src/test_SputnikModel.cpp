@@ -5,6 +5,7 @@
 #include "file_output.h"
 
 #include "Time.h"		// для макросов времени
+#include <SolarSystem.h>
 #include "Gravitation.h"
 #include "AerodynamicForce.h"
 #include "Sputnik.h"
@@ -16,13 +17,18 @@ using namespace std;
 
 void Modelling(const TYPE duration, const Orbit::Kepler_elements &elements, Force * force);
 void Information(const Orbit::Kepler_elements &elements);
+
 void GravitationTest();
 void AerodynamicForceTest();
+void OverallTest();
 
 int main()
 {
 //	GravitationTest();
-	AerodynamicForceTest();
+//	AerodynamicForceTest();
+	OverallTest();
+
+	system("pause");
 }
 
 
@@ -55,6 +61,8 @@ void Information(const Orbit::Kepler_elements &elements)
 		<< "	teta	= " << elements.teta << "\n"
 		<< endl;
 }
+
+
 
 void GravitationTest()
 {
@@ -94,6 +102,8 @@ void GravitationTest()
 	Modelling(duration, elements, &central_field);
 }
 
+
+
 void AerodynamicForceTest()
 {
 	Orbit::Kepler_elements
@@ -119,6 +129,45 @@ void AerodynamicForceTest()
 
 	Integrator.SetEpsMax(1.0e-13);
 	Integrator.Run(sputnik);
+
+	Dorman_to_file(sputnik.GetResult(), Integrator);
+}
+
+
+
+void OverallTest()
+{
+	TYPE alpha_height = 970 + Earth::meanRadius;
+	TYPE pi_height = 40 + Earth::meanRadius;
+
+	TYPE a = (alpha_height + pi_height) / 2.0;
+	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
+
+	Orbit::Kepler_elements
+		elements = { 0, deg2rad(42), 0, a, e, deg2rad(0) };
+
+	DormanPrinceSolver Integrator;
+	GravitationField central_field;
+	AerodynamicForce aerodynamic_force;
+	Sputnik sputnik(elements);
+
+	Information(elements);
+
+	TYPE duration = SECINDAY * 30;
+
+	sputnik.SetMass(50);
+	sputnik.SetBallisticCoeff(1.4);
+
+	sputnik.Set_t1(duration);
+	sputnik.SetInterval(1.0);
+
+	sputnik.AddForce(&central_field);
+	sputnik.AddForce(&aerodynamic_force);
+
+	Integrator.SetEpsMax(1.0e-13);
+	Integrator.Run(sputnik);
+
+	cout << endl << "sputnik_orbit generated" << endl;
 
 	Dorman_to_file(sputnik.GetResult(), Integrator);
 }
