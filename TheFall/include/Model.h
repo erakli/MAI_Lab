@@ -7,23 +7,23 @@
 class Model
 {
 protected:
-	Eigen::VectorXd StartValues;
+	Eigen::VectorXd m_start_values;
 
 	size_t
-		s_size; // длина вектора StartValues
+		s_size; // длина вектора m_start_values
 
 	TYPE 
-		Interval, // должен ли быть интервал между знач. задан тут?
+		m_interval, // должен ли быть интервал между знач. задан тут?
 		t0, 
 		t1;
 
-	Eigen::MatrixXd Result;	// двунаправленный список
+	Eigen::MatrixXd m_result;	// двунаправленный список
 	size_t last_result_idx;
 	size_t result_line_length;
 
 	// Остановка интегрирования при малых изменениях приращения координаты
 	TYPE stop_condition;
-	unsigned short int stop_count, stop_count_max;
+	unsigned short stop_count, stop_count_max;
 	bool stop_flag;
 
 public:
