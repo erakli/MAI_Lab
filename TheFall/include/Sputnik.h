@@ -21,10 +21,10 @@ public:
 	void AddForce(Force* force);
 	void ClearForcesList();
 
-	Eigen::VectorXd getRight(const Eigen::VectorXd &X, TYPE t) const override;
+	Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const override;
 
-	bool Stop_Calculation(
-		TYPE t, TYPE Step, const Eigen::VectorXd &PrevStep, const Eigen::VectorXd &CurStep)
+	bool StopCalculation(
+		TYPE t, TYPE Step, const Eigen::VectorXd &prev_step, const Eigen::VectorXd &cur_step)
 		override;
 
 public:

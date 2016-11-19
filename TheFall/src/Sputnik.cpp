@@ -69,7 +69,7 @@ void Sputnik::ClearForcesList()
 
 
 
-VectorXd Sputnik::getRight(const VectorXd &X, TYPE t) const
+VectorXd Sputnik::GetRight(const VectorXd &X, TYPE t) const
 {
 	Vector3d cur_force;
 	Vector3d forces_sum = Vector3d::Zero();
@@ -90,7 +90,7 @@ VectorXd Sputnik::getRight(const VectorXd &X, TYPE t) const
 
 
 
-bool Sputnik::Stop_Calculation(
+bool Sputnik::StopCalculation(
 	TYPE t, TYPE Step, const VectorXd& PrevStep, const VectorXd& CurStep)
 {
 	TYPE norm = PrevStep.head(VEC_SIZE).norm();
