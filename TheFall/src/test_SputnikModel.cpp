@@ -31,17 +31,17 @@ void Modelling(const TYPE duration,
                const Orbit::Kepler_elements &elements, Force * force)
 {
 	DormanPrinceSolver Integrator;
-	Integrator.setEps_Max(1.0e-13);
+	Integrator.SetEpsMax(1.0e-13);
 
 	Sputnik sputnik(elements);
-	sputnik.set_t1(duration);
-	sputnik.setInterval(SECINMIN);
+	sputnik.Set_t1(duration);
+	sputnik.SetInterval(SECINMIN);
 
 	sputnik.AddForce(force);
 
 	Integrator.Run(sputnik);
 
-	Dorman_to_file(sputnik.getResult(), Integrator);
+	Dorman_to_file(sputnik.GetResult(), Integrator);
 }
 
 void Information(const Orbit::Kepler_elements &elements)
@@ -111,14 +111,14 @@ void AerodynamicForceTest()
 	sputnik.SetMass(50);
 	sputnik.SetBallisticCoeff(1.4);
 
-	sputnik.set_t1(duration);
-	sputnik.setInterval(SECINMIN);
+	sputnik.Set_t1(duration);
+	sputnik.SetInterval(SECINMIN);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
 
-	Integrator.setEps_Max(1.0e-13);
+	Integrator.SetEpsMax(1.0e-13);
 	Integrator.Run(sputnik);
 
-	Dorman_to_file(sputnik.getResult(), Integrator);
+	Dorman_to_file(sputnik.GetResult(), Integrator);
 }
