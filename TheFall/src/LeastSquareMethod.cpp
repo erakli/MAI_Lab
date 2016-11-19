@@ -48,14 +48,14 @@ void LeastSquareMethod::SetObservationModel(ObservationModel * new_observation_m
 void LeastSquareMethod::InitH(TYPE t1)
 {
 	DormanPrinceSolver solver;
-	solver.setEps_Max(1.0e-13);
+	solver.SetEpsMax(1.0e-13);
 
-	p_model->clearResult();
-	p_model->set_t1(t1);
+	p_model->ClearResult();
+	p_model->Set_t1(t1);
 
-	p_model->setStart(initial_condition);
+	p_model->SetStart(initial_condition);
 	solver.Run(*p_model);
-	MatrixXd main_traectory = p_model->getResult();
+	MatrixXd main_traectory = p_model->GetResult();
 
 	size_t initial_condition_size = initial_condition.size();
 
@@ -79,12 +79,12 @@ void LeastSquareMethod::InitH(TYPE t1)
 		while (repeat < 2)
 		{
 			sign = (repeat == 0) ? -1 : 1;
-			p_model->clearResult();
+			p_model->ClearResult();
 			
 			var_initial_condition(i) += delta * sign;
-			p_model->setStart(var_initial_condition);
+			p_model->SetStart(var_initial_condition);
 			solver.Run(*p_model);
-			var_traectories[i * 2 + repeat] = p_model->getResult();
+			var_traectories[i * 2 + repeat] = p_model->GetResult();
 
 			var_initial_condition(i) = temp;
 
