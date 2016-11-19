@@ -32,7 +32,7 @@ TYPE DormanPrinceSolver_fixed::GetError()
 {
 	//CDormanPrince::GetError();
 	
-	//if (Error > Eps_Max)
+	//if (Error > m_eps_max)
 	//	Error = 0;
 
 	return 0;

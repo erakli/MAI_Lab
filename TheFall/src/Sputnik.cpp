@@ -91,9 +91,9 @@ VectorXd Sputnik::GetRight(const VectorXd &X, TYPE t) const
 
 
 bool Sputnik::StopCalculation(
-	TYPE t, TYPE Step, const VectorXd& PrevStep, const VectorXd& CurStep)
+	TYPE t, TYPE Step, const VectorXd& prev_step, const VectorXd& cur_step)
 {
-	TYPE norm = PrevStep.head(VEC_SIZE).norm();
+	TYPE norm = prev_step.head(VEC_SIZE).norm();
 	if ((norm - Earth::meanRadius) < 0)
 	{
 #ifdef DEBUG
