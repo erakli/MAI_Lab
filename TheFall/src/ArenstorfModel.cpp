@@ -11,18 +11,18 @@ ArenstorfModel::ArenstorfModel(int variant)
 
 	orbit = variant;
 
-	StartValues(0) = 0.994; // y1
-	StartValues(1) = 0;     // y2
-	StartValues(2) = 0;     // y1'
+	m_start_values(0) = 0.994; // y1
+	m_start_values(1) = 0;     // y2
+	m_start_values(2) = 0;     // y1'
 	if (orbit) // выбираем большую орбиту
 	{
-		StartValues(3) = -2.00158510637908252240537862224; // y2'
-		Period = 17.0652165601579625588917206249;
+		m_start_values(3) = -2.00158510637908252240537862224; // y2'
+		m_period = 17.0652165601579625588917206249;
 	}
 	else // иначе малую
 	{
-		StartValues(3) = -2.0317326295573368357302057924; // y2'	
-		Period = 11.124340337266085134999734047;
+		m_start_values(3) = -2.0317326295573368357302057924; // y2'	
+		m_period = 11.124340337266085134999734047;
 	}
 }
 
