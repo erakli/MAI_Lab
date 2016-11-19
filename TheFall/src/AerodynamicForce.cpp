@@ -126,12 +126,14 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 	int layer;
 
 	for (layer = 0; layer < ATMO_LAYERS - 1; layer++)
+	{
 		if (density_params[layer].height > height)
 		{
 			if (layer > 0)
 				layer--;
 			break;
 		}
+	}
 
 	TYPE layer_dist = height - density_params[layer].height;
 	TYPE e = exp(
