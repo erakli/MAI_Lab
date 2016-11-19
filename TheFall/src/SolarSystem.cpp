@@ -21,19 +21,19 @@ const TYPE
 
 Earth::Earth()
 {
-	StartValues.resize(6);	// гелиоцентрическое положение + скорость
-	s_size = StartValues.size();
+	m_start_values.resize(6);	// гелиоцентрическое положение + скорость
+	s_size = m_start_values.size();
 	
 	/*
 		1.1.2016
 	*/
-	StartValues(0) = -2.439276441307208e+7;
-	StartValues(1) =  1.332124993767647e+8;
-	StartValues(2) =  5.772281789058973e+7;
+	m_start_values(0) = -2.439276441307208e+7;
+	m_start_values(1) =  1.332124993767647e+8;
+	m_start_values(2) =  5.772281789058973e+7;
 
-	StartValues(3) = -2.984063142864898e+1;
-	StartValues(4) = -4.727555397178124;
-	StartValues(5) = -2.049346856618893;
+	m_start_values(3) = -2.984063142864898e+1;
+	m_start_values(4) = -4.727555397178124;
+	m_start_values(5) = -2.049346856618893;
 
 	t0 = JD2016 * SECINDAY;
 	t1 = t0 + DAYS_IN_CURRENT_YEAR * SECINDAY;
@@ -41,8 +41,8 @@ Earth::Earth()
 
 Earth::Earth(const TYPE JD)
 {
-	StartValues.resize(6);	// гелиоцентрическое положение + скорость
-	s_size = StartValues.size();
+	m_start_values.resize(6);	// гелиоцентрическое положение + скорость
+	s_size = m_start_values.size();
 
 	/*
 		Положение и скорость в экваториальной гелиоцентрической СК
@@ -50,57 +50,57 @@ Earth::Earth(const TYPE JD)
 	*/
 	if (JD == JD2016)
 	{
-		StartValues(0) = -2.439276441307208e+7;
-		StartValues(1) = 1.332124993767647e+8;
-		StartValues(2) = 5.772281789058973e+7;
+		m_start_values(0) = -2.439276441307208e+7;
+		m_start_values(1) = 1.332124993767647e+8;
+		m_start_values(2) = 5.772281789058973e+7;
 
-		StartValues(3) = -2.984063142864898e+1;
-		StartValues(4) = -4.727555397178124;
-		StartValues(5) = -2.049346856618893;
+		m_start_values(3) = -2.984063142864898e+1;
+		m_start_values(4) = -4.727555397178124;
+		m_start_values(5) = -2.049346856618893;
 	}
 	else
 	if (JD == 2457468.5)
 	{
-		StartValues(0) = -1.484512468045209e+8;
-		StartValues(1) = -1.117361282251260e+6;
-		StartValues(2) = -5.101193558950569e+5;
+		m_start_values(0) = -1.484512468045209e+8;
+		m_start_values(1) = -1.117361282251260e+6;
+		m_start_values(2) = -5.101193558950569e+5;
 
-		StartValues(3) = -1.813507346095267e-1;
-		StartValues(4) = -2.742106189673085e+1;
-		StartValues(5) = -1.188731012157166e+1;
+		m_start_values(3) = -1.813507346095267e-1;
+		m_start_values(4) = -2.742106189673085e+1;
+		m_start_values(5) = -1.188731012157166e+1;
 	}
 	else
 	if (JD == 2457561.5)
 	{
-		StartValues(0) = 2.646770613778915e+6;
-		StartValues(1) = -1.391168307821974e+8;
-		StartValues(2) = -6.033492142652344e+7;
+		m_start_values(0) = 2.646770613778915e+6;
+		m_start_values(1) = -1.391168307821974e+8;
+		m_start_values(2) = -6.033492142652344e+7;
 
-		StartValues(3) = 2.929880927153534e+1;
-		StartValues(4) = 2.845999982294178e-1;
-		StartValues(5) = 1.232505993914231e-1;
+		m_start_values(3) = 2.929880927153534e+1;
+		m_start_values(4) = 2.845999982294178e-1;
+		m_start_values(5) = 1.232505993914231e-1;
 	}
 	else
 	if (JD == 2457654.5)
 	{
-		StartValues(0) = 1.506473988158580e+8;
-		StartValues(1) = 8.608380672583859e+5;
-		StartValues(2) = 3.462104807619269e+5;
+		m_start_values(0) = 1.506473988158580e+8;
+		m_start_values(1) = 8.608380672583859e+5;
+		m_start_values(2) = 3.462104807619269e+5;
 
-		StartValues(3) = -5.758350444110057e-1;
-		StartValues(4) = 2.724025582030263e+1;
-		StartValues(5) = 1.180895196291067e+1;
+		m_start_values(3) = -5.758350444110057e-1;
+		m_start_values(4) = 2.724025582030263e+1;
+		m_start_values(5) = 1.180895196291067e+1;
 	}
 	else
 	if (JD == 2457744.5)
 	{
-		StartValues(0) = -3.488250688338019e+5;
-		StartValues(1) = 1.355541180476501e+8;
-		StartValues(2) = 5.873831689579538e+7;
+		m_start_values(0) = -3.488250688338019e+5;
+		m_start_values(1) = 1.355541180476501e+8;
+		m_start_values(2) = 5.873831689579538e+7;
 
-		StartValues(3) = -3.027784098174831e+1;
-		StartValues(4) = -2.507359785692029e-1;
-		StartValues(5) = 1.084393412860461e-1;
+		m_start_values(3) = -3.027784098174831e+1;
+		m_start_values(4) = -2.507359785692029e-1;
+		m_start_values(5) = 1.084393412860461e-1;
 	}
 		
 	t0 = JD * SECINDAY;
@@ -109,8 +109,8 @@ Earth::Earth(const TYPE JD)
 
 Earth::Earth(const VectorXd &stateVector, const TYPE start)
 {
-	StartValues = stateVector;
-	s_size = StartValues.size();
+	m_start_values = stateVector;
+	s_size = m_start_values.size();
 
 	t0 = start * SECINDAY;
 	t1 = t0 + 365 * SECINDAY;
@@ -118,8 +118,8 @@ Earth::Earth(const VectorXd &stateVector, const TYPE start)
 
 Earth::Earth(const Earth &copy_earth)
 {
-	StartValues = copy_earth.StartValues;
-	s_size = StartValues.size();
+	m_start_values = copy_earth.m_start_values;
+	s_size = m_start_values.size();
 
 	t0 = copy_earth.get_t0();
 	t1 = copy_earth.get_t1();
@@ -134,7 +134,7 @@ void Earth::addResult(const VectorXd& X, double t)
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << X, t;
 
-	Result.row(last_result_idx) = compile;
+	m_result.row(last_result_idx) = compile;
 	last_result_idx++;
 }
 
