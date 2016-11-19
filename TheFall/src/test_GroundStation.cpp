@@ -26,7 +26,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY;
+	TYPE duration = SECINDAY * 13;
 	size_t num_of_results = int(ceil(duration) + 1);
 
 	MatrixXd sputnik_orbit = GenerateSputnikOrbit(duration);
@@ -120,7 +120,7 @@ void Information(const Orbit::Kepler_elements &elements)
 MatrixXd GenerateSputnikOrbit(TYPE duration)
 {
 	TYPE alpha_height = 970 + Earth::meanRadius;
-	TYPE pi_height = 140 + Earth::meanRadius;
+	TYPE pi_height = 40 + Earth::meanRadius;
 
 	TYPE a = (alpha_height + pi_height) / 2.0;
 	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
