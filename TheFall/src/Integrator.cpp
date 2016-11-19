@@ -15,12 +15,12 @@ Integrator::~Integrator()
 
 
 
-TYPE Integrator::getStep() const
+TYPE Integrator::GetStep() const
 {
 	return step;
 }
 
-void Integrator::setStep(TYPE arg)
+void Integrator::SetStep(TYPE arg)
 {
 	step = arg;
 }

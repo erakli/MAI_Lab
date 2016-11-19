@@ -15,6 +15,6 @@ public:
 
 	virtual void Run(Model &model) = 0; // pure virtual function
 
-	TYPE getStep() const;
-	void setStep(TYPE arg);
+	TYPE GetStep() const;
+	void SetStep(TYPE arg);
 };
