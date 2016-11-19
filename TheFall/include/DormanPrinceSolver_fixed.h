@@ -13,7 +13,7 @@ private:
 		формирования белого шума
 	*/
 	TYPE StepCorrection(TYPE Error) override;
-	TYPE getError() override;
+	TYPE GetError() override;
 public:
 	DormanPrinceSolver_fixed();
 	DormanPrinceSolver_fixed(TYPE correlation_interval);

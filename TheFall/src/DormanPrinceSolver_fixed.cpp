@@ -28,9 +28,9 @@ TYPE DormanPrinceSolver_fixed::StepCorrection(TYPE Error)
 #endif
 }
 
-TYPE DormanPrinceSolver_fixed::getError()
+TYPE DormanPrinceSolver_fixed::GetError()
 {
-	//CDormanPrince::getError();
+	//CDormanPrince::GetError();
 	
 	//if (Error > Eps_Max)
 	//	Error = 0;
