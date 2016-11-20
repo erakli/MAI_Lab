@@ -131,7 +131,7 @@ void DormanPrinceSolver::Run(Model &model)
 		local_iter = 0; // обнуляем счётчик количества итераций при успехе шага
 
 		// если приращение координаты менее заданного условия прерываем процесс
-		if (p_model->StopCalculation(t, new_step, x0, x1))
+		if (p_model->IsStopCalculation(t, new_step, x0, x1))
 		{
 			break;
 		}
