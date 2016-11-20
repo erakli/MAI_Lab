@@ -23,8 +23,8 @@ public:
 
 	Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const override;
 
-	bool StopCalculation(
-		TYPE t, TYPE Step, const Eigen::VectorXd &prev_step, const Eigen::VectorXd &cur_step)
+	bool IsStopCalculation(
+		TYPE t, TYPE step, const Eigen::VectorXd &prev_step, const Eigen::VectorXd &cur_step)
 		override;
 
 public:

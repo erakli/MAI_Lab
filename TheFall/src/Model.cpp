@@ -80,8 +80,8 @@ void Model::Init(int argc, void** argv)
 
 
 
-bool Model::StopCalculation(
-	TYPE t, TYPE Step, const VectorXd& PrevStep, const VectorXd& CurStep)
+bool Model::IsStopCalculation(
+	TYPE t, TYPE step, const VectorXd& prev_step, const VectorXd& cur_step)
 {
 	return false;
 }
