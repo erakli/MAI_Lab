@@ -15,7 +15,7 @@ using namespace std;
 #endif
 
 
-#define CORRELATION_INTERVAL 10.0
+#define CORRELATION_INTERVAL 1.0
 
 
 
