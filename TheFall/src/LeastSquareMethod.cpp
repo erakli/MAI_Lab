@@ -1,6 +1,7 @@
 #include "LeastSquareMethod.h"
 
-#include "DormanPrinceSolver.h"
+#include <Constants.h>
+
 #include <vector>
 
 using namespace Eigen;
@@ -8,8 +9,14 @@ using namespace std;
 
 LeastSquareMethod::LeastSquareMethod()
 {
+	// TODO: необходимо будет инициализировать
+	t_start = 0.0;
+	t_end = 0.0;
+
 	p_model = nullptr;
 	p_observation_model = nullptr;
+
+	solver.SetEpsMax(1.0e-13);
 }
 
 
@@ -39,6 +46,48 @@ void LeastSquareMethod::SetModel(Model * new_model_ptr)
 void LeastSquareMethod::SetObservationModel(ObservationModel * new_observation_model_ptr)
 {
 	p_observation_model = new_observation_model_ptr;
+}
+
+
+
+MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
+{
+	p_model->ClearResult();
+	p_model->Set_t0(t_start);
+	p_model->Set_t1(t_end);
+
+	p_model->SetStart(initial_condition);
+	solver.Run(*p_model);
+
+	return p_model->GetResult();
+}
+
+MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& reference_trajectory)
+{
+	size_t reference_trajectory_size = reference_trajectory.rows();
+
+	p_observation_model->Init(reference_trajectory_size);
+
+	VectorXd row;
+	Vector3d cur_pos;
+	TYPE t;
+
+	for (size_t i = 0; i < reference_trajectory_size; i++)
+	{
+		row = reference_trajectory.row(i);
+		cur_pos = row.tail(VEC_SIZE);
+		t = row(0);
+
+		p_observation_model->SaveObservation(cur_pos, t);
+	}
+
+	return p_observation_model->GetObservations();
+}
+
+MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_observations)
+{
+	// TODO: надо осуществить вычитание из соответствующих моментов времени
+	return MatrixXd();
 }
 
 

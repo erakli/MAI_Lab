@@ -9,7 +9,8 @@
 #include "Model.h"
 #include "ObservationModel.h"
 
-// TODO: подключить модель измерений
+#include "DormanPrinceSolver.h"
+
 
 class LeastSquareMethod
 {
@@ -30,8 +31,18 @@ private:
 
 	Eigen::MatrixXd observations; // первым столбцом будет время
 
+	TYPE t_start;
+	TYPE t_end;
+
 	Model * p_model;
 	ObservationModel * p_observation_model;
+
+	DormanPrinceSolver solver;
+
+private:
+	Eigen::MatrixXd GenerateReferenceTrajectory();
+	Eigen::MatrixXd GenerateReferenceObservations(const Eigen::MatrixXd & reference_trajectory);
+	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations);
 
 	// t1 - время окончания построения опорной траектории
 	void InitH(TYPE t1);
