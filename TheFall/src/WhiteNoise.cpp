@@ -3,6 +3,7 @@
 #include "Types.h"
 #include "Constants.h"
 
+#include <chrono>
 #include <random>	// Для генерации Белого Шума
 
 using namespace std;
@@ -21,8 +22,11 @@ VectorXd GetWhiteNoise(TYPE omega, TYPE t0, TYPE t1, TYPE &dt)
 
 	WhiteNoise.resize(vector_size);
 
+	// construct a trivial random generator engine from a time - based seed :
+	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+
 	// генератор с гауссовским нормальным распределением СВ
-	default_random_engine generator;
+	default_random_engine generator(seed);
 	normal_distribution<TYPE> distribution(0, sqrt(Disp));
 
 	for (size_t i = 0; i < vector_size; i++)
