@@ -97,7 +97,7 @@ bool Sputnik::IsStopCalculation(
 	if ((norm - Earth::meanRadius) < 0)
 	{
 #ifdef DEBUG
-		cout << "Touchdown!" << endl;
+		cout << " * Touchdown! * " << endl;
 		cout << endl;
 		system("pause");
 #endif
