@@ -40,6 +40,15 @@ int main()
 //	TYPE _vision_zone_angle = PI_HALF - deg2rad(75);
 //	MatrixXd observations = MatrixXd::Zero(num_of_results, 3);
 
+	TYPE disp = 3.3 / 60.0; // �������� ������� ������ � �������
+
+	MyNormalDistribution::param_type random_params(0.0, deg2rad(disp));
+	DistributionParamVec random_param_vec(2);
+	random_param_vec[0] = random_params;
+	random_param_vec[1] = random_params;
+
+	ground_station.SetRandomErrorParams(random_param_vec);
+	ground_station.SetDoRandom(false);
 	ground_station.Init(num_of_results);
 
 	Vector3d cur_geographic_pos = ground_station.GetGeographicPos();
