@@ -1,5 +1,8 @@
 #include "ObservationModel.h"
 
+#include <chrono>
+
+using namespace std;
 using namespace Eigen;
 
 
@@ -8,6 +11,8 @@ ObservationModel::ObservationModel()
 {
 	num_of_observations = 0;
 	observation_vec_size = 0;
+	// construct a trivial random generator engine from a time - based seed :
+	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
 }
 
 ObservationModel::~ObservationModel()
