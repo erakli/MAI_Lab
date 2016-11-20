@@ -137,8 +137,8 @@ void AerodynamicForceTest()
 
 void OverallTest()
 {
-	TYPE alpha_height = 970 + Earth::meanRadius;
-	TYPE pi_height = 40 + Earth::meanRadius;
+	TYPE alpha_height = 450 + Earth::meanRadius;
+	TYPE pi_height = 20 + Earth::meanRadius;
 
 	TYPE a = (alpha_height + pi_height) / 2.0;
 	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
@@ -159,7 +159,7 @@ void OverallTest()
 	sputnik.SetBallisticCoeff(1.4);
 
 	sputnik.Set_t1(duration);
-	sputnik.SetInterval(1.0);
+	sputnik.SetInterval(30.0);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
