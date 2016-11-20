@@ -4,8 +4,6 @@
 
 #define ATMO_LAYERS	8
 
-
-
 struct DensityModelParams
 {
 	TYPE
@@ -23,16 +21,18 @@ class AerodynamicForce : public Force
 {
 public:
 	AerodynamicForce();
-	AerodynamicForce(bool has_randomnicities);
+	AerodynamicForce(bool has_random);
 
 	void Init(int argc, void** argv) override;
 
 	Eigen::Vector3d getRight(const Vector6d &X, TYPE t) const override;
 
+	void SetHasRandom(bool has_random);
+
 private:
 	TYPE ballistic_coeff;
 
-	bool randomnicities;
+	bool has_random;
 
 	DensityModelParams density_params[ATMO_LAYERS];
 	Eigen::VectorXd random_process_realization;

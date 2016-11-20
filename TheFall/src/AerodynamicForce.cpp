@@ -33,7 +33,7 @@ AerodynamicForce::AerodynamicForce()
 {
 	ballistic_coeff = 0.0;
 
-	randomnicities = true;
+	SetHasRandom(true);
 
 	density_params[0].height = 0.0;
 	density_params[1].height = 20.0 * 1000;
@@ -72,9 +72,9 @@ AerodynamicForce::AerodynamicForce()
 	density_params[7].k2 = 0.9540e-5;
 }
 
-AerodynamicForce::AerodynamicForce(bool has_randomnicities) : AerodynamicForce()
+AerodynamicForce::AerodynamicForce(bool has_random) : AerodynamicForce()
 {
-	randomnicities = has_randomnicities;
+	this->has_random = has_random;
 }
 
 
@@ -118,6 +118,13 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 
 
 
+void AerodynamicForce::SetHasRandom(bool has_random)
+{
+	this->has_random = has_random;
+}
+
+
+
 TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 {
 	// TODO: перевели в м
@@ -142,8 +149,11 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 		);
 	TYPE density = density_params[layer].A * e;
 
-	if (randomnicities == true)
-		density *= 1 + random_process_realization(int(t / CORRELATION_INTERVAL));
+	if (has_random == true)
+	{
+		TYPE random = random_process_realization(int(t / CORRELATION_INTERVAL));
+		density *= 1 + random;
+	}
 
 	// TODO: перевели в кг/км^3
 	return density * 1.0e-3;
@@ -153,7 +163,7 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 
 void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 {
-	if (randomnicities == true)
+	if (has_random == true)
 	{
 		ShapingFilter shaping_filter;
 		DormanPrinceSolver_fixed integrator;
