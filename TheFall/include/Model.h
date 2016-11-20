@@ -18,7 +18,7 @@ protected:
 		t1;
 
 	Eigen::MatrixXd m_result;	// двунаправленный список
-	size_t last_result_idx;
+	size_t result_size;
 	size_t result_line_length;
 
 	// Остановка интегрирования при малых изменениях приращения координаты

@@ -12,7 +12,7 @@ Model::Model()
 	Set_t0(0);
 	Set_t1(5);
 
-	last_result_idx = 0;
+	result_size = 0;
 	result_line_length = 0;
 
 	stop_condition = 1.0e-5;
@@ -31,7 +31,7 @@ Model::Model(const Model& other)
 	t1 = other.t1;
 
 	m_result = other.m_result;
-	last_result_idx = other.last_result_idx;
+	result_size = other.result_size;
 	result_line_length = other.result_line_length;
 
 	stop_condition = other.stop_condition;
@@ -60,7 +60,7 @@ Model& Model::operator=(const Model& right)
 	t1 = right.t1;
 
 	m_result = right.m_result;
-	last_result_idx = right.last_result_idx;
+	result_size = right.result_size;
 	result_line_length = right.result_line_length;
 
 	stop_condition = right.stop_condition;
@@ -93,8 +93,8 @@ void Model::AddResult(const VectorXd &X, TYPE t)
 	VectorXd compile(X.size() + 1); // вектор результата + время
 	compile << t, X;
 
-	m_result.row(last_result_idx) = compile;
-	last_result_idx++;
+	m_result.row(result_size) = compile;
+	result_size++;
 }
 
 MatrixXd Model::GetResult() const
@@ -104,13 +104,16 @@ MatrixXd Model::GetResult() const
 
 VectorXd Model::GetLastResult() const
 {
-	return m_result.row(last_result_idx);
+	if (result_size > 0)
+		return m_result.row(result_size - 1);
+
+	return m_result.row(0);
 }
 
 void Model::ClearResult()
 {
 	m_result.resize(0, 0);
-	last_result_idx = 0;
+	result_size = 0;
 }
 
 
@@ -189,8 +192,8 @@ void Model::SetResultSize()
 	if (t0 == t1)
 		t1 += 1;
 
-	size_t result_size = size_t(ceil((t1 - t0) / m_interval)) + 1;
+	size_t new_result_size = size_t(ceil((t1 - t0) / m_interval)) + 1;
 
-	m_result = MatrixXd::Zero(result_size, result_line_length);
-	last_result_idx = 0;
+	m_result = MatrixXd::Zero(new_result_size, result_line_length);
+	result_size = 0;
 }
