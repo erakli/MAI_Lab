@@ -3,6 +3,12 @@
 #include "Types.h"
 #include "LinearAlgebra.h"
 
+#include <random>
+#include <vector>
+
+
+typedef std::normal_distribution<TYPE> MyNormalDistribution;
+typedef std::vector<MyNormalDistribution::param_type> DistributionParamVec;
 
 
 class ObservationModel
