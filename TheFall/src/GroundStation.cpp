@@ -12,9 +12,6 @@ GroundStation::GroundStation() : ObservationModel()
 	// установки базовой модели
 	observation_vec_size = OBSERVATION_COORDINATES + 1;
 
-	random_error_params.resize(OBSERVATION_COORDINATES, DISTRIBUTION_PARAMS);
-	// TODO: дописать заполнение матрицы параметров
-
 	// собственные установки
 	_geographic_pos = Vector3d::Zero();
 	_vision_zone_angle = 0.0;
@@ -43,6 +40,12 @@ VectorXd GroundStation::MakeObservation(const VectorXd& X, TYPE t) const
 void GroundStation::SaveObservation(const VectorXd& X, TYPE t)
 {
 	Vector2d sputnik_horiz_pos = MakeObservation(X, t);
+
+	if (do_random)
+	{
+		sputnik_horiz_pos(0) += distribution(generator, random_error_params[0]);
+		sputnik_horiz_pos(1) += distribution(generator, random_error_params[1]);
+	}
 
 	// проверка на попадание элевации в конус видимости НИП
 	if (sputnik_horiz_pos(0) >= _vision_zone_angle)
