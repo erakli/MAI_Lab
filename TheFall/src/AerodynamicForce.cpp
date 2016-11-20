@@ -108,7 +108,9 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 	atmospheric_veloc = veloc - earth_ang_veloc.cross(pos);
 
 	TYPE scalar_part = 
-		-atmospheric_veloc.norm() * GetDensity(pos, t) * ballistic_coeff / 2.0;
+		-atmospheric_veloc.norm() * GetDensity(pos, t) * 
+		ballistic_coeff / 2.0 * 
+		1.0e-3;
 
 	Vector3d right_part;
 	right_part = scalar_part * atmospheric_veloc;
@@ -155,8 +157,8 @@ TYPE AerodynamicForce::GetDensity(const Vector3d& X, TYPE t) const
 		density *= 1 + random;
 	}
 
-	// TODO: перевели в кг/км^3
-	return density * 1.0e-3;
+	// кг/м^3
+	return density;
 }
 
 
