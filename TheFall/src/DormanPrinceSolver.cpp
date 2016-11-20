@@ -208,7 +208,7 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE Step)
 
 	sqrTeta = pow(Teta, 2); // квадрат от тета
 
-	static const auto b_size = 6;
+	static const size_t b_size = 6;
 
 	Eigen::VectorXd b(b_size);
 
@@ -234,9 +234,9 @@ Eigen::VectorXd DormanPrinceSolver::ThickExtradition(TYPE &Teta, TYPE Step)
 
 	Eigen::VectorXd sum = Eigen::VectorXd::Zero(x_size);
 
-	for (int i = 0; i < x_size; i++)
+	for (size_t i = 0; i < x_size; i++)
 	{
-		for (int j = 0; j < b_size; j++)
+		for (size_t j = 0; j < b_size; j++)
 		{
 			sum(i) += b(j) * m_k(j, i);
 		}
@@ -265,7 +265,7 @@ TYPE DormanPrinceSolver::GetError()
 	static TYPE scalar_in_max = 2.0 * m_rounding_error / m_eps_max;
 
 	// числитель и знаменатель дроби под корнем
-	Eigen::VectorXd numerator(x_size), denominator(x_size), fraction(x_size);
+	Eigen::VectorXd numerator, denominator(x_size), fraction(x_size);
 
 	//TYPE u = RoundingError(); // вычисление ошибки округления
 
