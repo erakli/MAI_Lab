@@ -25,8 +25,11 @@ public:
 	Eigen::MatrixXd GetObservations() const;
 	size_t GetNumOfObservations() const;
 
-	Eigen::MatrixXd GetRandomErrorParams() const;
-	Eigen::VectorXd GetRandomErrorParams(size_t param_num) const;
+	void SetDoRandom(bool should_we_do_random);
+
+	DistributionParamVec GetRandomErrorParams() const;
+	MyNormalDistribution::param_type GetRandomErrorParams(size_t param_num) const;
+	void SetRandomErrorParams(const DistributionParamVec & new_random_error_params);
 
 protected:
 	Eigen::MatrixXd observations;
@@ -34,6 +37,11 @@ protected:
 
 	size_t observation_vec_size;
 
-	// матрица, в которой по столбцам записаны параметры всех случайных ошибок
-	Eigen::MatrixXd random_error_params;
+	bool do_random;
+
+	// вектор, в котором записаны параметры случайных ошибок
+	DistributionParamVec random_error_params;
+
+	std::default_random_engine generator;
+	MyNormalDistribution distribution;
 };
