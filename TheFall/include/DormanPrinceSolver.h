@@ -49,8 +49,7 @@ public:
 	DormanPrinceSolver();
 	void Run(Model &model) override;
 
-	void SetEpsMax(const TYPE &arg);
-//	void setEps(const TYPE &arg);
+	void SetEpsMax(TYPE arg);
 
 	TYPE GetEpsMax() const;
 	TYPE GetEpsGlobal() const;

@@ -341,7 +341,7 @@ void DormanPrinceSolver::Set_b1()
 
 
 // ------------ инкапсул€ци€
-void DormanPrinceSolver::SetEpsMax(const TYPE &arg)
+void DormanPrinceSolver::SetEpsMax(TYPE arg)
 {
 	m_eps_max = arg;
 }
