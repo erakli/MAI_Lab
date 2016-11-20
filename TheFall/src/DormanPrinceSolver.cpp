@@ -65,6 +65,8 @@ void DormanPrinceSolver::Run(Model &model)
 		t_end = p_model->Get_t1(),
 		tout = t;			// Для плотной выдачи
 
+	TYPE out_delta = p_model->GetInterval();
+
 	TYPE new_step;			// храним знание о новом шаге на эту итерацию
 	TYPE error;
 	UINT local_iter(0);
@@ -126,31 +128,24 @@ void DormanPrinceSolver::Run(Model &model)
 		if (error > m_eps_max) // ------------------- основной перевалочный пункт
 			continue; 
 
-		m_eps_global += error; // считаем глобальную погрешность как сумму локальных
-
-		local_iter = 0; // обнуляем счётчик количества итераций при успехе шага
+		m_eps_global += error;
+		local_iter = 0;
 
 		// если приращение координаты менее заданного условия прерываем процесс
 		if (p_model->IsStopCalculation(t, new_step, x0, x1))
 		{
+			// сохраним более подробные значения перед прерыванием интегрирования
+			TYPE stop_delta = out_delta / 10.0;
+			tout -= out_delta;
+			tout += stop_delta;
+			SaveSubstepResult(tout, stop_delta, new_step, t_end);
 			break;
 		}
 
-		/*
-			Плотная выдача. Результаты уходят в матрицу
-			результатов модели
-		*/
-		TYPE Teta;
-		Eigen::VectorXd xout; // сюда записываются значения с учётом коэф. плотной выдачи
-		while ((tout < t + new_step) && (tout <= t_end))
-		{
-			Teta = (tout - t) / new_step;
-			xout = ThickExtradition(Teta, new_step);
-			p_model->AddResult(xout, tout);
-			tout += p_model->GetInterval();
-		}
+		SaveSubstepResult(tout, out_delta, new_step, t_end);
 
-		x0 = x1; // на выход отдаём результат 4 порядка (принимая его основным)
+		// на выход отдаём результат 4 порядка (принимая его основным)
+		x0 = x1;
 		t += new_step;
 	}
 
@@ -197,6 +192,25 @@ void DormanPrinceSolver::SetK(int size)
 		m_k.row(s) = p_model->GetRight(arg, t + m_c(s) * step);
 	}
 }
+
+
+
+// Сохранение результатов с заданным в модели интервалом
+// Результаты уходят в матрицу результатов модели
+void DormanPrinceSolver::SaveSubstepResult(TYPE& tout, TYPE delta, TYPE new_step, TYPE t_end)
+{
+	TYPE Teta;
+	Eigen::VectorXd xout; // сюда записываются значения с учётом коэф. плотной выдачи
+	while ((tout < t + new_step) && (tout <= t_end))
+	{
+		Teta = (tout - t) / new_step;
+		xout = ThickExtradition(Teta, new_step);
+		p_model->AddResult(xout, tout);
+		tout += delta;
+	}
+}
+
+
 
 /*
 ------------- Плотная выдача.

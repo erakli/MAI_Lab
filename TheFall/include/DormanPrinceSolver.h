@@ -35,6 +35,7 @@ protected:
 
 	void SetK(int size);
 
+	void SaveSubstepResult(TYPE &tout, TYPE delta, TYPE new_step, TYPE t_end);
 	Eigen::VectorXd ThickExtradition(TYPE &Teta, TYPE Step); // плотная выдача
 
 	void Set_c();
