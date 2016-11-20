@@ -26,11 +26,11 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY * 13;
-	size_t num_of_results = int(ceil(duration) + 1);
+	TYPE duration = SECINDAY * 2;
 
 	MatrixXd sputnik_orbit = GenerateSputnikOrbit(duration);
-	MatrixXd modules = MatrixXd::Zero(1 + num_of_results / 10, 3);
+//	MatrixXd modules = MatrixXd::Zero(1 + num_of_results / 10, 3);
+	size_t num_of_results = sputnik_orbit.rows();
 
 	GroundStation ground_station(
 		{ 0, deg2rad(18), deg2rad(173) }, PI_HALF - deg2rad(75));
@@ -40,7 +40,7 @@ int main()
 //	TYPE _vision_zone_angle = PI_HALF - deg2rad(75);
 //	MatrixXd observations = MatrixXd::Zero(num_of_results, 3);
 
-	TYPE disp = 3.3 / 60.0; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	TYPE disp = 3.3 / 60.0; // перевели угловые минуты в градусы
 
 	MyNormalDistribution::param_type random_params(0.0, deg2rad(disp));
 	DistributionParamVec random_param_vec(2);
@@ -54,6 +54,8 @@ int main()
 	Vector3d cur_geographic_pos = ground_station.GetGeographicPos();
 	MatrixXd fix_positions(num_of_results, 3);
 
+	MatrixXd observed_positions(num_of_results, 4);
+
 	Vector3d sputnik_fix_pos;
 //	Vector2d sputnik_horiz_pos;
 
@@ -62,20 +64,27 @@ int main()
 	TYPE lambda_start = cur_geographic_pos(2);
 	TYPE start_time = 0.0;
 
+	size_t num_of_observations = 0;
 //	size_t num_of_observations = 0;
 
 	for (size_t sec = 0; sec < num_of_results; sec++)
 	{
 		sputnik_fix_pos = sputnik_orbit.row(sec).segment(1, VEC_SIZE);
-		if (sec % 10 == 0)
-		{
-			modules.row(sec / 10) <<
-				sec,
-				sputnik_fix_pos.norm(),
-				sputnik_orbit.row(sec).segment(VEC_SIZE + 1, VEC_SIZE).norm();
-		}
+		//if (sec % 10 == 0)
+		//{
+		//	modules.row(sec / 10) <<
+		//		sec,
+		//		sputnik_fix_pos.norm(),
+		//		sputnik_orbit.row(sec).segment(VEC_SIZE + 1, VEC_SIZE).norm();
+		//}
 
 		ground_station.SaveObservation(sputnik_fix_pos, sec);
+
+		if (num_of_observations < ground_station.GetNumOfObservations())
+		{
+			observed_positions.row(num_of_observations) = sputnik_orbit.row(sec).head(VEC_SIZE + 1);
+			num_of_observations = ground_station.GetNumOfObservations();
+		}
 
 		//sputnik_horiz_pos = Fix2Horiz(sputnik_fix_pos, cur_geographic_pos);
 
@@ -96,16 +105,18 @@ int main()
 
 	cout << endl << "Finished" << endl;
 
-	cout << " * Saving sputnik_orbit" << endl;
-	to_file(sputnik_orbit);
-	to_file(modules);
+//	cout << " * Saving sputnik_orbit" << endl;
+//	to_file(sputnik_orbit);
+//	to_file(modules);
 
 	cout << " * Saving observations" << endl;
-	to_file(ground_station.GetObservations());
+	to_file(ground_station.GetObservations(), false);
 //	to_file(observations);
 
-	cout << " * Saving fix_positions" << endl;
-	to_file(fix_positions);
+	to_file(observed_positions);
+
+//	cout << " * Saving fix_positions" << endl;
+//	to_file(fix_positions);
 
 	system("pause");
 }
@@ -128,6 +139,9 @@ void Information(const Orbit::Kepler_elements &elements)
 
 MatrixXd GenerateSputnikOrbit(TYPE duration)
 {
+//	TYPE alpha_height = 970 + Earth::meanRadius;
+//	TYPE pi_height = 40 + Earth::meanRadius;
+
 	TYPE alpha_height = 970 + Earth::meanRadius;
 	TYPE pi_height = 40 + Earth::meanRadius;
 
@@ -149,6 +163,8 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 
 	sputnik.Set_t1(duration);
 	sputnik.SetInterval(1);
+
+	aerodynamic_force.SetHasRandom(false);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
