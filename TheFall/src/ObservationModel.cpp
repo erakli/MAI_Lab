@@ -43,6 +43,10 @@ MatrixXd ObservationModel::GetObservations() const
 
 
 MatrixXd ObservationModel::GetRandomErrorParams() const
+size_t ObservationModel::GetNumOfObservations() const
+{
+	return num_of_observations;
+}
 {
 	return random_error_params;
 }

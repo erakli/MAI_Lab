@@ -23,6 +23,7 @@ public:
 	virtual void SaveObservation(const Eigen::VectorXd & X, TYPE t);
 
 	Eigen::MatrixXd GetObservations() const;
+	size_t GetNumOfObservations() const;
 
 	Eigen::MatrixXd GetRandomErrorParams() const;
 	Eigen::VectorXd GetRandomErrorParams(size_t param_num) const;
