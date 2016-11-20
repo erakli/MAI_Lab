@@ -99,7 +99,9 @@ void Model::AddResult(const VectorXd &X, TYPE t)
 
 MatrixXd Model::GetResult() const
 {
-	return m_result;
+	MatrixXd trimmed_matrix = m_result;
+	trimmed_matrix.conservativeResize(result_size, NoChange);
+	return trimmed_matrix;
 }
 
 VectorXd Model::GetLastResult() const
