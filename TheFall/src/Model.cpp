@@ -132,7 +132,8 @@ void Model::SetStart(const VectorXd &arg)
 
 
 
-TYPE Model::GetInterval() const{
+TYPE Model::GetInterval() const
+{
 	return m_interval;
 }
 
