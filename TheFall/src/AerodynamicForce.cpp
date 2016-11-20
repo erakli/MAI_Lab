@@ -181,5 +181,14 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 		integrator.Run(shaping_filter);
 
 		random_process_realization = shaping_filter.GetResult().rightCols(1);
+
+#ifdef DEBUG
+		//cout << endl;
+		//cout << "random_process_realization:" << endl;
+		//cout << random_process_realization.head(10);
+		//cout << endl;
+
+		//system("pause");
+#endif
 	}
 }
