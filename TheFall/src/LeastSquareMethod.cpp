@@ -64,8 +64,6 @@ MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
 
 MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& reference_trajectory)
 {
-	size_t reference_trajectory_size = reference_trajectory.rows();
-
 	VectorXd time_moments_of_observations = observations.col(0);
 	size_t num_of_observations = time_moments_of_observations.size();
 
