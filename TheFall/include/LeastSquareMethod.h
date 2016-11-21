@@ -24,6 +24,8 @@ public:
 	void SetModel(Model * new_model_ptr);
 	void SetObservationModel(ObservationModel * new_observation_model_ptr);
 
+	void SetObservationSessionsList(const ObservationSessionsList * new_observation_sessions_list_ptr);
+
 private:
 	Eigen::VectorXd initial_condition;
 	Eigen::MatrixXd H_matrix;
@@ -37,13 +39,15 @@ private:
 	Model * p_model;
 	ObservationModel * p_observation_model;
 
+	const ObservationSessionsList * p_observation_sessions_list;
+
 	DormanPrinceSolver solver;
 
 private:
 	Eigen::MatrixXd GenerateReferenceTrajectory();
 	Eigen::MatrixXd GenerateReferenceObservations(const Eigen::MatrixXd & reference_trajectory);
-	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations);
+	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations) const;
 
 	// t1 - время окончания построения опорной траектории
-	void InitH(TYPE t1);
+	void EvalH();
 };

@@ -16,6 +16,8 @@ LeastSquareMethod::LeastSquareMethod()
 	p_model = nullptr;
 	p_observation_model = nullptr;
 
+	p_observation_sessions_list = nullptr;
+
 	solver.SetEpsMax(1.0e-13);
 }
 
@@ -50,6 +52,14 @@ void LeastSquareMethod::SetObservationModel(ObservationModel * new_observation_m
 
 
 
+void LeastSquareMethod::SetObservationSessionsList(const ObservationSessionsList* new_observation_sessions_list_ptr)
+{
+	p_observation_sessions_list = new_observation_sessions_list_ptr;
+}
+
+
+
+
 MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
 {
 	p_model->ClearResult();
@@ -73,30 +83,31 @@ MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& refere
 	Vector3d cur_pos;
 	TYPE t;
 
-	size_t j = 0;
+	size_t cur_time = 0;
+	size_t end_time;
 
-	for (size_t i = 0; i < num_of_observations; i++)
+	for (ObservationSessionsList::const_iterator
+			session = p_observation_sessions_list->begin();
+			session != p_observation_sessions_list->end();
+			++session)
 	{
-		while (j < reference_trajectory_size)
+		end_time = cur_time + session->GetDuration();
+		while (cur_time < end_time)
 		{
-			if (time_moments_of_observations(i) == reference_trajectory(j, 0))
-			{
-				row = reference_trajectory.row(j);
-				cur_pos = row.tail(VEC_SIZE);
-				t = time_moments_of_observations(i);
+			row = reference_trajectory.row(cur_time);
+			cur_pos = row.segment(1, VEC_SIZE);
+			t = time_moments_of_observations(cur_time);
 
-				p_observation_model->SaveObservation(cur_pos, t);
-				break;
-			}
+			p_observation_model->SaveObservation(cur_pos, t);
 
-			j++;
+			cur_time++;
 		}
 	}
 
 	return p_observation_model->GetObservations();
 }
 
-MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_observations)
+MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_observations) const
 {
 	// TODO: надо осуществить вычитание из соответствующих моментов времени
 	return 
@@ -108,32 +119,23 @@ MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_
 
 // построение фундаментальной матрицы H
 // t1 - время окончания построения опорной траектории
-void LeastSquareMethod::InitH(TYPE t1)
+void LeastSquareMethod::EvalH()
 {
-	DormanPrinceSolver solver;
-	solver.SetEpsMax(1.0e-13);
-
-	p_model->ClearResult();
-	p_model->Set_t1(t1);
-
-	p_model->SetStart(initial_condition);
-	solver.Run(*p_model);
-	MatrixXd main_traectory = p_model->GetResult();
-
 	size_t initial_condition_size = initial_condition.size();
 
 	vector<MatrixXd> var_traectories(initial_condition_size * 2);
 	VectorXd var_initial_condition;
 
-	TYPE delta;
+	VectorXd delta = VectorXd::Zero(initial_condition_size);
+
 	TYPE temp;
 	size_t repeat;
 	short sign;
 
-	for (size_t i = 0; i < initial_condition.size(); i++)
+	for (size_t i = 0; i < initial_condition_size; i++)
 	{
 		var_initial_condition = initial_condition;
-		delta = initial_condition(i) * 1.0e-3;	// делаем вариации на 3-4 порядка меньше в обе стороны
+		delta(i) = initial_condition(i) * 1.0e-3;	// делаем вариации на 3-4 порядка меньше в обе стороны
 
 		temp = var_initial_condition(i);
 		repeat = 0;
@@ -144,7 +146,7 @@ void LeastSquareMethod::InitH(TYPE t1)
 			sign = (repeat == 0) ? -1 : 1;
 			p_model->ClearResult();
 			
-			var_initial_condition(i) += delta * sign;
+			var_initial_condition(i) += delta(i) * sign;
 			p_model->SetStart(var_initial_condition);
 			solver.Run(*p_model);
 			var_traectories[i * 2 + repeat] = p_model->GetResult();
@@ -155,5 +157,5 @@ void LeastSquareMethod::InitH(TYPE t1)
 		}
 	}
 
-		
+	vector<MatrixXd> part_derivate_from_initial(initial_condition_size);
 }
