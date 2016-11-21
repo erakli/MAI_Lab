@@ -101,7 +101,9 @@ MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& refere
 MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_observations)
 {
 	// TODO: надо осуществить вычитание из соответствующих моментов времени
-	return MatrixXd();
+	return 
+		observations.rightCols(observations.cols() - 1) - 
+		reference_observations.rightCols(reference_observations.cols() - 1);
 }
 
 
