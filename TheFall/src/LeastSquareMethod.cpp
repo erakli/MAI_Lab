@@ -66,19 +66,33 @@ MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& refere
 {
 	size_t reference_trajectory_size = reference_trajectory.rows();
 
-	p_observation_model->Init(reference_trajectory_size);
+	VectorXd time_moments_of_observations = observations.col(0);
+	size_t num_of_observations = time_moments_of_observations.size();
+
+	p_observation_model->Init(num_of_observations);
 
 	VectorXd row;
 	Vector3d cur_pos;
 	TYPE t;
 
-	for (size_t i = 0; i < reference_trajectory_size; i++)
-	{
-		row = reference_trajectory.row(i);
-		cur_pos = row.tail(VEC_SIZE);
-		t = row(0);
+	size_t j = 0;
 
-		p_observation_model->SaveObservation(cur_pos, t);
+	for (size_t i = 0; i < num_of_observations; i++)
+	{
+		while (j < reference_trajectory_size)
+		{
+			if (time_moments_of_observations(i) == reference_trajectory(j, 0))
+			{
+				row = reference_trajectory.row(j);
+				cur_pos = row.tail(VEC_SIZE);
+				t = time_moments_of_observations(i);
+
+				p_observation_model->SaveObservation(cur_pos, t);
+				break;
+			}
+
+			j++;
+		}
 	}
 
 	return p_observation_model->GetObservations();
