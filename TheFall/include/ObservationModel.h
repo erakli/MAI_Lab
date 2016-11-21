@@ -5,10 +5,30 @@
 
 #include <random>
 #include <vector>
+#include <list>
 
 
 typedef std::normal_distribution<TYPE> MyNormalDistribution;
 typedef std::vector<MyNormalDistribution::param_type> DistributionParamVec;
+
+
+
+// храним граничные моменты времени реальных измерений
+// относительно начала наблюдений
+struct ObservationSession
+{
+	// момент времени первого измерения
+	size_t start_moment;
+
+	// момент времени ПОСЛЕ последнего измерения
+	size_t end_moment;
+
+	ObservationSession();
+	size_t GetDuration() const;
+};
+
+typedef std::list<ObservationSession> ObservationSessionsList;
+
 
 
 class ObservationModel
@@ -25,6 +45,8 @@ public:
 	Eigen::MatrixXd GetObservations() const;
 	size_t GetNumOfObservations() const;
 
+	const ObservationSessionsList * GetObservationSessionsList() const;
+
 	void SetDoRandom(bool should_we_do_random);
 
 	DistributionParamVec GetRandomErrorParams() const;
@@ -37,6 +59,14 @@ protected:
 
 	size_t observation_vec_size;
 
+	ObservationSession current_session;
+	ObservationSessionsList observation_sessions_list;
+	bool is_session_initialized;
+
+	void InitObservationSession(size_t start_moment);
+	void CloseObservationSession(size_t end_moment);
+
+protected:
 	bool do_random;
 
 	// вектор, в котором записаны параметры случайных ошибок

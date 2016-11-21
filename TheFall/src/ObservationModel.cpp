@@ -6,11 +6,24 @@ using namespace std;
 using namespace Eigen;
 
 
+ObservationSession::ObservationSession()
+	:start_moment(0), end_moment(0)
+{
+}
+
+size_t ObservationSession::GetDuration() const
+{
+	return end_moment - start_moment;
+}
+
+
 
 ObservationModel::ObservationModel()
 {
 	num_of_observations = 0;
 	observation_vec_size = 0;
+
+	is_session_initialized = false;
 
 	do_random = false;
 
@@ -60,6 +73,13 @@ size_t ObservationModel::GetNumOfObservations() const
 
 
 
+const ObservationSessionsList* ObservationModel::GetObservationSessionsList() const
+{
+	return &observation_sessions_list;
+}
+
+
+
 void ObservationModel::SetDoRandom(bool should_we_do_random)
 {
 	do_random = should_we_do_random;
@@ -80,4 +100,20 @@ MyNormalDistribution::param_type ObservationModel::GetRandomErrorParams(size_t p
 void ObservationModel::SetRandomErrorParams(const DistributionParamVec & new_random_error_params)
 {
 	random_error_params = new_random_error_params;
+}
+
+
+
+void ObservationModel::InitObservationSession(size_t start_moment)
+{	
+	current_session.start_moment = start_moment;
+	is_session_initialized = true;
+}
+
+void ObservationModel::CloseObservationSession(size_t end_moment)
+{
+	current_session.end_moment = end_moment;
+	is_session_initialized = false;
+
+	observation_sessions_list.push_back(current_session);
 }
