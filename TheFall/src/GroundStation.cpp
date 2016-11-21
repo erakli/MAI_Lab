@@ -50,7 +50,14 @@ void GroundStation::SaveObservation(const VectorXd& X, TYPE t)
 	// проверка на попадание элевации в конус видимости НИП
 	if (sputnik_horiz_pos(0) >= _vision_zone_angle)
 	{
+		if (is_session_initialized == false)
+			InitObservationSession(num_of_observations);
+
 		ObservationModel::SaveObservation(sputnik_horiz_pos, t);
+	}
+	else if (is_session_initialized == true)
+	{
+		CloseObservationSession(num_of_observations);	// момент после последнего измерения
 	}
 }
 
