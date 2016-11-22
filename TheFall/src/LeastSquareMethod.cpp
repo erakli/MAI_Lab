@@ -155,6 +155,13 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 			var_initial_condition(i) = temp;
 		}
 
+		// TODO: скорее всего, после построения траекторий по отклонённым
+		// НУ, надо будет сделать такой же просев, как это сделано в 
+		// GenerateReferenceObservations() - то есть сохранить только те 
+		// моменты времени, на которые были сделаны измерения
+		//
+		//	и только уже потом делать следующую операцию:
+
 		part_derivate_from_initial[i] =
 			(var_traectories[0] - var_traectories[1]) / (2 * delta(i));
 	}
