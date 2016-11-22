@@ -51,6 +51,5 @@ private:
 	Eigen::MatrixXd GenerateReferenceObservations(const Eigen::MatrixXd & reference_trajectory);
 	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations) const;
 
-	// t1 - время окончания построения опорной траектории
-	void EvalH();
+	VectorOfMatrix EvalPartDerivateFromInitial();
 };

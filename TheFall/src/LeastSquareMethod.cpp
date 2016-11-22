@@ -7,6 +7,12 @@
 using namespace Eigen;
 using namespace std;
 
+
+
+#define NUM_OF_DEVIATIONS	2
+
+
+
 LeastSquareMethod::LeastSquareMethod()
 {
 	// TODO: необходимо будет инициализировать
@@ -113,44 +119,45 @@ MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_
 
 
 // построение фундаментальной матрицы H
-// t1 - время окончания построения опорной траектории
-void LeastSquareMethod::EvalH()
+VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 {
+	// TODO: надо отобрать только те значения, которые соответствуют 
+	// моментам измерений
+
 	size_t initial_condition_size = initial_condition.size();
 
-	vector<MatrixXd> var_traectories(initial_condition_size * 2);
-	VectorXd var_initial_condition;
+	VectorOfMatrix part_derivate_from_initial(initial_condition_size);
 
 	VectorXd delta = VectorXd::Zero(initial_condition_size);
+	VectorXd var_initial_condition = initial_condition;;
+
+	MatrixXd var_traectories[NUM_OF_DEVIATIONS];
+	short sign[NUM_OF_DEVIATIONS] = { -1, 1 };
 
 	TYPE temp;
-	size_t repeat;
-	short sign;
 
 	for (size_t i = 0; i < initial_condition_size; i++)
 	{
-		var_initial_condition = initial_condition;
 		delta(i) = initial_condition(i) * 1.0e-3;	// делаем вариации на 3-4 порядка меньше в обе стороны
 
 		temp = var_initial_condition(i);
-		repeat = 0;
 
 		// делаем вариации НУ 
-		while (repeat < 2)
+		for (size_t j = 0; j < NUM_OF_DEVIATIONS; j++)
 		{
-			sign = (repeat == 0) ? -1 : 1;
 			p_model->ClearResult();
 			
-			var_initial_condition(i) += delta(i) * sign;
+			var_initial_condition(i) += delta(i) * sign[j];
 			p_model->SetStart(var_initial_condition);
 			solver.Run(*p_model);
-			var_traectories[i * 2 + repeat] = p_model->GetResult();
+			var_traectories[j] = p_model->GetResult(false); // без времени
 
 			var_initial_condition(i) = temp;
-
-			repeat++;
 		}
+
+		part_derivate_from_initial[i] =
+			(var_traectories[0] - var_traectories[1]) / (2 * delta(i));
 	}
 
-	vector<MatrixXd> part_derivate_from_initial(initial_condition_size);
+	return part_derivate_from_initial;
 }
