@@ -183,12 +183,17 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 		random_process_realization = shaping_filter.GetResult().rightCols(1);
 
 #ifdef DEBUG
-		//cout << endl;
-		//cout << "random_process_realization:" << endl;
-		//cout << random_process_realization.head(10);
-		//cout << endl;
+		cout << endl;
+		cout << "shaping_filter.GetResult():" << endl;
+		cout << shaping_filter.GetResult().topRows(10);
+		cout << endl;
 
-		//system("pause");
+		cout << endl;
+		cout << "random_process_realization:" << endl;
+		cout << random_process_realization.head(10);
+		cout << endl;
+
+		system("pause");
 #endif
 	}
 }
