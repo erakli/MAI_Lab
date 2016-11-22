@@ -11,6 +11,9 @@
 
 #include "DormanPrinceSolver.h"
 
+#include <vector>
+
+typedef std::vector<Eigen::MatrixXd> VectorOfMatrix;
 
 class LeastSquareMethod
 {
