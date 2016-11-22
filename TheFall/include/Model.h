@@ -46,7 +46,8 @@ public:
 
 public:
 	virtual void AddResult(const Eigen::VectorXd &X, TYPE t);
-	Eigen::MatrixXd GetResult() const;
+	// если with_time == false, вернём без первого столбца
+	Eigen::MatrixXd GetResult(bool with_time = true) const;
 	Eigen::VectorXd GetLastResult() const;
 	void ClearResult();
 
