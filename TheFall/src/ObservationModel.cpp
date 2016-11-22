@@ -18,10 +18,16 @@ size_t ObservationSession::GetDuration() const
 
 
 
+#define DEFAULT_OBSERVATION_SESSIONS_NUM	50
+
+
+
 ObservationModel::ObservationModel()
 {
 	num_of_observations = 0;
 	observation_vec_size = 0;
+
+	observation_sessions_vec.reserve(DEFAULT_OBSERVATION_SESSIONS_NUM);
 
 	is_session_initialized = false;
 
@@ -73,9 +79,9 @@ size_t ObservationModel::GetNumOfObservations() const
 
 
 
-const ObservationSessionsList* ObservationModel::GetObservationSessionsList() const
+UnsignedVector ObservationModel::GetObservationSessionsList() const
 {
-	return &observation_sessions_list;
+	return observation_sessions_vec;
 }
 
 
@@ -115,5 +121,7 @@ void ObservationModel::CloseObservationSession(size_t end_moment)
 	current_session.end_moment = end_moment;
 	is_session_initialized = false;
 
-	observation_sessions_list.push_back(current_session);
+	// сохраняем продолжительность сеанса
+	observation_sessions_vec.push_back(current_session.GetDuration());
+	current_session = ObservationSession();
 }

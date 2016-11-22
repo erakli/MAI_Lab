@@ -16,8 +16,6 @@ LeastSquareMethod::LeastSquareMethod()
 	p_model = nullptr;
 	p_observation_model = nullptr;
 
-	p_observation_sessions_list = nullptr;
-
 	solver.SetEpsMax(1.0e-13);
 }
 
@@ -52,9 +50,9 @@ void LeastSquareMethod::SetObservationModel(ObservationModel * new_observation_m
 
 
 
-void LeastSquareMethod::SetObservationSessionsList(const ObservationSessionsList* new_observation_sessions_list_ptr)
+void LeastSquareMethod::SetObservationSessionsVec(const UnsignedVector& new_observation_sessions_vec)
 {
-	p_observation_sessions_list = new_observation_sessions_list_ptr;
+	observation_sessions_vec = new_observation_sessions_vec;
 }
 
 
@@ -86,12 +84,9 @@ MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& refere
 	size_t cur_time = 0;
 	size_t end_time;
 
-	for (ObservationSessionsList::const_iterator
-			session = p_observation_sessions_list->begin();
-			session != p_observation_sessions_list->end();
-			++session)
+	for (size_t i = 0; i < observation_sessions_vec.size(); i++)
 	{
-		end_time = cur_time + session->GetDuration();
+		end_time = cur_time + observation_sessions_vec[i];
 		while (cur_time < end_time)
 		{
 			row = reference_trajectory.row(cur_time);
