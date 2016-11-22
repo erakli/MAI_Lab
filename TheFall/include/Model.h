@@ -34,12 +34,15 @@ public:
 	Model& operator=(const Model& right);
 
 public:
-	virtual void Init(int argc = 0, void** argv = nullptr);	// инициализация модели
+	// инициализация модели
+	virtual void Init(int argc = 0, void** argv = nullptr);
 
 	virtual Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const = 0;
 
-	virtual bool IsStopCalculation(
-		TYPE t, TYPE step, const Eigen::VectorXd &prev_step, const Eigen::VectorXd &cur_step);
+	virtual bool IsStopCalculation(		TYPE t, 
+										TYPE step, 
+										const Eigen::VectorXd &prev_step, 
+										const Eigen::VectorXd &cur_step);
 
 public:
 	virtual void AddResult(const Eigen::VectorXd &X, TYPE t);
@@ -60,7 +63,9 @@ public:
 	void Set_t1(TYPE arg);	
 
 protected:
-	virtual void SetStartValuesSize(size_t new_size, size_t result_line_expansion_by = 1);
-	virtual void SetStartValuesSize(const Eigen::VectorXd& new_start_values, size_t result_line_expansion_by = 1);
+	virtual void SetStartValuesSize(	size_t new_size,  
+										size_t result_line_expansion_by = 1);
+	virtual void SetStartValuesSize(	const Eigen::VectorXd& new_start_values,
+										size_t result_line_expansion_by = 1);
 	void SetResultSize();
 };
