@@ -110,10 +110,7 @@ MatrixXd Model::GetResult(bool with_time) const
 
 VectorXd Model::GetLastResult() const
 {
-	if (result_size > 0)
-		return m_result.row(result_size - 1);
-
-	return m_result.row(0);
+	return m_result.row(result_size > 0 ? result_size - 1 : 0);
 }
 
 void Model::ClearResult()
