@@ -26,7 +26,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY * 2;
+	TYPE duration = SECINDAY * 0.5;
 
 	MatrixXd sputnik_orbit = GenerateSputnikOrbit(duration);
 //	MatrixXd modules = MatrixXd::Zero(1 + num_of_results / 10, 3);
@@ -164,7 +164,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 	sputnik.Set_t1(duration);
 	sputnik.SetInterval(1);
 
-	aerodynamic_force.SetHasRandom(false);
+	aerodynamic_force.SetHasRandom(true);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
