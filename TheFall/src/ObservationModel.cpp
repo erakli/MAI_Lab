@@ -126,6 +126,6 @@ void ObservationModel::CloseObservationSession(size_t end_moment)
 	is_session_initialized = false;
 
 	// сохраняем продолжительность сеанса
-	observation_sessions_vec.push_back(current_session.GetDuration());
+	observation_sessions_vec.push_back(current_session);
 	current_session = ObservationSession();
 }
