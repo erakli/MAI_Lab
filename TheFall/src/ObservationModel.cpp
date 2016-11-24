@@ -79,7 +79,7 @@ size_t ObservationModel::GetNumOfObservations() const
 
 
 
-UnsignedVector ObservationModel::GetObservationSessionsList() const
+ObservationSessionsVector ObservationModel::GetObservationSessionsVector() const
 {
 	return observation_sessions_vec;
 }

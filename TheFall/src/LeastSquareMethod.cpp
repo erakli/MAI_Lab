@@ -56,7 +56,7 @@ void LeastSquareMethod::SetObservationModel(ObservationModel * new_observation_m
 
 
 
-void LeastSquareMethod::SetObservationSessionsVec(const UnsignedVector& new_observation_sessions_vec)
+void LeastSquareMethod::SetObservationSessionsVec(const ObservationSessionsVector& new_observation_sessions_vec)
 {
 	observation_sessions_vec = new_observation_sessions_vec;
 }

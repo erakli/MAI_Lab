@@ -6,8 +6,6 @@
 #include <random>
 #include <vector>
 
-typedef std::vector<size_t> UnsignedVector;
-
 typedef std::normal_distribution<TYPE> MyNormalDistribution;
 typedef std::vector<MyNormalDistribution::param_type> DistributionParamVec;
 
@@ -27,6 +25,8 @@ struct ObservationSession
 	size_t GetDuration() const;
 };
 
+typedef std::vector<ObservationSession> ObservationSessionsVector;
+
 
 
 class ObservationModel
@@ -43,7 +43,7 @@ public:
 	Eigen::MatrixXd GetObservations() const;
 	size_t GetNumOfObservations() const;
 
-	UnsignedVector GetObservationSessionsList() const;
+	ObservationSessionsVector GetObservationSessionsVector() const;
 
 	void SetDoRandom(bool should_we_do_random);
 
@@ -61,7 +61,7 @@ protected:
 
 	// каждый элемент вектора - сеанс наблюдения и его продолжительность в 
 	// моментах времени
-	UnsignedVector observation_sessions_vec;
+	ObservationSessionsVector observation_sessions_vec;
 	bool is_session_initialized;
 
 	void InitObservationSession(size_t start_moment);

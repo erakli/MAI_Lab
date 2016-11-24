@@ -27,7 +27,7 @@ public:
 	void SetModel(Model * new_model_ptr);
 	void SetObservationModel(ObservationModel * new_observation_model_ptr);
 
-	void SetObservationSessionsVec(const UnsignedVector & new_observation_sessions_vec);
+	void SetObservationSessionsVec(const ObservationSessionsVector & new_observation_sessions_vec);
 
 private:
 	Eigen::VectorXd initial_condition;
@@ -42,7 +42,7 @@ private:
 	Model * p_model;
 	ObservationModel * p_observation_model;
 
-	UnsignedVector observation_sessions_vec;
+	ObservationSessionsVector observation_sessions_vec;
 
 	DormanPrinceSolver solver;
 
