@@ -63,11 +63,15 @@ void ObservationModel::SaveObservation(const VectorXd& X, TYPE t)
 
 
 
-MatrixXd ObservationModel::GetObservations() const
+MatrixXd ObservationModel::GetObservations(bool with_time) const
 {
 	MatrixXd trimmed_matrix = observations;
 	trimmed_matrix.conservativeResize(num_of_observations, NoChange);
-	return trimmed_matrix;
+
+	if (with_time)
+		return trimmed_matrix;
+
+	return trimmed_matrix.rightCols(trimmed_matrix.cols() - 1);
 }
 
 
