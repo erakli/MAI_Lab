@@ -73,7 +73,7 @@ MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
 	p_model->SetStart(initial_condition);
 	solver.Run(*p_model);
 
-	return p_model->GetResult();
+	return p_model->GetResult(false);	// ����� ��� �������
 }
 
 MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & reference_trajectory) const
