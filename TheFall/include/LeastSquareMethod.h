@@ -55,4 +55,5 @@ private:
 	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations) const;
 
 	VectorOfMatrix EvalPartDerivateFromInitial();
+	VectorOfMatrix EvalPartDerivateFromState(const Eigen::MatrixXd & reference_trajectory);
 };
