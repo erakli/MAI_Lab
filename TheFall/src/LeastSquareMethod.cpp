@@ -34,6 +34,13 @@ void LeastSquareMethod::Run()
 	reference_trajectory = SelectOnlyObservedTimeMoments(reference_trajectory);
 	MatrixXd reference_observations = GenerateReferenceObservations(reference_trajectory);
 	MatrixXd observations_deviation = EvalObservationsDeviation(reference_observations);
+
+	MatrixXd matrix_H = EvalH(reference_trajectory);
+
+	// TODO: осталось сформировать матрицу D_eta, где на главной диагонали 
+	// расположились обратные дисперсии каждого измерения (размерности 
+	// (N + 1) * l x (N + 1) * l), и перемножить всё это.
+	// Не забываем про итерации и получение результата
 }
 
 
@@ -97,7 +104,7 @@ MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & refer
 	// TODO: считаем, что опорная траектория строится из первого момента времени
 	// наблюдений
 	size_t first_start_time = observation_sessions_vec.front().start_moment;
-	size_t cur_time = 0;
+	size_t cur_time;
 	size_t end_time;
 	size_t j = 0;
 
@@ -152,6 +159,52 @@ MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_
 
 
 
+MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
+{
+	size_t initial_condition_size = initial_condition.size();
+	size_t state_vector_size = reference_trajectory.cols();
+	size_t num_of_observations = observations.rows();
+
+	// TODO: вычисляем размер вектора измерений (считается, что
+	// первым столбцом идёт время, а оно нам не нужно, поэтому и вычтем 1)
+	size_t observations_vec_size = observations.cols() - 1; 
+
+	MatrixXd matrix_H(num_of_observations * observations_vec_size, initial_condition_size);
+
+	VectorOfMatrix from_state = EvalPartDerivateFromState(reference_trajectory);
+	VectorOfMatrix from_initial = EvalPartDerivateFromInitial();
+
+	MatrixXd ballistic_derivates(0, initial_condition_size);
+	ArrayXd temp_sum;
+
+	for (size_t i = 0; i < num_of_observations; i++)
+	{
+		for (size_t j = 0; j < initial_condition_size; j++)
+		{
+			temp_sum = ArrayXd::Zero(observations_vec_size);
+			for (size_t k = 0; k < state_vector_size; k++)
+			{
+				// вектор-столбец частн. производной от измеряемых параметров
+				// поэлементно умножается на частн. произв. от компонент вектора
+				// состояния по компонентам вектора НУ
+				temp_sum += from_state[i].col(k).array() * from_initial[j](i, k);
+			}
+
+			ballistic_derivates.col(j) = temp_sum.matrix();
+		}
+
+		// TODO: по идее, присваиваем значения очередной матрицы H_i,
+		// которая состоит из баллистических производных. размерности должны
+		// совпадать с выделяемым блоком
+		matrix_H.block(i, 0, observations_vec_size, initial_condition_size) =
+			ballistic_derivates;
+	}
+
+	return matrix_H;
+}
+
+
+
 // построение фундаментальной матрицы H
 VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 {
@@ -159,7 +212,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 	VectorOfMatrix part_derivate_from_initial(initial_condition_size);
 
-	VectorXd delta = VectorXd::Zero(initial_condition_size);
+	ArrayXd delta = VectorXd::Zero(initial_condition_size);
 	VectorXd var_initial_condition = initial_condition;
 
 	MatrixXd var_traectories[NUM_OF_DEVIATIONS];
@@ -196,15 +249,15 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 	return part_derivate_from_initial;
 }
 
-VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & reference_trajectory)
+VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & reference_trajectory) const
 {
 	// TODO: компоненты скорости мы не вычисляем
 	size_t state_vec_size = reference_trajectory.cols();
 	size_t num_of_observations = observations.rows();
 
-	VectorOfMatrix part_derivate_from_state(state_vec_size);
+	VectorOfMatrix part_derivate_from_state(num_of_observations);
 
-	VectorXd delta = VectorXd::Zero(state_vec_size);
+	ArrayXd delta = VectorXd::Zero(state_vec_size);
 	VectorXd var_state_vector;
 
 	MatrixXd var_observations[NUM_OF_DEVIATIONS];
@@ -241,6 +294,11 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 			}
 		}
 
-		// TODO: понять, как вычислять производную для фи
+		// поэлементное деление
+		part_derivate_from_state[i] =
+			(var_observations[0] - var_observations[1]).array() * 
+			(2 * delta).inverse();
 	}
+
+	return part_derivate_from_state;
 }
