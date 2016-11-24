@@ -76,10 +76,41 @@ MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
 	return p_model->GetResult();
 }
 
+MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & reference_trajectory) const
+{
+	size_t num_of_observations = observations.rows();
+
+	MatrixXd selected_time_moments;
+	selected_time_moments = MatrixXd::Zero(num_of_observations, reference_trajectory.cols());
+
+	// TODO: �������, ��� ������� ���������� �������� �� ������� ������� �������
+	// ����������
+	size_t first_start_time = observation_sessions_vec.front().start_moment;
+	size_t cur_time = 0;
+	size_t end_time;
+	size_t j = 0;
+
+	for (size_t i = 0; i < observation_sessions_vec.size(); i++)
+	{
+		cur_time = observation_sessions_vec[i].start_moment - first_start_time;
+		end_time = observation_sessions_vec[i].end_moment - first_start_time;
+		while (cur_time < end_time)
+		{
+			// ������� ������� ������� ��������������� � ������������
+			// � �������� ��������� � ������� ����������
+			selected_time_moments.row(j) = reference_trajectory.row(cur_time);
+
+			cur_time++;
+			j++;
+		}
+	}
+
+	return selected_time_moments;
+}
+
 MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& reference_trajectory)
 {
-	VectorXd time_moments_of_observations = observations.col(0);
-	size_t num_of_observations = time_moments_of_observations.size();
+	size_t num_of_observations = observations.rows();
 
 	p_observation_model->Init(num_of_observations);
 
@@ -87,22 +118,14 @@ MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& refere
 	Vector3d cur_pos;
 	TYPE t;
 
-	size_t cur_time = 0;
-	size_t end_time;
-
-	for (size_t i = 0; i < observation_sessions_vec.size(); i++)
+	for (size_t i = 0; i < reference_trajectory.rows(); i++)
 	{
-		end_time = cur_time + observation_sessions_vec[i];
-		while (cur_time < end_time)
-		{
-			row = reference_trajectory.row(cur_time);
-			cur_pos = row.segment(1, VEC_SIZE);
-			t = time_moments_of_observations(cur_time);
+		row = reference_trajectory.row(i);
+		cur_pos = row.head(VEC_SIZE);
+		t = observations(i, 0);
 
-			p_observation_model->SaveObservation(cur_pos, t);
-
-			cur_time++;
-		}
+		// ��� ������������
+		p_observation_model->SaveObservation(cur_pos, t);
 	}
 
 	return p_observation_model->GetObservations();

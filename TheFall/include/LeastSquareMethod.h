@@ -48,6 +48,7 @@ private:
 
 private:
 	Eigen::MatrixXd GenerateReferenceTrajectory();
+	Eigen::MatrixXd SelectOnlyObservedTimeMoments(const Eigen::MatrixXd & reference_trajectory) const;
 	Eigen::MatrixXd GenerateReferenceObservations(const Eigen::MatrixXd & reference_trajectory);
 	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations) const;
 
