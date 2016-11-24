@@ -27,6 +27,17 @@ LeastSquareMethod::LeastSquareMethod()
 
 
 
+void LeastSquareMethod::Run()
+{
+	MatrixXd reference_trajectory;
+	reference_trajectory = GenerateReferenceTrajectory();
+	reference_trajectory = SelectOnlyObservedTimeMoments(reference_trajectory);
+	MatrixXd reference_observations = GenerateReferenceObservations(reference_trajectory);
+	MatrixXd observations_deviation = EvalObservationsDeviation(reference_observations);
+}
+
+
+
 void LeastSquareMethod::SetInitialCondition(const VectorXd& new_initial_condition)
 {
 	initial_condition = new_initial_condition;
