@@ -120,6 +120,13 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 
 
 
+void AerodynamicForce::SetBallisticCoeff(TYPE new_ballistic_coeff)
+{
+	ballistic_coeff = new_ballistic_coeff;
+}
+
+
+
 void AerodynamicForce::SetHasRandom(bool has_random)
 {
 	this->has_random = has_random;

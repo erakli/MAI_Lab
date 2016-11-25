@@ -138,7 +138,7 @@ void AerodynamicForceTest()
 void OverallTest()
 {
 	TYPE alpha_height = 450 + Earth::meanRadius;
-	TYPE pi_height = 20 + Earth::meanRadius;
+	TYPE pi_height = 40 + Earth::meanRadius;
 
 	TYPE a = (alpha_height + pi_height) / 2.0;
 	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
@@ -151,9 +151,14 @@ void OverallTest()
 	AerodynamicForce aerodynamic_force;
 	Sputnik sputnik(elements);
 
+	Vector6d X = Orbit::Kepler2Decart(elements);
+	aerodynamic_force.SetBallisticCoeff(1.4);
+	aerodynamic_force.GenerateRandomRealization(100);
+	Eigen::Vector3d res = aerodynamic_force.getRight(X, 50.0);
+
 	Information(elements);
 
-	TYPE duration = SECINDAY * 30;
+	TYPE duration = SECINDAY;
 
 	sputnik.SetMass(50);
 	sputnik.SetBallisticCoeff(1.4);

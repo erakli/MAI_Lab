@@ -27,7 +27,10 @@ public:
 
 	Eigen::Vector3d getRight(const Vector6d &X, TYPE t) const override;
 
+	void SetBallisticCoeff(TYPE new_ballistic_coeff);
 	void SetHasRandom(bool has_random);
+
+	void GenerateRandomRealization(TYPE t1);
 
 private:
 	TYPE ballistic_coeff;
@@ -38,6 +41,4 @@ private:
 	Eigen::VectorXd random_process_realization;
 
 	TYPE GetDensity(const Eigen::Vector3d& X, TYPE t) const;
-
-	void GenerateRandomRealization(TYPE t1);
 };
