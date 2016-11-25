@@ -137,8 +137,8 @@ void AerodynamicForceTest()
 
 void OverallTest()
 {
-	TYPE alpha_height = 450 + Earth::meanRadius;
-	TYPE pi_height = 40 + Earth::meanRadius;
+	TYPE alpha_height = 970 + Earth::meanRadius;
+	TYPE pi_height = 140 + Earth::meanRadius;
 
 	TYPE a = (alpha_height + pi_height) / 2.0;
 	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
@@ -153,8 +153,10 @@ void OverallTest()
 
 	Vector6d X = Orbit::Kepler2Decart(elements);
 	aerodynamic_force.SetBallisticCoeff(1.4);
-	aerodynamic_force.GenerateRandomRealization(100);
+	//aerodynamic_force.GenerateRandomRealization(100);
+	aerodynamic_force.SetHasRandom(false);
 	Eigen::Vector3d res = aerodynamic_force.getRight(X, 50.0);
+	TYPE norm = res.norm();
 
 	Information(elements);
 
