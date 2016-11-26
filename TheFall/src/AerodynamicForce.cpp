@@ -16,7 +16,7 @@ using namespace std;
 
 #ifdef DEBUG
 #include <list>
-std::list<Eigen::Vector3d> right_parts_list;
+std::list<Eigen::VectorXd> aerodynamic_right_parts_list;
 #endif
 
 
@@ -121,7 +121,9 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 	right_part = scalar_part * atmospheric_veloc;
 
 #ifdef DEBUG
-	right_parts_list.push_back(right_part);
+//	VectorXd res(4);
+//	res << t, right_part;
+//	aerodynamic_right_parts_list.push_back(res);
 #endif
 
 	return right_part;
@@ -219,12 +221,12 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 #ifdef DEBUG
 Eigen::MatrixXd AerodynamicForce::GetRightPartsList() const
 {
-	Eigen::MatrixXd res = Eigen::MatrixXd::Zero(right_parts_list.size(), 3);
+	Eigen::MatrixXd res = Eigen::MatrixXd::Zero(aerodynamic_right_parts_list.size(), 4);
 	size_t i = 0;
 
-	for (std::list<Eigen::Vector3d>::const_iterator
-		it = right_parts_list.begin();
-		it != right_parts_list.end();
+	for (std::list<Eigen::VectorXd>::const_iterator
+		it = aerodynamic_right_parts_list.begin();
+		it != aerodynamic_right_parts_list.end();
 	++it)
 	{
 		res.row(i) = *it;

@@ -13,6 +13,11 @@ using namespace Eigen;
 using namespace std;
 #endif
 
+#ifdef DEBUG
+#include <list>
+std::list<Eigen::VectorXd> right_parts_list;
+#endif
+
 
 #define DEFAULT_FORCES_SIZE	5
 
@@ -88,6 +93,12 @@ VectorXd Sputnik::GetRight(const VectorXd &X, TYPE t) const
 	VectorXd right_part(VEC_SIZE * 2);
 	right_part << X.tail(VEC_SIZE), forces_sum;
 
+#ifdef DEBUG
+//	VectorXd res(VEC_SIZE * 2 + 1);
+//	res << t, right_part;
+//	right_parts_list.push_back(res);
+#endif
+
 	return right_part;
 }
 
@@ -131,3 +142,24 @@ void Sputnik::SetBallisticCoeff(TYPE new_ballistic_coeff)
 {
 	ballistic_coeff = new_ballistic_coeff;
 }
+
+
+
+#ifdef DEBUG
+Eigen::MatrixXd Sputnik::GetRightPartsList() const
+{
+	Eigen::MatrixXd res = Eigen::MatrixXd::Zero(right_parts_list.size(), 7);
+	size_t i = 0;
+
+	for (std::list<Eigen::VectorXd>::const_iterator
+		it = right_parts_list.begin();
+		it != right_parts_list.end();
+	++it)
+	{
+		res.row(i) = *it;
+		i++;
+	}
+
+	return res;
+}
+#endif

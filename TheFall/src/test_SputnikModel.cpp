@@ -174,7 +174,10 @@ void OverallTest()
 	Integrator.SetEpsMax(1.0e-13);
 	Integrator.Run(sputnik);
 
-	to_file(aerodynamic_force.GetRightPartsList());
+#ifdef DEBUG
+	//to_file(aerodynamic_force.GetRightPartsList());
+	//to_file(sputnik.GetRightPartsList());
+#endif
 
 	cout << endl << "sputnik_orbit generated" << endl;
 

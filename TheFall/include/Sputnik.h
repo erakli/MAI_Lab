@@ -34,6 +34,10 @@ public:
 	TYPE GetBallisticCoeff() const;
 	void SetBallisticCoeff(TYPE new_ballistic_coeff);
 
+#ifdef DEBUG
+	Eigen::MatrixXd GetRightPartsList() const;
+#endif
+
 private:
 	TYPE mass;
 	TYPE ballistic_coeff;
