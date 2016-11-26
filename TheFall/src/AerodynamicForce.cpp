@@ -12,6 +12,9 @@ using namespace Eigen;
 #ifdef DEBUG
 #include <iostream>
 using namespace std;
+
+#include <list>
+std::list<Eigen::Vector3d> right_parts_list;
 #endif
 
 
@@ -115,6 +118,10 @@ Vector3d AerodynamicForce::getRight(const Vector6d& X, TYPE t) const
 	Vector3d right_part;
 	right_part = scalar_part * atmospheric_veloc;
 
+#ifdef DEBUG
+	right_parts_list.push_back(right_part);
+#endif
+
 	return right_part;
 }
 
@@ -204,3 +211,24 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 #endif
 	}
 }
+
+
+
+#ifdef DEBUG
+Eigen::MatrixXd AerodynamicForce::GetRightPartsList() const
+{
+	Eigen::MatrixXd res = Eigen::MatrixXd::Zero(right_parts_list.size(), 3);
+	size_t i = 0;
+
+	for (std::list<Eigen::Vector3d>::const_iterator
+		it = right_parts_list.begin();
+		it != right_parts_list.end();
+	++it)
+	{
+		res.row(i) = *it;
+		i++;
+	}
+
+	return res;
+}
+#endif

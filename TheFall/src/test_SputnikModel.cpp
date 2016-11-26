@@ -174,6 +174,8 @@ void OverallTest()
 	Integrator.SetEpsMax(1.0e-13);
 	Integrator.Run(sputnik);
 
+	to_file(aerodynamic_force.GetRightPartsList());
+
 	cout << endl << "sputnik_orbit generated" << endl;
 
 	Dorman_to_file(sputnik.GetResult(), Integrator);

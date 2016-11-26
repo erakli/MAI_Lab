@@ -32,6 +32,10 @@ public:
 
 	void GenerateRandomRealization(TYPE t1);
 
+#ifdef DEBUG
+	Eigen::MatrixXd GetRightPartsList() const;
+#endif
+
 private:
 	TYPE ballistic_coeff;
 
