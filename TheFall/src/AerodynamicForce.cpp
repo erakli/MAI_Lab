@@ -191,7 +191,7 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 		TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
 
 		shaping_filter.SetInterval(CORRELATION_INTERVAL);
-		shaping_filter.Set_t1(t1 + CORRELATION_INTERVAL);
+		shaping_filter.Set_t1(t1 + CORRELATION_INTERVAL + 10);
 		shaping_filter.Generate_WhiteNoise(omega);
 
 		integrator.SetCorrelationInterval(CORRELATION_INTERVAL);
