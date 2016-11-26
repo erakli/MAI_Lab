@@ -7,7 +7,7 @@
 
 using namespace Eigen;
 
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 #include <iostream>
 using namespace std;
 #endif

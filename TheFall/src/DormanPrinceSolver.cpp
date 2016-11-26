@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <math.h>
 
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 #include <iostream>
 using namespace std;
 #endif
@@ -74,7 +74,7 @@ void DormanPrinceSolver::Run(Model &model)
 	Eigen::VectorXd sum(x_size);
 	Eigen::VectorXd sum_1(x_size);
 
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 	cout << endl << endl;
 	cout << "DormanPrinceSolver::Run" << endl;
 	cout << "	t_end = " << t_end << endl;
@@ -149,7 +149,7 @@ void DormanPrinceSolver::Run(Model &model)
 		t += new_step;
 	}
 
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 	cout << endl;
 	cout << "	m_eps_global = " << m_eps_global << endl;
 	cout << "	t = " << t << endl;

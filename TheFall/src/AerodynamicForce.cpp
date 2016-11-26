@@ -9,10 +9,12 @@
 using namespace Eigen;
 
 
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 #include <iostream>
 using namespace std;
+#endif
 
+#ifdef DEBUG
 #include <list>
 std::list<Eigen::Vector3d> right_parts_list;
 #endif
@@ -196,7 +198,7 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 
 		random_process_realization = shaping_filter.GetResult().rightCols(1);
 
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 		cout << endl;
 		cout << "shaping_filter.GetResult():" << endl;
 		cout << shaping_filter.GetResult().topRows(10);

@@ -5,7 +5,10 @@
 using namespace Eigen;
 
 
-#ifdef DEBUG
+#define CONSOLE_OUTPUT
+
+
+#ifdef CONSOLE_OUTPUT
 #include <iostream>
 using namespace std;
 #endif
@@ -96,7 +99,7 @@ bool Sputnik::IsStopCalculation(
 	TYPE norm = cur_step.head(VEC_SIZE).norm();
 	if ((norm - Earth::meanRadius) < 0)
 	{
-#ifdef DEBUG
+#ifdef CONSOLE_OUTPUT
 		cout << " * Touchdown! * " << endl;
 		cout << endl;
 		system("pause");
