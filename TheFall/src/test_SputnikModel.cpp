@@ -2,6 +2,7 @@
 
 
 #include "DormanPrinceSolver.h"
+#include "DormanPrinceSolver_fixed.h"
 #include "file_output.h"
 
 #include "Time.h"		// для макросов времени
@@ -146,7 +147,7 @@ void OverallTest()
 	Orbit::Kepler_elements
 		elements = { 0, deg2rad(42), 0, a, e, deg2rad(0) };
 
-	DormanPrinceSolver Integrator;
+	DormanPrinceSolver_fixed Integrator;
 	GravitationField central_field;
 	AerodynamicForce aerodynamic_force;
 	Sputnik sputnik(elements);
@@ -172,6 +173,11 @@ void OverallTest()
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
+
+	// TODO: используем для случайной реализации фиксированный шаг
+	// надо ввести ручной ввод интервала корреляции для 
+	// аэродинамической силы
+	Integrator.SetCorrelationInterval(1.0);	
 
 	Integrator.SetEpsMax(1.0e-13);
 	Integrator.Run(sputnik);
