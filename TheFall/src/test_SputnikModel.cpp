@@ -163,13 +163,13 @@ void OverallTest()
 
 	Information(elements);
 
-	TYPE duration = SECINDAY;
+	TYPE duration = SECINDAY * 5;
 
 	sputnik.SetMass(50);
 	sputnik.SetBallisticCoeff(1.4);
 
 	sputnik.Set_t1(duration);
-	sputnik.SetInterval(30.0);
+	sputnik.SetInterval(10.0);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
