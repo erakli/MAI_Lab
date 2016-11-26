@@ -5,7 +5,28 @@
 
 using namespace std;
 
-int main(){
+
+
+class TestModel : public Model
+{
+public:
+	TestModel()
+	{
+		SetStartValuesSize(1, 1);
+	}
+
+	Eigen::VectorXd GetRight(const Eigen::VectorXd &X, TYPE t) const
+	{
+		Eigen::VectorXd res(1);
+		res << exp(t);
+		return res;
+	}
+};
+
+
+
+int main()
+{
 	// ------------------------------------------------------------ Интерфейс
 	cout << "Integrating with Dorman and Prince (4(5) order)\n\n"
 		<< "Please, choose type of an Aristorf's orbit (0 - small, other - big): ";
@@ -18,6 +39,23 @@ int main(){
 	Dorman.SetStep(1.0e-3);  // задали величину шага
 	Dorman.SetEpsMax(1.0e-17); // задали максимально допустимую погрешность
 //	Dorman.setEps(1.0e-5); // задали начальную погрешность
+
+
+	Eigen::MatrixXd res(100, 2);
+	TYPE t;
+	for (int i = 0; i < 100; i++)
+	{
+		t = i / 10.0;
+		res.row(i) << t, exp(t);
+	}
+	to_file(res);
+
+	TestModel test_model;
+	test_model.Set_t1(10);
+	test_model.SetInterval(0.1);
+	Dorman.Run(test_model);
+	to_file(test_model.GetResult());
+
 
 	// инициализировали модель (в скобках тип орбиты)
 	ArenstorfModel Model(orbit);
