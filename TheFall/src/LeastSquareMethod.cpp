@@ -11,6 +11,13 @@ using namespace std;
 
 #define NUM_OF_DEVIATIONS	2
 
+#define CONSOLE_OUTPUT
+
+#ifdef CONSOLE_OUTPUT
+#include <iostream>
+using namespace std;
+#endif
+
 
 
 LeastSquareMethod::LeastSquareMethod()
@@ -27,20 +34,56 @@ LeastSquareMethod::LeastSquareMethod()
 
 
 
-void LeastSquareMethod::Run()
+MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 {
+	MatrixXd temp_reference_trajectory;
 	MatrixXd reference_trajectory;
-	reference_trajectory = GenerateReferenceTrajectory();
-	reference_trajectory = SelectOnlyObservedTimeMoments(reference_trajectory);
-	MatrixXd reference_observations = GenerateReferenceObservations(reference_trajectory);
-	MatrixXd observations_deviation = EvalObservationsDeviation(reference_observations);
+	MatrixXd reference_observations;
+	MatrixXd observations_deviation;
+	MatrixXd matrix_H;
+	MatrixXd D_eta;
+	MatrixXd H_D_eta;
+	VectorXd delta_X;
 
-	MatrixXd matrix_H = EvalH(reference_trajectory);
+	size_t iter = 0;
+	size_t max_iter = 50;
 
-	// TODO: осталось сформировать матрицу D_eta, где на главной диагонали 
-	// расположились обратные дисперсии каждого измерения (размерности 
-	// (N + 1) * l x (N + 1) * l), и перемножить всё это.
-	// Не забываем про итерации и получение результата
+	// TODO: будем записывать сюда все итерации
+	MatrixXd log = MatrixXd::Zero(max_iter, initial_condition.size());
+
+#ifdef CONSOLE_OUTPUT
+	cout << endl << endl;
+	cout << "iter	delta_X.norm()" << endl;
+	cout << endl;
+#endif
+
+	do // while (delta_X.norm() >= stop_condition && iter < max_iter);
+	{
+		temp_reference_trajectory = GenerateReferenceTrajectory();
+		reference_trajectory = SelectOnlyObservedTimeMoments(temp_reference_trajectory);
+		reference_observations = GenerateReferenceObservations(reference_trajectory);
+		observations_deviation = EvalObservationsDeviation(reference_observations);
+
+		matrix_H = EvalH(reference_trajectory);
+
+		D_eta = GetErrorCovMatrix();
+		H_D_eta = matrix_H.transpose() * D_eta;
+
+		delta_X = (H_D_eta * matrix_H).inverse() * H_D_eta * observations_deviation;
+
+		initial_condition += delta_X;
+		log.row(iter) = delta_X;
+
+#ifdef CONSOLE_OUTPUT
+		cout << iter << "\t" << delta_X.norm() << endl;
+#endif
+
+		iter++;
+	} while (delta_X.norm() >= stop_condition && iter < max_iter);
+
+	log.conservativeResize(iter, NoChange);
+
+	return log;
 }
 
 
@@ -58,7 +101,7 @@ void LeastSquareMethod::SetObservationsError(const VectorXd& observations_disp_v
 void LeastSquareMethod::SetObservations(const MatrixXd& observations_vec)
 {
 	observations = observations_vec;
-	t_start = observations(0, 0);	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	t_start = observations(0, 0);	// считаем первый столбец матрицы - временем
 	t_end = observations(observations.rows() - 1, 0);
 }
 
@@ -175,7 +218,7 @@ MatrixXd LeastSquareMethod::GetErrorCovMatrix() const
 			errors_disp_inversed;
 	}
 
-	// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	// TODO: проверить вот на этом моменте
 	return main_diag.asDiagonal();
 }
 
@@ -218,8 +261,11 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 		// TODO: по идее, присваиваем значения очередной матрицы H_i,
 		// которая состоит из баллистических производных. размерности должны
 		// совпадать с выделяемым блоком
-		matrix_H.block(i, 0, observations_vec_size, initial_condition_size) =
-			ballistic_derivates;
+		matrix_H.block(		i * observations_vec_size,
+							0, 
+							observations_vec_size, 
+							initial_condition_size) 
+			= ballistic_derivates;
 	}
 
 	return matrix_H;
@@ -273,7 +319,6 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & reference_trajectory) const
 {
-	// TODO: компоненты скорости мы не вычисляем
 	size_t state_vec_size = reference_trajectory.cols();
 	size_t num_of_observations = observations.rows();
 
@@ -308,7 +353,6 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 			{
 				var_state_vector(k) += delta(k) * sign[deviation];
 
-				// TODO: проверить с размерностью вектора на входе в функцию
 				temp_observation = p_observation_model->MakeObservation(var_state_vector, t);
 				var_observations[deviation].col(k) = temp_observation;
 
