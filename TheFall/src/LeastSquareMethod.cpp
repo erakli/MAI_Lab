@@ -52,7 +52,7 @@ void LeastSquareMethod::SetInitialCondition(const VectorXd& new_initial_conditio
 
 void LeastSquareMethod::SetObservationsError(const VectorXd& observations_disp_vec)
 {
-	error_cov_matrix = observations_disp_vec.asDiagonal().inverse();
+	error_cov_vec = observations_disp_vec; // .asDiagonal().inverse();
 }
 
 void LeastSquareMethod::SetObservations(const MatrixXd& observations_vec)
@@ -155,6 +155,26 @@ MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_
 	return 
 		observations.rightCols(observations.cols() - 1) - 
 		reference_observations.rightCols(reference_observations.cols() - 1);
+}
+
+
+
+MatrixXd LeastSquareMethod::GetErrorCovMatrix() const
+{
+	size_t observation_vec_size = observations.cols() - 1;
+	size_t num_of_observations = observations.rows();
+	VectorXd main_diag(num_of_observations * observation_vec_size);
+
+	ArrayXd errors_disp_inversed = error_cov_vec.array().inverse();
+
+	for (size_t i = 0; i < num_of_observations; i++)
+	{
+		main_diag.segment(i * observation_vec_size, observation_vec_size) =
+			errors_disp_inversed;
+	}
+
+	// TODO: ��������� ��� �� ���� �������
+	return main_diag.asDiagonal();
 }
 
 

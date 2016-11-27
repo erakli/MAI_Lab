@@ -34,7 +34,7 @@ public:
 private:
 	Eigen::VectorXd initial_condition;
 	Eigen::MatrixXd H_matrix;
-	Eigen::MatrixXd error_cov_matrix;
+	Eigen::VectorXd error_cov_vec;
 
 	Eigen::MatrixXd observations; // первым столбцом будет время
 
@@ -53,6 +53,8 @@ private:
 	Eigen::MatrixXd SelectOnlyObservedTimeMoments(const Eigen::MatrixXd & reference_trajectory) const;
 	Eigen::MatrixXd GenerateReferenceObservations(const Eigen::MatrixXd & reference_trajectory);
 	Eigen::MatrixXd EvalObservationsDeviation(const Eigen::MatrixXd & reference_observations) const;
+
+	Eigen::MatrixXd GetErrorCovMatrix() const;
 
 	Eigen::MatrixXd EvalH(const Eigen::MatrixXd & reference_trajectory);
 
