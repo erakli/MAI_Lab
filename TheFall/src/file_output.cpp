@@ -218,3 +218,43 @@ void to_file(const VectorXd& result, bool radians)
 
 	SecondNum++;
 }
+
+
+
+void to_file_plot(const Eigen::MatrixXd &result)
+{
+	size_t result_size = result.rows();
+	ofstream datafile("C:\\_plot\\matrix.dat");
+	datafile.precision(20);
+
+	for (size_t i = 0; i < result_size; i++)
+	{
+		datafile << result.block(0, 1, i + 1, 3);
+		datafile << endl << endl << endl;
+	}	
+	datafile.close();
+
+	ofstream com("C:\\_plot\\animator.gp");
+	com << "set xrange [-7000:7000]" << endl;
+	com << "set yrange [-7000:7000]" << endl;
+	com << "set zrange [-7000:7000]" << endl;
+	com << "unset colorbox" << endl;
+	com << "set terminal png size 750, 750" << endl;
+	com << "set key off" << endl;
+	com << "set size square" << endl;
+
+	com << "iterations = " << result_size << endl;
+	com << "iterator = 0" << endl;
+	com << "load \"C:/_plot/animate.gp\"" << endl;
+	com.close();
+
+	ofstream animate("C:\\_plot\\animate.gp");
+	animate << "iterator = iterator + 1" << endl;
+	animate << "if (iterator < iterations)\\" << endl;
+	animate << "	set output \"C:/_plot/output/\".iterator.\".png\"; \\" << endl;
+	animate << "	splot \"C:/_plot/matrix.dat\" index iterator using 1:2:3 w lines; \\" << endl;
+	animate << "	reread" << endl;
+	animate.close();
+
+	system("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\" C:\\_plot\\animator.gp");	
+}

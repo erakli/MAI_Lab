@@ -189,5 +189,6 @@ void OverallTest()
 
 	cout << endl << "sputnik_orbit generated" << endl;
 
-	Dorman_to_file(sputnik.GetResult(), Integrator);
+	//Dorman_to_file(sputnik.GetResult(), Integrator);
+	to_file_plot(sputnik.GetResult());
 }
