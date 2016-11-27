@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <math.h>
 
+#define CONSOLE_OUTPUT
+
 #ifdef CONSOLE_OUTPUT
 #include <iostream>
 using namespace std;
