@@ -58,6 +58,8 @@ void LeastSquareMethod::SetObservationsError(const VectorXd& observations_disp_v
 void LeastSquareMethod::SetObservations(const MatrixXd& observations_vec)
 {
 	observations = observations_vec;
+	t_start = observations(0, 0);	// ������� ������ ������� ������� - ��������
+	t_end = observations(observations.rows() - 1, 0);
 }
 
 
