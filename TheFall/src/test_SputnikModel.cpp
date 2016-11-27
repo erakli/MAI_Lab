@@ -153,23 +153,23 @@ void OverallTest()
 	Sputnik sputnik(elements);
 
 #ifdef DEBUG
-	Vector6d X = Orbit::Kepler2Decart(elements);
-	aerodynamic_force.SetBallisticCoeff(1.4);
-	aerodynamic_force.GenerateRandomRealization(100);
-	aerodynamic_force.SetHasRandom(true);
-	Eigen::Vector3d res = aerodynamic_force.getRight(X, 50.0);
-	TYPE norm = res.norm();
+	//Vector6d X = Orbit::Kepler2Decart(elements);
+	//aerodynamic_force.SetBallisticCoeff(1.4);
+	//aerodynamic_force.GenerateRandomRealization(100);
+	//aerodynamic_force.SetHasRandom(true);
+	//Eigen::Vector3d res = aerodynamic_force.getRight(X, 50.0);
+	//TYPE norm = res.norm();
 #endif
 
 	Information(elements);
 
-	TYPE duration = SECINDAY * 5;
+	TYPE duration = SECINDAY;
 
 	sputnik.SetMass(50);
 	sputnik.SetBallisticCoeff(1.4);
 
 	sputnik.Set_t1(duration);
-	sputnik.SetInterval(10.0);
+	sputnik.SetInterval(30.0);
 
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
