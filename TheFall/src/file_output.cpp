@@ -225,12 +225,17 @@ void to_file_plot(const Eigen::MatrixXd &result)
 {
 	size_t result_size = result.rows();
 	ofstream datafile("C:\\_plot\\matrix.dat");
+	ofstream pointsfile("C:\\_plot\\points.dat");
 	datafile.precision(20);
+	pointsfile.precision(20);
 
 	for (size_t i = 0; i < result_size; i++)
 	{
 		datafile << result.block(0, 1, i + 1, 3);
 		datafile << endl << endl << endl;
+
+		pointsfile << result.row(i).segment(1, VEC_SIZE);
+		pointsfile << endl << endl << endl;
 	}	
 	datafile.close();
 
@@ -242,19 +247,23 @@ void to_file_plot(const Eigen::MatrixXd &result)
 	com << "set terminal png size 750, 750" << endl;
 	com << "set key off" << endl;
 	com << "set size square" << endl;
-
+	com << endl;
+	com << "set style line 1 lc rgb '#a2142f' pt 7 ps 1.5 lt 1 lw 1 # --- red" << endl;
+	com << endl;
 	com << "iterations = " << result_size << endl;
 	com << "iterator = 0" << endl;
 	com << "load \"C:/_plot/animate.gp\"" << endl;
 	com.close();
 
 	ofstream animate("C:\\_plot\\animate.gp");
-	animate << "iterator = iterator + 1" << endl;
+	animate << "iterator=iterator+1" << endl;
 	animate << "if (iterator < iterations)\\" << endl;
 	animate << "	set output \"C:/_plot/output/\".iterator.\".png\"; \\" << endl;
-	animate << "	splot \"C:/_plot/matrix.dat\" index iterator using 1:2:3 w lines; \\" << endl;
+	animate << "	splot ";
+	animate << "\"C:/_plot/matrix.dat\" index iterator using 1:2:3 w lines, ";
+	animate << "\"C:/_plot/points.dat\" index iterator using 1:2:3 w p ls 1; \\" << endl;
 	animate << "	reread" << endl;
 	animate.close();
 
-	system("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\" C:\\_plot\\animator.gp");	
+	system("\"C:\\Program Files (x86)\\gnuplot\\bin\\gnuplot.exe\" C:\\_plot\\animator.gp");	
 }
