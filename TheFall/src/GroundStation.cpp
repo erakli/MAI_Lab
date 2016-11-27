@@ -1,5 +1,6 @@
 #include "GroundStation.h"
 #include <Coordinates.h>
+#include <Constants.h>
 
 using namespace Eigen;
 using namespace Transform;
@@ -33,8 +34,7 @@ VectorXd GroundStation::MakeObservation(const VectorXd& X, TYPE t) const
 	Vector3d cur_geographic_pos = _geographic_pos;
 	cur_geographic_pos(2) += StarTime(start_star_time, t);
 
-	// TODO: проверить, как реагирует на передачу вектора размерностью, более 3
-	Vector2d sputnik_horiz_pos = Fix2Horiz(X, cur_geographic_pos);
+	Vector2d sputnik_horiz_pos = Fix2Horiz(X.head(VEC_SIZE), cur_geographic_pos);
 
 	return sputnik_horiz_pos;
 }
