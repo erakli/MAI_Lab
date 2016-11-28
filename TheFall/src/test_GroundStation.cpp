@@ -3,7 +3,7 @@
 #include <Constants.h>
 #include "Functions.h"
 
-#include "DormanPrinceSolver.h"
+#include "DormanPrinceSolver_fixed.h"
 #include "file_output.h"
 
 #include "Time.h"		// для макросов времени
@@ -15,6 +15,8 @@
 #include "Sputnik.h"
 
 #include "GroundStation.h"
+
+#include "LeastSquareMethod.h"
 
 using namespace Eigen;
 using namespace MyFunc;
@@ -34,10 +36,6 @@ int main()
 
 	GroundStation ground_station(
 		{ 0, deg2rad(18), deg2rad(173) }, PI_HALF - deg2rad(75));
-//	ground_station._geographic_pos << 0, deg2rad(18), deg2rad(173);
-//	ground_station._vision_zone_angle = PI_HALF - deg2rad(75);
-//	ground_station.observations.resize(num_of_results, 3);
-//	TYPE _vision_zone_angle = PI_HALF - deg2rad(75);
 //	MatrixXd observations = MatrixXd::Zero(num_of_results, 3);
 
 	TYPE disp = 3.3 / 60.0; // перевели угловые минуты в градусы
@@ -50,6 +48,10 @@ int main()
 	ground_station.SetRandomErrorParams(random_param_vec);
 	ground_station.SetDoRandom(false);
 	ground_station.Init(num_of_results);
+
+	LeastSquareMethod ls_method;
+	//ls_method.SetObservationsError();
+	//ls_method.SetModel()
 
 	Vector3d cur_geographic_pos = ground_station.GetGeographicPos();
 	MatrixXd fix_positions(num_of_results, 3);
@@ -65,7 +67,6 @@ int main()
 	TYPE start_time = 0.0;
 
 	size_t num_of_observations = 0;
-//	size_t num_of_observations = 0;
 
 	for (size_t sec = 0; sec < num_of_results; sec++)
 	{
@@ -85,23 +86,10 @@ int main()
 			observed_positions.row(num_of_observations) = sputnik_orbit.row(sec).head(VEC_SIZE + 1);
 			num_of_observations = ground_station.GetNumOfObservations();
 		}
-
-		//sputnik_horiz_pos = Fix2Horiz(sputnik_fix_pos, cur_geographic_pos);
-
-		//// проверку на попадание элевации в конус видимости НИП
-		//if (sputnik_horiz_pos(0) >= _vision_zone_angle)
-		//{
-		//	result << sputnik_orbit(sec, 0), sputnik_horiz_pos * DEG_IN_RAD;
-
-		//	observations.row(num_of_observations) = result;
-		//	num_of_observations++;
-		//}
 		
 		cur_geographic_pos(2) = lambda_start + StarTime(start_time, sec);
 		fix_positions.row(sec) = Geographic2Fix(cur_geographic_pos);
 	}
-
-//	observations.conservativeResize(num_of_observations, NoChange);
 
 	cout << endl << "Finished" << endl;
 
@@ -111,7 +99,6 @@ int main()
 
 	cout << " * Saving observations" << endl;
 	to_file(ground_station.GetObservations(), false);
-//	to_file(observations);
 
 	to_file(observed_positions);
 
@@ -151,7 +138,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 	Orbit::Kepler_elements
 		elements = { 0, deg2rad(42), 0, a, e, deg2rad(0) };
 
-	DormanPrinceSolver Integrator;
+	DormanPrinceSolver_fixed solver;
 	GravitationField central_field;
 	AerodynamicForce aerodynamic_force;
 	Sputnik sputnik(elements);
@@ -169,8 +156,10 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 	sputnik.AddForce(&central_field);
 	sputnik.AddForce(&aerodynamic_force);
 
-	Integrator.SetEpsMax(1.0e-13);
-	Integrator.Run(sputnik);
+	// TODO: добавить установку интервала 
+	// кореляции аэродинамической силы
+	solver.SetCorrelationInterval(1.0);
+	solver.Run(sputnik);
 
 	cout << endl << "sputnik_orbit generated" << endl;
 
