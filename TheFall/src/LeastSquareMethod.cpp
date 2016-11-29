@@ -246,6 +246,10 @@ MatrixXd LeastSquareMethod::GetErrorCovMatrix() const
 
 MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 {
+#ifdef CONSOLE_OUTPUT
+	cout << endl << "EvalH()" << endl;
+#endif
+
 	size_t initial_condition_size = initial_condition.size();
 	size_t state_vector_size = reference_trajectory.cols();
 	size_t num_of_observations = observations.rows();
@@ -286,6 +290,16 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 							observations_vec_size, 
 							initial_condition_size) 
 			= ballistic_derivates;
+
+#ifdef CONSOLE_OUTPUT
+		cout << "ballistic_derivates:" << endl;
+		cout << ballistic_derivates << endl;
+
+		cout << 
+			"matrix_H.block(" << i * observations_vec_size << ", " << 
+			0 << ", " << observations_vec_size << ", " << initial_condition_size << "):"<< endl;
+		cout << matrix_H.block(i * observations_vec_size, 0, observations_vec_size, initial_condition_size);
+#endif
 	}
 
 	return matrix_H;
