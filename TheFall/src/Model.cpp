@@ -128,7 +128,9 @@ VectorXd Model::GetStart() const
 
 void Model::SetStart(const VectorXd &arg)
 {
-	m_start_values = arg;
+	// TODO: полностью заменить эту функцию SetStartValuesSize
+	SetStartValuesSize(arg);
+	//m_start_values = arg;
 }
 
 
