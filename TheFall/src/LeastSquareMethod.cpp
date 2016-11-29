@@ -139,6 +139,9 @@ void LeastSquareMethod::SetObservationSessionsVec(const ObservationSessionsVecto
 
 MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
 {
+#ifdef CONSOLE_OUTPUT
+	cout << "GenerateReferenceTrajectory()" << endl;
+#endif
 	p_model->ClearResult();
 	p_model->Set_t0(t_start);
 	p_model->Set_t1(t_end);
@@ -151,6 +154,13 @@ MatrixXd LeastSquareMethod::GenerateReferenceTrajectory()
 
 MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & reference_trajectory) const
 {
+#ifdef CONSOLE_OUTPUT
+	cout << endl << "SelectOnlyObservedTimeMoments()" << endl;
+	cout << "	reference_trajectory.rows() = " << reference_trajectory.rows() << endl;
+	cout << "	observations.rows() = " << observations.rows() << endl;
+	cout << "	first_observation = " << observations(0, 0) << endl;
+#endif
+
 	size_t num_of_observations = observations.rows();
 
 	MatrixXd selected_time_moments;
