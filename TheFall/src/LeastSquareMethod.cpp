@@ -55,8 +55,6 @@ MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 
 #ifdef CONSOLE_OUTPUT
 	cout << endl << endl;
-	cout << "iter	delta_X.norm()" << endl;
-	cout << endl;
 #endif
 
 	do // while (delta_X.norm() >= stop_condition && iter < max_iter);
@@ -77,7 +75,10 @@ MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 		log_matrix.row(iter) = delta_X;
 
 #ifdef CONSOLE_OUTPUT
-		cout << iter << "\t" << delta_X.norm() << endl;
+		cout << endl << "iter = " << iter << endl;
+		cout << "	delta_X.norm() = " << delta_X.norm() << endl;
+		cout << "	delta_X: " << delta_X.transpose() << endl;
+		cout << "	initial_condition: " << initial_condition.transpose() << endl;
 #endif
 
 		iter++;
