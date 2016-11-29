@@ -53,7 +53,7 @@ void ObservationModel::Init(size_t observations_size)
 	observations = MatrixXd::Zero(observations_size, observation_vec_size);
 }
 
-void ObservationModel::SaveObservation(const VectorXd& X, TYPE t)
+void ObservationModel::SaveObservation(const VectorXd& X, TYPE t, size_t time_moment)
 {
 	VectorXd new_line(X.size() + 1);	// +1 для времени
 	new_line << t, X;

@@ -39,7 +39,7 @@ VectorXd GroundStation::MakeObservation(const VectorXd& X, TYPE t) const
 	return sputnik_horiz_pos;
 }
 
-void GroundStation::SaveObservation(const VectorXd& X, TYPE t)
+void GroundStation::SaveObservation(const VectorXd& X, TYPE t, size_t time_moment)
 {
 	Vector2d sputnik_horiz_pos = MakeObservation(X, t);
 

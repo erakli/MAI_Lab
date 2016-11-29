@@ -38,7 +38,7 @@ public:
 	void Init(size_t observations_size);
 
 	virtual Eigen::VectorXd MakeObservation(const Eigen::VectorXd & X, TYPE t) const = 0;
-	virtual void SaveObservation(const Eigen::VectorXd & X, TYPE t);
+	virtual void SaveObservation(const Eigen::VectorXd & X, TYPE t, size_t time_moment = -1);
 
 	Eigen::MatrixXd GetObservations(bool with_time = true) const;
 	size_t GetNumOfObservations() const;
