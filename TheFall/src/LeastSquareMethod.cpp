@@ -191,7 +191,7 @@ MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & refer
 	return selected_time_moments;
 }
 
-MatrixXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& reference_trajectory)
+VectorXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& reference_trajectory)
 {
 	size_t num_of_observations = observations.rows();
 
