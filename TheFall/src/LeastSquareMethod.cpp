@@ -353,6 +353,10 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & reference_trajectory) const
 {
+#ifdef CONSOLE_OUTPUT
+	cout << endl << "EvalPartDerivateFromState()" << endl;
+#endif
+
 	size_t state_vec_size = reference_trajectory.cols();
 	size_t num_of_observations = observations.rows();
 	size_t observations_vec_size = observations.cols() - 1;
