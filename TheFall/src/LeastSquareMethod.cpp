@@ -93,6 +93,13 @@ void LeastSquareMethod::SetInitialCondition(const VectorXd& new_initial_conditio
 	initial_condition = new_initial_condition;
 }
 
+VectorXd LeastSquareMethod::GetInitialCondition() const
+{
+	return initial_condition;
+}
+
+
+
 void LeastSquareMethod::SetObservationsError(const VectorXd& observations_disp_vec)
 {
 	error_cov_vec = observations_disp_vec; // .asDiagonal().inverse();

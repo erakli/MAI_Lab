@@ -23,6 +23,8 @@ public:
 	Eigen::MatrixXd Run(TYPE stop_condition);
 
 	void SetInitialCondition(const Eigen::VectorXd & new_initial_condition);
+	Eigen::VectorXd GetInitialCondition() const;
+
 	void SetObservationsError(const Eigen::VectorXd & observations_disp_vec);
 	void SetObservations(const Eigen::MatrixXd & observations_vec);
 
