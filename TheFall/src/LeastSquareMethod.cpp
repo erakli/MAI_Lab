@@ -214,7 +214,7 @@ VectorXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& refere
 	return p_observation_model->GetObservations();
 }
 
-MatrixXd LeastSquareMethod::EvalObservationsDeviation(const MatrixXd& reference_observations) const
+VectorXd LeastSquareMethod::EvalObservationsDeviation(const VectorXd& reference_observations) const
 {
 	// TODO: надо осуществить вычитание из соответствующих моментов времени
 	return 
