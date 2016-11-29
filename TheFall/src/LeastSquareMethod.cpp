@@ -110,6 +110,10 @@ void LeastSquareMethod::SetObservationsError(const VectorXd& observations_disp_v
 
 void LeastSquareMethod::SetObservations(const MatrixXd& observations_vec)
 {
+#ifdef CONSOLE_OUTPUT
+//	cout << "observations_vec: " << endl << observations_vec << endl;
+#endif
+
 	observations = observations_vec;
 	t_start = observations(0, 0);	// считаем первый столбец матрицы - временем
 	t_end = observations(observations.rows() - 1, 0);
@@ -188,38 +192,60 @@ MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & refer
 		}
 	}
 
+#ifdef CONSOLE_OUTPUT
+	cout << "	last filled selected_time_moments row - " << j - 1 << endl;
+#endif
+
 	return selected_time_moments;
 }
 
 VectorXd LeastSquareMethod::GenerateReferenceObservations(const MatrixXd& reference_trajectory)
 {
-	size_t num_of_observations = observations.rows();
+#ifdef CONSOLE_OUTPUT
+	cout << endl << "GenerateReferenceObservations()" << endl;
+	cout << "	reference_observations = " << (observations.cols() - 1) * observations.rows() << endl;
+	cout << "	reference_trajectory.row(0) = " << reference_trajectory.row(0) << endl;
 
-	p_observation_model->Init(num_of_observations);
+#endif
+
+	size_t observation_vec_size = observations.cols() - 1;
+	size_t num_of_observations = observations.rows();
 
 	VectorXd row;
 	Vector3d cur_pos;
 	TYPE t;
 
-	for (size_t i = 0; i < reference_trajectory.rows(); i++)
+	VectorXd reference_observations(num_of_observations * observation_vec_size);
+
+	for (size_t i = 0; i < num_of_observations; i++)
 	{
 		row = reference_trajectory.row(i);
 		cur_pos = row.head(VEC_SIZE);
 		t = observations(i, 0);
 
 		// без случайностей
-		p_observation_model->SaveObservation(cur_pos, t);
+		reference_observations.segment(i * observation_vec_size, observation_vec_size) =
+			p_observation_model->MakeObservation(cur_pos, t);
 	}
 
-	return p_observation_model->GetObservations();
+	return reference_observations;
 }
 
 VectorXd LeastSquareMethod::EvalObservationsDeviation(const VectorXd& reference_observations) const
 {
 	// TODO: надо осуществить вычитание из соответствующих моментов времени
-	return 
-		observations.rightCols(observations.cols() - 1) - 
-		reference_observations.rightCols(reference_observations.cols() - 1);
+	size_t observation_vec_size = observations.cols() - 1;
+	size_t num_of_observations = observations.rows();
+
+	// отсекаем время и меняем порядок представления данных в матрице на
+	// построчный (с постолбцового)
+	Matrix<double, Dynamic, Dynamic, RowMajor> observations_matrix = 
+		observations.rightCols(observation_vec_size);
+
+	// проецируем построчно матрицу измерений в вектор
+	Map<VectorXd> observations_vec(observations_matrix.data(), observations_matrix.size());
+
+	return observations_vec - reference_observations;
 }
 
 
@@ -310,6 +336,10 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 // построение фундаментальной матрицы H
 VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 {
+#ifdef CONSOLE_OUTPUT
+	cout << endl << "EvalPartDerivateFromInitial()" << endl;
+#endif
+
 	size_t initial_condition_size = initial_condition.size();
 
 	VectorOfMatrix part_derivate_from_initial(initial_condition_size);
@@ -339,6 +369,14 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 			solver.Run(*p_model);
 			temp_trajectory = p_model->GetResult(false); // без времени
 			var_traectories[deviation] = SelectOnlyObservedTimeMoments(temp_trajectory);
+
+#ifdef TEST
+#ifdef CONSOLE_OUTPUT
+			cout << endl << "to_file(var_traectories[" << sign[deviation] << "])" << endl;
+			cout << "	var_initial_condition = " << j << endl;
+#endif
+			to_file(var_traectories[deviation]);
+#endif
 
 			var_initial_condition(j) = temp;
 		}
@@ -401,8 +439,8 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 		// поэлементное деление
 		part_derivate_from_state[i] =
-			(var_observations[0] - var_observations[1]).array() * 
-			(2 * delta).inverse();
+			(var_observations[0] - var_observations[1]).array().rowwise() *
+			(2 * delta).array().inverse().transpose();
 	}
 
 	return part_derivate_from_state;
