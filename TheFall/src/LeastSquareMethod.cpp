@@ -363,7 +363,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 				temp_observation = p_observation_model->MakeObservation(var_state_vector, t);
 				var_observations[deviation].col(k) = temp_observation;
 
-				var_state_vector(i) = temp;
+				var_state_vector(k) = temp;
 			}
 		}
 
