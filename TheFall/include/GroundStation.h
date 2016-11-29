@@ -17,7 +17,7 @@ public:
 	TYPE GetVisionZoneAngle() const;
 	void SetVisionZoneAngle(TYPE new_vision_zone_angle);
 
-private:
+protected:
 	Eigen::Vector3d _geographic_pos;
 	TYPE _vision_zone_angle;	// [рад]
 	TYPE start_star_time;
