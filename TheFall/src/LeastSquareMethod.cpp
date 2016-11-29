@@ -49,7 +49,7 @@ MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 	size_t max_iter = 50;
 
 	// TODO: будем записывать сюда все итерации
-	MatrixXd log = MatrixXd::Zero(max_iter, initial_condition.size());
+	MatrixXd log_matrix = MatrixXd::Zero(max_iter, initial_condition.size());
 
 #ifdef CONSOLE_OUTPUT
 	cout << endl << endl;
@@ -72,7 +72,7 @@ MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 		delta_X = (H_D_eta * matrix_H).inverse() * H_D_eta * observations_deviation;
 
 		initial_condition += delta_X;
-		log.row(iter) = delta_X;
+		log_matrix.row(iter) = delta_X;
 
 #ifdef CONSOLE_OUTPUT
 		cout << iter << "\t" << delta_X.norm() << endl;
@@ -81,9 +81,9 @@ MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 		iter++;
 	} while (delta_X.norm() >= stop_condition && iter < max_iter);
 
-	log.conservativeResize(iter, NoChange);
+	log_matrix.conservativeResize(iter, NoChange);
 
-	return log;
+	return log_matrix;
 }
 
 
