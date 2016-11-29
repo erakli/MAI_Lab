@@ -79,6 +79,7 @@ void DormanPrinceSolver::Run(Model &model)
 #ifdef CONSOLE_OUTPUT
 	cout << endl << endl;
 	cout << "DormanPrinceSolver::Run" << endl;
+	cout << "	t_start = " << t << endl;
 	cout << "	t_end = " << t_end << endl;
 	cout << "	x0: " << x0.transpose() << endl;
 #endif
