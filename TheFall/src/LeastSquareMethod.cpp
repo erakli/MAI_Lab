@@ -10,15 +10,17 @@ using namespace std;
 
 
 #define NUM_OF_DEVIATIONS	2
-
 #define CONSOLE_OUTPUT
+#define TEST
 
 #ifdef CONSOLE_OUTPUT
 #include <iostream>
 using namespace std;
 #endif
 
-
+#ifdef TEST
+#include "file_output.h"
+#endif
 
 LeastSquareMethod::LeastSquareMethod()
 {
