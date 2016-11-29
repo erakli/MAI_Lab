@@ -46,7 +46,7 @@ MatrixXd LeastSquareMethod::Run(TYPE stop_condition)
 	VectorXd delta_X;
 
 	size_t iter = 0;
-	size_t max_iter = 50;
+	size_t max_iter = 7;
 
 	// TODO: будем записывать сюда все итерации
 	MatrixXd log_matrix = MatrixXd::Zero(max_iter, initial_condition.size());
