@@ -287,7 +287,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 	VectorOfMatrix part_derivate_from_initial(initial_condition_size);
 
-	ArrayXd delta = VectorXd::Zero(initial_condition_size);
+	VectorXd delta = VectorXd::Zero(initial_condition_size);
 	VectorXd var_initial_condition = initial_condition;
 
 	MatrixXd var_traectories[NUM_OF_DEVIATIONS];
@@ -331,7 +331,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 	VectorOfMatrix part_derivate_from_state(num_of_observations);
 
-	ArrayXd delta = VectorXd::Zero(state_vec_size);
+	VectorXd delta = VectorXd::Zero(state_vec_size);
 	VectorXd var_state_vector;
 
 	MatrixXd var_observations[NUM_OF_DEVIATIONS];
