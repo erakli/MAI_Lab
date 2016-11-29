@@ -43,23 +43,23 @@ void GroundStation::SaveObservation(const VectorXd& X, TYPE t, size_t time_momen
 {
 	Vector2d sputnik_horiz_pos = MakeObservation(X, t);
 
-	if (do_random)
-	{
-		sputnik_horiz_pos(0) += distribution(generator, random_error_params[0]);
-		sputnik_horiz_pos(1) += distribution(generator, random_error_params[1]);
-	}
-
 	// проверка на попадание элевации в конус видимости НИП
 	if (sputnik_horiz_pos(0) >= _vision_zone_angle)
 	{
 		if (is_session_initialized == false)
-			InitObservationSession(num_of_observations);
+			InitObservationSession(time_moment);
+
+		if (do_random)
+		{
+			sputnik_horiz_pos(0) += distribution(generator, random_error_params[0]);
+			sputnik_horiz_pos(1) += distribution(generator, random_error_params[1]);
+		}
 
 		ObservationModel::SaveObservation(sputnik_horiz_pos, t);
 	}
 	else if (is_session_initialized == true)
 	{
-		CloseObservationSession(num_of_observations);	// момент после последнего измерения
+		CloseObservationSession(time_moment);	// момент после последнего измерения
 	}
 }
 
