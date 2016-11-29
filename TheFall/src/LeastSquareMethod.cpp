@@ -246,7 +246,7 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 	VectorOfMatrix from_state = EvalPartDerivateFromState(reference_trajectory);
 	VectorOfMatrix from_initial = EvalPartDerivateFromInitial();
 
-	MatrixXd ballistic_derivates(0, initial_condition_size);
+	MatrixXd ballistic_derivates(observations_vec_size, initial_condition_size);
 	ArrayXd temp_sum;
 
 	for (size_t i = 0; i < num_of_observations; i++)
@@ -339,7 +339,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 	for (size_t deviation = 0; deviation < NUM_OF_DEVIATIONS; deviation++)
 	{
-		var_observations[deviation] = MatrixXd::Zero(NoChange, state_vec_size);
+		var_observations[deviation] = MatrixXd::Zero(observations_vec_size, state_vec_size);
 	}
 
 	VectorXd temp_observation;
