@@ -349,3 +349,61 @@ Vector6d Orbit::Kepler2Decart(const Kepler_elements& elements)
 
 	return Res;
 }
+
+Orbit::Kepler_elements Orbit::Decart2Kepler(const Vector6d& X)
+{
+	// гравитационная постонная земли
+	TYPE mu = Earth::muEarth;
+
+	// позиция и скорость спутника
+	Vector3d _pos = X.head(VEC_SIZE);
+	Vector3d _vel = X.tail(VEC_SIZE);
+
+	// модули позиции и скорости
+	TYPE radius = _pos.norm();
+	TYPE veloc = _vel.norm();
+
+	// интеграл энергии
+	TYPE h = pow(veloc, 2) - 2 * mu / radius;
+
+	// интеграл площадей
+	Vector3d c = _pos.cross(_vel);
+	TYPE c_norm = c.norm();
+	TYPE c_xoy_norm = c.head(2).norm();
+
+	TYPE cos_i = c(2) / c_norm;
+
+	TYPE cos_Omega = -c(1) / c_xoy_norm;
+	TYPE sin_Omega = c(0) / c_xoy_norm;
+
+	Vector3d k = { cos_Omega, sin_Omega, 0 };
+
+	// интеграл Лапласа
+	Vector3d lap = -mu / radius * _pos + _vel.cross(c);
+
+	// вычисление элементов орбиты
+	TYPE a = mu / abs(h);
+	TYPE p = pow(c_norm, 2) / mu;
+	TYPE e = sqrt(1 + pow(c_norm / mu, 2) * h);
+
+	TYPE cos_omega = lap.dot(k) / (mu * e);
+	TYPE cos_teta = (p / radius - 1) / e;
+
+	TYPE _Omega = asin(sin_Omega);
+	TYPE i = acos(cos_i);
+	TYPE omega = acos(cos_omega);
+	TYPE teta = acos(cos_teta);
+
+	if (abs(_Omega) < 1.0e-6)
+		_Omega = 0.0;
+
+	if (abs(omega) < 1.0e-6)
+		omega = 0.0;
+
+	if (abs(teta) < 1.0e-6)
+		teta = 0.0;
+
+	Kepler_elements elements = { _Omega, i, omega, a, e, teta };
+
+	return elements;
+}

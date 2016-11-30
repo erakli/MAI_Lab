@@ -41,4 +41,5 @@ namespace Orbit
 	Eigen::Matrix3d OrientationMatrix(const Kepler_elements &elements);
 
 	Vector6d Kepler2Decart(const Kepler_elements &elements);
+	Kepler_elements Decart2Kepler(const Vector6d & X);
 }
