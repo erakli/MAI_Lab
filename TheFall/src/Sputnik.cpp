@@ -22,19 +22,20 @@ std::list<Eigen::VectorXd> right_parts_list;
 #define DEFAULT_FORCES_SIZE	5
 
 
-Sputnik::Sputnik() : mass(0), ballistic_coeff(0), forces_count(0)
+Sputnik::Sputnik() : Model()
 {
-}
-
-Sputnik::Sputnik(const Orbit::Kepler_elements &elements)
-{
-	Model::SetStartValuesSize(Kepler2Decart(elements));
-
 	mass = 0;
 	ballistic_coeff = 0;
 
 	forces.reserve(DEFAULT_FORCES_SIZE);
 	forces_count = 0;
+
+	do_disable_stop_calculation = false;
+}
+
+Sputnik::Sputnik(const Orbit::Kepler_elements &elements) : Sputnik()
+{
+	Model::SetStartValuesSize(Kepler2Decart(elements));
 }
 
 
