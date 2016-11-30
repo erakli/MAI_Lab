@@ -20,7 +20,7 @@ class LeastSquareMethod
 public:
 	LeastSquareMethod();
 
-	Eigen::MatrixXd Run(TYPE stop_condition);
+	Eigen::MatrixXd Run(Eigen::VectorXd stop_condition);
 
 	void SetInitialCondition(const Eigen::VectorXd & new_initial_condition);
 	Eigen::VectorXd GetInitialCondition() const;
