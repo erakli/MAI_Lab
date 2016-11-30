@@ -34,6 +34,8 @@ public:
 	TYPE GetBallisticCoeff() const;
 	void SetBallisticCoeff(TYPE new_ballistic_coeff);
 
+	void SetDisableStopCalculation(bool do_disable);
+
 #ifdef DEBUG
 	Eigen::MatrixXd GetRightPartsList() const;
 #endif
@@ -44,4 +46,6 @@ private:
 
 	ForcesVector forces;
 	size_t forces_count;
+
+	bool do_disable_stop_calculation;
 };
