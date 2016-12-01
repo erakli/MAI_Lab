@@ -9,7 +9,7 @@
 #include "Model.h"
 #include "ObservationModel.h"
 
-#include "DormanPrinceSolver.h"
+#include "DormanPrinceSolver_fixed.h"
 
 #include <vector>
 
@@ -48,7 +48,7 @@ private:
 
 	ObservationSessionsVector observation_sessions_vec;
 
-	DormanPrinceSolver solver;
+	DormanPrinceSolver_fixed solver;
 
 private:
 	Eigen::MatrixXd GenerateReferenceTrajectory();

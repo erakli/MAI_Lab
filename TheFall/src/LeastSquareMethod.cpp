@@ -31,7 +31,8 @@ LeastSquareMethod::LeastSquareMethod()
 	p_model = nullptr;
 	p_observation_model = nullptr;
 
-	solver.SetEpsMax(1.0e-13);
+//	solver.SetEpsMax(1.0e-13);
+	solver.SetCorrelationInterval(1.0);	// TODO: ������� �� ������� ���������
 }
 
 
