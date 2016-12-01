@@ -31,7 +31,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY * 3;
+	TYPE duration = SECINDAY;
 
 	TYPE stddev = 3.3 / 60.0; // перевели угловые минуты в градусы
 
@@ -47,7 +47,7 @@ int main()
 	ObservationSessionsVector observation_sessions_vec;
 #endif
 
-	{
+//	{
 		MatrixXd sputnik_orbit = GenerateSputnikOrbit(duration);
 		size_t num_of_results = sputnik_orbit.rows();
 
@@ -83,11 +83,12 @@ int main()
 			sputnik_orbit.row(observation_sessions_vec.front().start_moment);
 
 		initial_condition = true_initial_condition;
+		initial_condition(0) += 1.0;
 		//Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
 		//another_elements.a += another_elements.a * 1.0e-2;
 		//initial_condition = Orbit::Kepler2Decart(another_elements);
 #endif
-	}
+//	}
 
 #ifdef LSM_TEST
 	VectorXd observations_disp_vec(2);
@@ -109,6 +110,22 @@ int main()
 	sputnik.AddForce(&aerodynamic_force);
 	sputnik.SetInterval(1.0);
 	sputnik.SetDisableStopCalculation(true);
+	sputnik.SetStart(initial_condition);
+
+#ifdef TEST
+	DormanPrinceSolver_fixed solver;
+
+	sputnik.Set_t0(observation_sessions_vec.front().start_moment);
+	sputnik.Set_t1(observation_sessions_vec.back().end_moment);
+
+	solver.SetCorrelationInterval(1.0);
+	//solver.SetEpsMax(1.0e-13);
+	solver.Run(sputnik);
+
+	to_file(sputnik_orbit);
+	to_file(sputnik.GetResult());
+	return 0;
+#endif
 
 	GroundStation observation_model(ground_station);
 	observation_model.SetDoRandom(false);
@@ -172,17 +189,17 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 		elements = { 0, deg2rad(42), 0, a, e, deg2rad(0) };
 
 #ifdef TEST
-	Vector6d X = Orbit::Kepler2Decart(elements);
-	Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(X);
-	Vector6d X2 = Orbit::Kepler2Decart(another_elements);
+	//Vector6d X = Orbit::Kepler2Decart(elements);
+	//Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(X);
+	//Vector6d X2 = Orbit::Kepler2Decart(another_elements);
 
-	Information(elements);
-	cout << "Result X: " << X.transpose() << endl;
-	Information(another_elements);
-	cout << "Result X2: " << X2.transpose() << endl;
+	//Information(elements);
+	//cout << "Result X: " << X.transpose() << endl;
+	//Information(another_elements);
+	//cout << "Result X2: " << X2.transpose() << endl;
 #endif
 
-	DormanPrinceSolver solver;
+	DormanPrinceSolver_fixed solver;
 	GravitationField central_field;
 	AerodynamicForce aerodynamic_force;
 	Sputnik sputnik(elements);
@@ -193,7 +210,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 	sputnik.SetBallisticCoeff(1.4);
 
 	sputnik.Set_t1(duration);
-	sputnik.SetInterval(1);
+	sputnik.SetInterval(1.0);
 
 	aerodynamic_force.SetHasRandom(false);
 
@@ -202,8 +219,8 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 
 	// TODO: добавить установку интервала 
 	// кореляции аэродинамической силы
-//	solver.SetCorrelationInterval(1.0);
-	solver.SetEpsMax(1.0e-13);
+	solver.SetCorrelationInterval(1.0);
+//	solver.SetEpsMax(1.0e-13);
 	solver.Run(sputnik);
 
 	cout << endl << "sputnik_orbit generated" << endl;
