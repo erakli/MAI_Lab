@@ -31,7 +31,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY * 5;
+	TYPE duration = SECINDAY * 3;
 
 	TYPE stddev = 3.3 / 60.0; // перевели угловые минуты в градусы
 
@@ -52,7 +52,7 @@ int main()
 		size_t num_of_results = sputnik_orbit.rows();
 
 		ground_station.SetRandomErrorParams(random_param_vec);
-		ground_station.SetDoRandom(true);
+		ground_station.SetDoRandom(false);
 		ground_station.Init(num_of_results);
 
 		Vector3d sputnik_fix_pos;
@@ -69,8 +69,8 @@ int main()
 		//to_file(sputnik_orbit);
 		//to_file(modules);
 
-		//cout << " * Saving observations" << endl;
-		//to_file(ground_station.GetObservations(), false);
+		cout << " * Saving observations" << endl;
+		to_file(ground_station.GetObservations(), false);
 
 #ifdef LSM_TEST
 		cout << endl << "Started LSM" << endl;
@@ -82,7 +82,7 @@ int main()
 		true_initial_condition =
 			sputnik_orbit.row(observation_sessions_vec.front().start_moment);
 
-		initial_condition = true_initial_condition.array() * 1.10;
+		initial_condition = true_initial_condition;
 		//Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
 		//another_elements.a += another_elements.a * 1.0e-2;
 		//initial_condition = Orbit::Kepler2Decart(another_elements);
@@ -91,9 +91,10 @@ int main()
 
 #ifdef LSM_TEST
 	VectorXd observations_disp_vec(2);
-	observations_disp_vec << 
-		deg2rad(pow(stddev, 2)),
-		deg2rad(pow(stddev, 2));
+	observations_disp_vec <<
+		//deg2rad(pow(stddev, 2)),
+		//deg2rad(pow(stddev, 2));
+		1.0, 1.0;	// TODO: временно убрали ошибки измерений
 
 	GravitationField central_field;
 	AerodynamicForce aerodynamic_force;
