@@ -32,7 +32,7 @@ LeastSquareMethod::LeastSquareMethod()
 	p_observation_model = nullptr;
 
 //	solver.SetEpsMax(1.0e-13);
-	solver.SetCorrelationInterval(1.0);	// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	solver.SetCorrelationInterval(1.0);	// TODO: вынести на внешнюю установку
 }
 
 
@@ -74,6 +74,15 @@ MatrixXd LeastSquareMethod::Run(VectorXd stop_condition)
 		reference_trajectory = SelectOnlyObservedTimeMoments(temp_reference_trajectory);
 		reference_observations = GenerateReferenceObservations(reference_trajectory);
 		observations_deviation = EvalObservationsDeviation(reference_observations);
+
+#ifdef TEST
+		cout << endl << "Saving reference_trajectory" << endl;
+		to_file(temp_reference_trajectory);
+		to_file(reference_trajectory);
+
+		cout << endl << "Saving observations_deviation vector" << endl;
+		to_file(observations_deviation);
+#endif
 
 		matrix_H = EvalH(reference_trajectory);
 
