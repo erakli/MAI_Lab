@@ -9,6 +9,9 @@ using namespace std;
 
 
 
+
+#define MAX_ITER	25
+
 #define NUM_OF_DEVIATIONS	2
 #define CONSOLE_OUTPUT
 //#define TEST
@@ -55,15 +58,14 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 	VectorXd delta_X;
 
 	size_t iter = 0;
-	size_t max_iter = 9;
 
 	// TODO: будем записывать сюда все итерации
-	MatrixXd log_matrix = MatrixXd::Zero(max_iter, initial_condition.size());
+	MatrixXd log_matrix = MatrixXd::Zero(MAX_ITER, initial_condition.size());
 
 	// не будет меняться между итерациями
 	D_eta = GetErrorCovMatrix();
 
-	bool reason_for_break = false;
+	bool reason_for_break;
 
 #ifdef CONSOLE_OUTPUT
 	cout << endl << endl;
@@ -117,7 +119,7 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		//	reason_for_break = true;
 
 		iter++;
-	} while (reason_for_break == false && iter < max_iter);
+	} while (reason_for_break == false && iter < MAX_ITER);
 
 //	log_matrix.conservativeResize(iter, NoChange);
 
@@ -134,6 +136,13 @@ void LeastSquareMethod::SetInitialCondition(const VectorXd& new_initial_conditio
 VectorXd LeastSquareMethod::GetInitialCondition() const
 {
 	return initial_condition;
+}
+
+
+
+void LeastSquareMethod::SetDelta(const Eigen::VectorXd& new_delta_vec)
+{
+	delta_vec = new_delta_vec;
 }
 
 
@@ -414,7 +423,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 	VectorOfMatrix part_derivate_from_initial(initial_condition_size);
 
-	VectorXd delta = VectorXd::Zero(initial_condition_size);
+//	VectorXd delta = VectorXd::Zero(initial_condition_size);
 	VectorXd var_initial_condition = initial_condition;
 
 	MatrixXd var_traectories[NUM_OF_DEVIATIONS];
@@ -431,7 +440,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 #endif
 #endif
 
-		delta(j) = abs(initial_condition(j)) * DELTA_COEFF;	// делаем вариации на 3-4 порядка меньше в обе стороны
+//		delta(j) = abs(initial_condition(j)) * DELTA_COEFF;	// делаем вариации на 3-4 порядка меньше в обе стороны
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
@@ -446,7 +455,8 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 		{
 			p_model->ClearResult();
 			
-			var_initial_condition(j) += delta(j) * sign[deviation];
+//			var_initial_condition(j) += delta(j) * sign[deviation];
+			var_initial_condition(j) += delta_vec(j) * sign[deviation];
 			p_model->SetStart(var_initial_condition);
 			solver.Run(*p_model);
 			temp_trajectory = p_model->GetResult(false); // без времени
@@ -469,7 +479,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 		// каждый из var_traectories состоит только из компонент вектора состояния, время отсутствует
 		part_derivate_from_initial[j] =
-			(var_traectories[0] - var_traectories[1]) / (2 * delta(j));
+			(var_traectories[0] - var_traectories[1]) / (2 * delta_vec(j));
 
 #ifdef CONSOLE_OUTPUT
 		//to_file(part_derivate_from_initial[j]);
@@ -491,7 +501,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 	VectorOfMatrix part_derivate_from_state(num_of_observations);
 
-	VectorXd delta = VectorXd::Zero(state_vec_size);
+//	VectorXd delta = VectorXd::Zero(state_vec_size);
 	VectorXd var_state_vector;
 
 	MatrixXd var_observations[NUM_OF_DEVIATIONS];
@@ -519,12 +529,12 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 		for (size_t k = 0; k < state_vec_size; k++)
 		{
-			delta(k) = abs(var_state_vector(k)) * DELTA_COEFF;	// делаем вариации на 3-4 порядка меньше в обе стороны
+//			delta(k) = abs(var_state_vector(k)) * DELTA_COEFF;	// делаем вариации на 3-4 порядка меньше в обе стороны
 			temp = var_state_vector(k);
 
 			for (size_t deviation = 0; deviation < NUM_OF_DEVIATIONS; deviation++)
 			{
-				var_state_vector(k) += delta(k) * sign[deviation];
+				var_state_vector(k) += delta_vec(k) * sign[deviation];
 
 				temp_observation = p_observation_model->MakeObservation(var_state_vector, t);
 				var_observations[deviation].col(k) = temp_observation;
@@ -536,7 +546,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 		// поэлементное деление
 		part_derivate_from_state[i] =
 			(var_observations[0] - var_observations[1]).array().rowwise() *
-			(2 * delta).array().inverse().transpose();
+			(2 * delta_vec).array().inverse().transpose();
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
