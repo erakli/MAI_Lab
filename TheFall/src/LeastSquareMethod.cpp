@@ -37,7 +37,7 @@ LeastSquareMethod::LeastSquareMethod()
 
 
 
-MatrixXd LeastSquareMethod::Run(VectorXd stop_condition)
+MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 {
 	MatrixXd temp_reference_trajectory;
 	MatrixXd reference_trajectory;
