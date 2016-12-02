@@ -31,7 +31,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY;
+	TYPE duration = SECINDAY * 10;
 
 	TYPE stddev = 3.3 / 60.0; // перевели угловые минуты в градусы
 
@@ -67,10 +67,9 @@ int main()
 
 		//cout << " * Saving sputnik_orbit" << endl;
 		//to_file(sputnik_orbit);
-		//to_file(modules);
 
-		cout << " * Saving observations" << endl;
-		to_file(ground_station.GetObservations(), false);
+		//cout << " * Saving observations" << endl;
+		//to_file(ground_station.GetObservations(), false);
 
 #ifdef LSM_TEST
 		cout << endl << "Started LSM" << endl;
@@ -83,7 +82,8 @@ int main()
 			sputnik_orbit.row(observation_sessions_vec.front().start_moment);
 
 		initial_condition = true_initial_condition;
-		initial_condition(0) += 1.0;
+		initial_condition(0) += 10.0;
+		initial_condition(1) += 10.0;
 		//Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
 		//another_elements.a += another_elements.a * 1.0e-2;
 		//initial_condition = Orbit::Kepler2Decart(another_elements);
@@ -140,6 +140,7 @@ int main()
 
 	Vector6d stop_condition;
 	stop_condition <<  2.0, 2.0, 2.0, 0.1, 0.1, 0.1;
+	//TYPE stop_condition = 3.0;
 
 	MatrixXd log_matrix = ls_method.Run(stop_condition);
 
