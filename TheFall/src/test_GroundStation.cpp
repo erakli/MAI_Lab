@@ -31,7 +31,7 @@ MatrixXd GenerateSputnikOrbit(TYPE duration);
 
 int main()
 {
-	TYPE duration = SECINDAY * 10;
+	TYPE duration = SECINDAY * 2.0;
 
 	TYPE stddev = 3.3 / 60.0; // перевели угловые минуты в градусы
 
@@ -137,6 +137,10 @@ int main()
 	ls_method.SetModel(&sputnik);
 	ls_method.SetObservationModel(&observation_model);
 	ls_method.SetObservationSessionsVec(observation_sessions_vec);
+
+	VectorXd delta(6);
+	delta << 0.5, 0.5, 0.5, 0.02, 0.02, 0.02;
+	ls_method.SetDelta(delta);
 
 	Vector6d stop_condition;
 	stop_condition <<  2.0, 2.0, 2.0, 0.1, 0.1, 0.1;
