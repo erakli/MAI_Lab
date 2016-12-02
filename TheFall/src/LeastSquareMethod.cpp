@@ -11,7 +11,9 @@ using namespace std;
 
 #define NUM_OF_DEVIATIONS	2
 #define CONSOLE_OUTPUT
-#define TEST
+//#define TEST
+
+#define DELTA_COEFF		1.0e-4
 
 #ifdef CONSOLE_OUTPUT
 #include <iostream>
@@ -48,11 +50,12 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 	MatrixXd matrix_H;
 	MatrixXd D_eta;
 	MatrixXd H_D_eta;
+	MatrixXd K;
 
 	VectorXd delta_X;
 
 	size_t iter = 0;
-	size_t max_iter = 30;
+	size_t max_iter = 9;
 
 	// TODO: будем записывать сюда все итерации
 	MatrixXd log_matrix = MatrixXd::Zero(max_iter, initial_condition.size());
@@ -60,7 +63,7 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 	// не будет меняться между итерациями
 	D_eta = GetErrorCovMatrix();
 
-	bool reason_for_break;
+	bool reason_for_break = false;
 
 #ifdef CONSOLE_OUTPUT
 	cout << endl << endl;
@@ -76,19 +79,18 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		observations_deviation = EvalObservationsDeviation(reference_observations);
 
 #ifdef TEST
-		cout << endl << "Saving reference_trajectory" << endl;
-		to_file(temp_reference_trajectory);
-		to_file(reference_trajectory);
+		//cout << endl << "Saving observations_deviation vector" << endl;
+		//to_file(observations_deviation);
 
-		cout << endl << "Saving observations_deviation vector" << endl;
-		to_file(observations_deviation);
+		//system("pause");
 #endif
 
 		matrix_H = EvalH(reference_trajectory);
 
 		H_D_eta = matrix_H.transpose() * D_eta;
+		K = (H_D_eta * matrix_H).inverse();
 
-		delta_X = (H_D_eta * matrix_H).inverse() * H_D_eta * observations_deviation;
+		delta_X = K * H_D_eta * observations_deviation;
 
 		initial_condition += delta_X;
 		log_matrix.row(iter) = delta_X;
@@ -97,21 +99,29 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		cout << endl << "iter = " << iter << endl;
 		cout << "	delta_X: " << delta_X.transpose() << endl;
 		cout << "	initial_condition: " << initial_condition.transpose() << endl;
+		cout << endl;
+
+//		to_file(matrix_H);
+
+		//system("pause");
 #endif
 
 		for (size_t j = 0; j < delta_X.size(); j++)
 		{
-			reason_for_break &= abs(delta_X(j)) < stop_condition(j);
+			reason_for_break &= abs(delta_X(j)) <= stop_condition(j);
 			if (reason_for_break == false)
 				break;
 		}
 
+		//if (delta_X.norm() < stop_condition)
+		//	reason_for_break = true;
+
 		iter++;
 	} while (reason_for_break == false && iter < max_iter);
 
-	log_matrix.conservativeResize(iter, NoChange);
+//	log_matrix.conservativeResize(iter, NoChange);
 
-	return log_matrix;
+	return log_matrix.topRows(iter);
 }
 
 
@@ -264,7 +274,6 @@ VectorXd LeastSquareMethod::EvalObservationsDeviation(const VectorXd& reference_
 
 	// TODO: надо осуществить вычитание из соответствующих моментов времени
 	size_t observation_vec_size = observations.cols() - 1;
-	size_t num_of_observations = observations.rows();
 
 	// отсекаем время и меняем порядок представления данных в матрице на
 	// построчный (с постолбцового)
@@ -329,7 +338,7 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 	ArrayXd temp_sum;
 
 #ifdef CONSOLE_OUTPUT
-	//cout << endl << endl;
+	cout << endl << endl;
 #endif
 
 	for (size_t i = 0; i < num_of_observations; i++)
@@ -358,6 +367,9 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 				//cout << "from_initial[j](i, k) = " << from_initial[j](i, k) << endl;
 				//cout << "from_state[i].col(k).array() * from_initial[j](i, k):" << endl << from_state[i].col(k).array() * from_initial[j](i, k) << endl;
 				//cout << "temp_sum:" << endl << temp_sum << endl;
+				//cout << endl;
+
+				//system("pause");
 #endif
 
 			}
@@ -377,6 +389,12 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 #ifdef CONSOLE_OUTPUT
 		//cout << endl << "ballistic_derivates:" << endl;
 		//cout << ballistic_derivates << endl;
+
+		//cout << endl << "matrix_H.block:" << endl;
+		//cout << matrix_H.topRows(10) << endl;
+		//cout << endl;
+
+		//system("pause");
 #endif
 	}
 
@@ -413,7 +431,13 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 #endif
 #endif
 
-		delta(j) = initial_condition(j) * 1.0e-3;	// делаем вариации на 3-4 порядка меньше в обе стороны
+		delta(j) = abs(initial_condition(j)) * DELTA_COEFF;	// делаем вариации на 3-4 порядка меньше в обе стороны
+
+#ifdef TEST
+#ifdef CONSOLE_OUTPUT
+		cout << endl << "	delta: " << delta.transpose() << endl;
+#endif
+#endif
 
 		temp = var_initial_condition(j);
 
@@ -430,6 +454,11 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
+			cout << endl << "	var_initial_condition: " << endl;
+			cout << var_initial_condition.transpose() << endl;
+
+//			system("pause");
+
 //			cout << endl << "to_file(var_traectories[" << sign[deviation] << "])" << endl;
 #endif
 //			to_file(var_traectories[deviation]);
@@ -441,6 +470,10 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 		// каждый из var_traectories состоит только из компонент вектора состояния, время отсутствует
 		part_derivate_from_initial[j] =
 			(var_traectories[0] - var_traectories[1]) / (2 * delta(j));
+
+#ifdef CONSOLE_OUTPUT
+		//to_file(part_derivate_from_initial[j]);
+#endif
 	}
 
 	return part_derivate_from_initial;
@@ -478,9 +511,15 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 		var_state_vector = reference_trajectory.row(i);
 		t = observations(i, 0);
 
+#ifdef TEST
+#ifdef CONSOLE_OUTPUT
+		cout << endl << endl << " * * var_state_vector = " << i << " * * " << endl;
+#endif
+#endif
+
 		for (size_t k = 0; k < state_vec_size; k++)
 		{
-			delta(k) = var_state_vector(k) * 1.0e-3;	// делаем вариации на 3-4 порядка меньше в обе стороны
+			delta(k) = abs(var_state_vector(k)) * DELTA_COEFF;	// делаем вариации на 3-4 порядка меньше в обе стороны
 			temp = var_state_vector(k);
 
 			for (size_t deviation = 0; deviation < NUM_OF_DEVIATIONS; deviation++)
@@ -498,6 +537,22 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 		part_derivate_from_state[i] =
 			(var_observations[0] - var_observations[1]).array().rowwise() *
 			(2 * delta).array().inverse().transpose();
+
+#ifdef TEST
+#ifdef CONSOLE_OUTPUT
+		cout << "	t = " << t << endl;
+		cout << endl << "	delta: " << endl;
+		cout << delta.transpose() << endl;
+
+		//cout << endl << "to_file()" << endl;
+#endif
+		//to_file(var_observations[0]);
+		//to_file(var_observations[1]);
+		//to_file(delta);
+		//to_file(part_derivate_from_state[i]);
+
+		//system("pause");
+#endif
 	}
 
 	return part_derivate_from_state;
