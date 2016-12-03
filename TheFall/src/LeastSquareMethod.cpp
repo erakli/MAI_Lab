@@ -13,18 +13,20 @@ using namespace std;
 #define MAX_ITER	25
 
 #define NUM_OF_DEVIATIONS	2
-#define CONSOLE_OUTPUT
+//#define CONSOLE_OUTPUT
+//#define CONSOLE_OUTPUT2
 //#define TEST
+//#define TEST2
 
-#define DELTA_COEFF		1.0e-4
-
-#ifdef CONSOLE_OUTPUT
+#if defined(CONSOLE_OUTPUT) || defined(CONSOLE_OUTPUT2)
 #include <iostream>
 using namespace std;
 #endif
 
-#ifdef TEST
+#if defined(TEST) || defined(TEST2)
 #include "file_output.h"
+#include <iostream>
+using namespace std;
 #endif
 
 LeastSquareMethod::LeastSquareMethod()
