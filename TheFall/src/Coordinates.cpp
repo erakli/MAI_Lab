@@ -225,6 +225,27 @@ namespace Transform
 		return Result;
 	}
 
+	Vector3d Spher2Geographic(const Vector3d& spher, TYPE JD)
+	{
+		// крутим Землю назад, чтобы вычесть поворот гринвича Гринвич
+		TYPE lambda = spher(2);
+		lambda = StarTime(lambda, (MyTime::getMidnight(JD) - JD) * SECINDAY);
+//		lambda = fmod(lambda, 2 * PI);
+
+		if (lambda > PI)
+			lambda -= 2 * PI;
+		else if (lambda < -PI)
+			lambda += 2 * PI;
+
+		Vector3d Result;
+
+		Result(0) = spher(0) - Earth::meanRadius;
+		Result(1) = spher(1);
+		Result(2) = lambda;
+
+		return Result;
+	}
+
 
 
 	Vector2d Fix2Horiz(const Vector3d &to_find_fix_vec, const Vector3d &center_geographic)

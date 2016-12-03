@@ -16,6 +16,7 @@ namespace Transform
 	Eigen::Vector3d Geographic2Fix(const Eigen::Vector3d &geographic);
 
 	Eigen::Vector3d Decart2Spher(const Eigen::Vector3d &fix);
+	Eigen::Vector3d Spher2Geographic(const Eigen::Vector3d &spher, TYPE JD);
 
 	// результат - углы в радианах [h, az] - элевация и азимут
 	Eigen::Vector2d Fix2Horiz(const Eigen::Vector3d &to_find_fix_vec, const Eigen::Vector3d &center_geographic);
