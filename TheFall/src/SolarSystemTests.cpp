@@ -67,7 +67,7 @@ void Tests::TestCoordinates()
 	Eigen::Vector3d vec_geographic;
 	vec_geographic[0] = 0;
 	vec_geographic[1] = deg2rad(0);
-	vec_geographic[2] = deg2rad(0);
+	vec_geographic[2] = deg2rad(90);
 
 	Eigen::Vector3d result_fix(Transform::Geographic2Fix(vec_geographic));
 
@@ -75,18 +75,25 @@ void Tests::TestCoordinates()
 	cout << "\nGeographic2Fix:	"; Show(result_fix);
 
 	Eigen::Vector3d dot;
-	dot[0] = 1 + Earth::meanRadius;
-	dot[1] = 0;
-	dot[2] = 0;
+	//dot[0] = 0;
+	//dot[1] = 1 + Earth::meanRadius;
+	//dot[2] = 0;
+	dot << 5990.9996202279917, -1469.7041561725089, -1594.1619001523136;
 
 	Eigen::Vector3d result_topo = Transform::Fix2Topo(dot, vec_geographic);
-
 	cout << "\ndot:		"; Show(dot);
 	cout << "\nFix2Topo:	"; Show(result_topo);
 
 	Eigen::Vector2d result_horiz = Transform::Fix2Horiz(dot, vec_geographic);
-
 	cout << "\nFix2Horiz:	"; Show(result_horiz * DEG_IN_RAD);
+
+	Eigen::Vector3d result_spher = Transform::Decart2Spher(dot);
+	cout << "\nDecart2Spher:	"; Show(result_spher);
+
+	Eigen::Vector3d result_geographic = Transform::Spher2Geographic(result_spher, 6075.5000000000055 / SECINDAY + 0.5);
+	cout << "\nSpher2Geographic:	"; Show(result_geographic);
+	cout << "\nGeographic2Fix:	"; Show(Transform::Geographic2Fix(result_geographic));
+
 
 	Final();
 }
