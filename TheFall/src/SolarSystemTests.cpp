@@ -58,7 +58,7 @@ void Tests::TestCoordinates()
 		JD = MyTime::Transformation::DateToJD(date),
 		lambda = deg2rad(0);
 
-	TYPE s = StarTime(JD, lambda);
+	TYPE s = StarTime(lambda, JD);
 
 	cout << "\nJD = " << fixed << JD;
 	cout << "\nlambda = " << fixed << lambda << endl;
