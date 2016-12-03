@@ -4,14 +4,14 @@
 
 #define J2000		2451544.5 // юлианская дата на 0:00 01.01.2000
 
-#define SECINMIN	60
-#define SECINHOUR	3600
-#define	SECINDAY	86400
+#define SECINMIN	60.0
+#define SECINHOUR	3600.0
+#define	SECINDAY	86400.0
 
-#define MININHOUR	60
-#define MININDAY	1440
+#define MININHOUR	60.0
+#define MININDAY	1440.0
 
-#define HOURINDAY	24
+#define HOURINDAY	24.0
 
 
 namespace MyTime
