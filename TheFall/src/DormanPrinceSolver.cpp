@@ -138,7 +138,7 @@ void DormanPrinceSolver::Run(Model &model)
 		if (p_model->IsStopCalculation(t, new_step, x0, x1))
 		{
 			// сохраним более подробные значения перед прерыванием интегрирования
-			TYPE stop_delta = out_delta;
+			TYPE stop_delta = out_delta / 10.0;
 			tout -= out_delta;
 			tout += stop_delta;
 			SaveSubstepResult(tout, stop_delta, new_step, t_end);
