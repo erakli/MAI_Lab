@@ -69,7 +69,7 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 
 	bool reason_for_break;
 
-#ifdef CONSOLE_OUTPUT
+#ifdef CONSOLE_OUTPUT2
 	cout << endl << endl;
 #endif
 
@@ -99,7 +99,7 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		initial_condition += delta_X;
 		log_matrix.row(iter) = delta_X;
 
-#ifdef CONSOLE_OUTPUT
+#ifdef CONSOLE_OUTPUT2
 		cout << endl << "iter = " << iter << endl;
 		cout << "	delta_X: " << delta_X.transpose() << endl;
 		cout << "	initial_condition: " << initial_condition.transpose() << endl;
@@ -123,7 +123,10 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		iter++;
 	} while (reason_for_break == false && iter < MAX_ITER);
 
-//	log_matrix.conservativeResize(iter, NoChange);
+#ifdef TEST2
+	cout << endl << " * Saving K matrix" << endl;
+	to_file(K);
+#endif
 
 	return log_matrix.topRows(iter);
 }
