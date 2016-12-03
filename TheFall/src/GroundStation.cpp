@@ -55,7 +55,7 @@ void GroundStation::SaveObservation(const VectorXd& X, TYPE t, size_t time_momen
 			sputnik_horiz_pos(1) += distribution(generator, random_error_params[1]);
 		}
 
-		ObservationModel::SaveObservation(sputnik_horiz_pos, t);
+		ObservationModel::SaveObservation(sputnik_horiz_pos, t, time_moment);
 	}
 	else if (is_session_initialized == true)
 	{
