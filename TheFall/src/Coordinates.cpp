@@ -185,12 +185,15 @@ namespace Transform
 	}
 
 	/* Перегрузка с CVector на приём */
-	Vector3d Geographic2Fix(const Vector3d &geographic)
+	Vector3d Geographic2Fix(const Vector3d &geographic, TYPE JD)
 	{
 		auto
 			h(geographic(0)),
 			fi(geographic(1)),
 			lambda(geographic(2));
+
+		// крутим Землю вперёд, чтобы совместить гринвич и ось Ох инерциальной СК
+		lambda = StarTime(lambda, (JD - MyTime::getMidnight(JD)) * SECINDAY);
 
 		Vector3d Result;
 		Result(0) = (h + Earth::meanRadius) * cos(fi) * cos(lambda);

@@ -13,7 +13,7 @@ namespace Transform
 	Eigen::Vector3d Fix2Topo(const Eigen::Vector3d &fix_vector, const Eigen::Vector3d &center_geographic);
 
 	Eigen::Vector3d Geographic2Fix(TYPE h, TYPE fi, TYPE lambda);
-	Eigen::Vector3d Geographic2Fix(const Eigen::Vector3d &geographic);
+	Eigen::Vector3d Geographic2Fix(const Eigen::Vector3d &geographic, TYPE JD = 0.5);
 
 	Eigen::Vector3d Decart2Spher(const Eigen::Vector3d &fix);
 	Eigen::Vector3d Spher2Geographic(const Eigen::Vector3d &spher, TYPE JD);
