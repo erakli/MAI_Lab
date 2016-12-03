@@ -142,11 +142,12 @@ void to_file(const MatrixXd& result, bool radians)
 	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
 
 	fout.precision(20);
+	IOFormat coeff_separator(StreamPrecision, DontAlignCols, "\t");
 
 	// ----------------- заполнение файла
 	MatrixXd output_matrix(result);
 	output_matrix.rightCols(result.cols() - 1) *= rad2deg;
-	fout << output_matrix;
+	fout << output_matrix.format(coeff_separator);
 
 	fout.close();
 
@@ -203,14 +204,10 @@ void to_file(const VectorXd& result, bool radians)
 	(radians) ? rad2deg = 1 : rad2deg = 180 / PI;
 
 	fout.precision(20);
+	IOFormat coeff_separator(StreamPrecision, DontAlignCols, "\t");
 
 	// ----------------- заполнение файла
-	int size = result.size();
-	for (int i = 0; i < size; i++)
-	{
-		fout << result[i] * rad2deg;
-		fout << "\n";
-	}
+	fout << result.format(coeff_separator);
 
 	fout.close();
 
