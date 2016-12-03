@@ -25,6 +25,7 @@ size_t ObservationSession::GetDuration() const
 ObservationModel::ObservationModel()
 {
 	num_of_observations = 0;
+	last_time_moment = 0;
 	observation_vec_size = 0;
 
 	observation_sessions_vec.reserve(DEFAULT_OBSERVATION_SESSIONS_NUM);
@@ -50,11 +51,15 @@ ObservationModel::~ObservationModel()
 void ObservationModel::Init(size_t observations_size)
 {
 	num_of_observations = 0;
+	last_time_moment = 0;
 	observations = MatrixXd::Zero(observations_size, observation_vec_size);
+	observation_sessions_vec.clear();
 }
 
 void ObservationModel::SaveObservation(const VectorXd& X, TYPE t, size_t time_moment)
 {
+	last_time_moment = time_moment;
+
 	VectorXd new_line(X.size() + 1);	// +1 для времени
 	new_line << t, X;
 	observations.row(num_of_observations) = new_line;
@@ -83,8 +88,13 @@ size_t ObservationModel::GetNumOfObservations() const
 
 
 
-ObservationSessionsVector ObservationModel::GetObservationSessionsVector() const
+ObservationSessionsVector ObservationModel::GetObservationSessionsVector()
 {
+	if (is_session_initialized == true)
+	{
+		CloseObservationSession(last_time_moment);
+	}
+
 	return observation_sessions_vec;
 }
 

@@ -43,7 +43,7 @@ public:
 	Eigen::MatrixXd GetObservations(bool with_time = true) const;
 	size_t GetNumOfObservations() const;
 
-	ObservationSessionsVector GetObservationSessionsVector() const;
+	ObservationSessionsVector GetObservationSessionsVector();
 
 	void SetDoRandom(bool should_we_do_random);
 
@@ -53,9 +53,10 @@ public:
 
 protected:
 	Eigen::MatrixXd observations;
-	size_t num_of_observations;
 
-	size_t observation_vec_size;
+	size_t num_of_observations;
+	size_t last_time_moment;
+	size_t observation_vec_size;	
 
 	ObservationSession current_session;
 
