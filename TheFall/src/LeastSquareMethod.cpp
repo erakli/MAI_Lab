@@ -464,8 +464,8 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
-			cout << endl << "	var_initial_condition: " << endl;
-			cout << var_initial_condition.transpose() << endl;
+//			cout << endl << "	var_initial_condition: " << endl;
+//			cout << var_initial_condition.transpose() << endl;
 
 //			system("pause");
 
@@ -523,7 +523,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
-		cout << endl << endl << " * * var_state_vector = " << i << " * * " << endl;
+//		cout << endl << endl << " * * var_state_vector = " << i << " * * " << endl;
 #endif
 #endif
 
@@ -550,9 +550,9 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
-		cout << "	t = " << t << endl;
-		cout << endl << "	delta: " << endl;
-		cout << delta.transpose() << endl;
+		//cout << "	t = " << t << endl;
+		//cout << endl << "	delta: " << endl;
+		//cout << delta.transpose() << endl;
 
 		//cout << endl << "to_file()" << endl;
 #endif
