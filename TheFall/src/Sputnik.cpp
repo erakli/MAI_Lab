@@ -117,7 +117,7 @@ bool Sputnik::IsStopCalculation(
 #ifdef CONSOLE_OUTPUT
 		cout << " * Touchdown! * " << endl;
 		cout << endl;
-		system("pause");
+//		system("pause");
 #endif
 		return true;
 	}
