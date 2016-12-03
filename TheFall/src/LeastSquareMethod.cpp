@@ -10,7 +10,7 @@ using namespace std;
 
 
 
-#define MAX_ITER	25
+#define MAX_ITER	100
 
 #define NUM_OF_DEVIATIONS	2
 //#define CONSOLE_OUTPUT
@@ -117,9 +117,6 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 				break;
 		}
 
-		//if (delta_X.norm() < stop_condition)
-		//	reason_for_break = true;
-
 		iter++;
 	} while (reason_for_break == false && iter < MAX_ITER);
 
@@ -219,6 +216,8 @@ MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & refer
 	MatrixXd selected_time_moments;
 	selected_time_moments = MatrixXd::Zero(num_of_observations, reference_trajectory.cols());
 
+	size_t num_of_sessions = observation_sessions_vec.size();
+
 	// TODO: считаем, что опорная траектория строится из первого момента времени
 	// наблюдений
 	size_t first_start_time = observation_sessions_vec.front().start_moment;
@@ -226,7 +225,7 @@ MatrixXd LeastSquareMethod::SelectOnlyObservedTimeMoments(const MatrixXd & refer
 	size_t end_time;
 	size_t j = 0;
 
-	for (size_t i = 0; i < observation_sessions_vec.size(); i++)
+	for (size_t i = 0; i < num_of_sessions; i++)
 	{
 		cur_time = observation_sessions_vec[i].start_moment - first_start_time;
 		end_time = observation_sessions_vec[i].end_moment - first_start_time;
@@ -449,7 +448,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT
-		cout << endl << "	delta: " << delta.transpose() << endl;
+//		cout << endl << "	delta: " << delta.transpose() << endl;
 #endif
 #endif
 
