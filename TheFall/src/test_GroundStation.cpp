@@ -244,20 +244,39 @@ int main()
 		fall_coord = Decart2Spher(temp_vec);
 		fall_results.row(num_of_fall) = Spher2Geographic(fall_coord, JD);
 
-		//fall_test.row(num_of_fall) = 
-		//	Geographic2Fix(fall_results.row(num_of_fall), JD);
-
 		num_of_fall++;
-
-		//to_file(orbit_result);
-		//break;
 	}
 
 	cout << " * Saving fall_results" << endl;
 	to_file(MatrixXd(fall_fix.topRows(num_of_fall)));
 	to_file(MatrixXd(fall_results.topRows(num_of_fall)));
-	//to_file(MatrixXd(fall_test.topRows(num_of_fall)));
 
+	VectorXd mean_vec(2);
+	mean_vec = fall_results.rightCols(2).colwise().mean();
+
+	MatrixXd K_matrix(2, 2);
+	MatrixXd centered;
+	centered = fall_results.rightCols(2).rowwise() - mean_vec.transpose();
+
+	TYPE temp;
+
+	for (size_t i = 0; i < 2; i++)
+	{
+
+		for (size_t j = i; j < 2; j++)
+		{
+			temp = (centered.col(i).array() * centered.col(j).array()).sum();
+			K_matrix(i, j) = temp / (num_of_fall - 1);
+
+			if (j != i)
+				K_matrix(j, i) = K_matrix(i, j);
+		}
+	}
+
+//	TYPE corr_coeff = K_matrix(1, 0) / sqrt(K_matrix(0, 0) * K_matrix(1, 1));
+
+	to_file(mean_vec);
+	to_file(K_matrix);
 
 #endif
 
