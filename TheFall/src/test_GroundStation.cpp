@@ -21,6 +21,7 @@
 #define LSM_TEST
 //#define TEST
 #define INITIALS
+//#define FALLING
 
 using namespace Eigen;
 using namespace MyFunc;
@@ -78,12 +79,14 @@ int main()
 #ifdef LSM_TEST
 		cout << endl << "Started LSM" << endl;
 
-		ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
+		//ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
 
-		// берём только последнее измерение
-		observation_sessions_vec.assign(
-			1, lsm_start_session);
+		//// берём только последнее измерение
+		//observation_sessions_vec.assign(
+		//	1, lsm_start_session);
 
+		observation_sessions_vec = ground_station.GetObservationSessionsVector();
+		ObservationSession lsm_start_session = observation_sessions_vec.front();
 
 		// берём вектор состояния на первый момент наблюдений и слегка варьируем
 		true_initial_condition =
@@ -144,15 +147,16 @@ int main()
 	LeastSquareMethod ls_method;
 	ls_method.SetInitialCondition(initial_condition);
 	// TODO: возьмём только последний участок измерений
-	ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
+//	ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
+	ls_method.SetObservations(ground_station.GetObservations());
 	ls_method.SetObservationsError(observations_disp_vec);
 	ls_method.SetModel(&sputnik);
 	ls_method.SetObservationModel(&observation_model);
 	ls_method.SetObservationSessionsVec(observation_sessions_vec);
 
 
-	TYPE pos_delta = 1.0e-10;
-	TYPE veloc_delta = 1.0e-10;
+	TYPE pos_delta = 1.0e-4;
+	TYPE veloc_delta = 1.0e-4;
 	VectorXd delta(6);
 	delta << 
 		pos_delta, pos_delta, pos_delta, 
@@ -198,6 +202,7 @@ int main()
 	to_file(initial_evolution);
 #endif
 
+#ifdef FALLING
 	cout << endl << "Modelling fall of sputnik" << endl;
 
 	MatrixXd orbit_result;
@@ -237,7 +242,7 @@ int main()
 		if (min > 0.5)
 			continue;
 
-		JD = 0.5 + orbit_result(min_idx, 0) / SECINDAY;
+		JD = orbit_result(min_idx, 0) / SECINDAY - 0.5;
 
 		fall_fix.row(num_of_fall) = temp_vec;
 
@@ -250,6 +255,8 @@ int main()
 	cout << " * Saving fall_results" << endl;
 	to_file(MatrixXd(fall_fix.topRows(num_of_fall)));
 	to_file(MatrixXd(fall_results.topRows(num_of_fall)));
+
+	fall_results.rightCols(2) *= DEG_IN_RAD;
 
 	VectorXd mean_vec(2);
 	mean_vec = fall_results.rightCols(2).colwise().mean();
@@ -277,6 +284,8 @@ int main()
 
 	to_file(mean_vec);
 	to_file(K_matrix);
+
+#endif
 
 #endif
 
