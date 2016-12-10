@@ -1,6 +1,7 @@
 #include "GroundStation.h"
 #include <Coordinates.h>
 #include <Constants.h>
+#include "Time.h"
 
 using namespace Eigen;
 using namespace Transform;
@@ -85,4 +86,41 @@ TYPE GroundStation::GetVisionZoneAngle() const
 void GroundStation::SetVisionZoneAngle(TYPE new_vision_zone_angle)
 {
 	_vision_zone_angle = new_vision_zone_angle;
+}
+
+
+
+
+
+
+GroundStation2::GroundStation2() : GroundStation()
+{
+
+}
+
+GroundStation2::GroundStation2(const Vector3d &geographic_pos, TYPE vision_zone_angle)
+	: GroundStation(geographic_pos, vision_zone_angle)
+{
+
+}
+
+
+
+VectorXd GroundStation2::MakeObservation(const VectorXd & X, TYPE t) const
+{
+	Vector3d cur_geographic_pos = _geographic_pos;
+	cur_geographic_pos(2) += StarTime(start_star_time, t);
+
+	TYPE JD = t / SECINDAY - 0.5;
+
+	Vector3d cur_fix_pos = Geographic2Fix(cur_geographic_pos, JD);
+	Vector3d temp = X.head(VEC_SIZE) - cur_fix_pos;
+	VectorXd result(1);
+	result << temp.norm() + X(X.size() - 1);
+	return result;
+}
+
+void GroundStation2::SaveObservation(const VectorXd & X, TYPE t, size_t time_moment = -1)
+{
+
 }
