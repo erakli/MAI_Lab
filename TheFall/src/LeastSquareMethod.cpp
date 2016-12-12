@@ -3,6 +3,7 @@
 #include <Constants.h>
 
 #include <vector>
+#include <Functions.h>
 
 using namespace Eigen;
 using namespace std;
@@ -14,7 +15,7 @@ using namespace std;
 
 #define NUM_OF_DEVIATIONS	2
 //#define CONSOLE_OUTPUT
-//#define CONSOLE_OUTPUT2
+#define CONSOLE_OUTPUT2
 //#define TEST
 //#define TEST2
 
@@ -83,8 +84,10 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		observations_deviation = EvalObservationsDeviation(reference_observations);
 
 #ifdef TEST
-		//cout << endl << "Saving observations_deviation vector" << endl;
-		//to_file(observations_deviation);
+		cout << endl << "Saving observations_deviation vector" << endl;
+		Map<Matrix<double, Dynamic, Dynamic, RowMajor>> 
+			temp_deviations(observations_deviation.data(), observations_deviation.size() / 2, 2);
+		to_file(MatrixXd(temp_deviations));
 
 		//system("pause");
 #endif
@@ -105,7 +108,8 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		cout << "	initial_condition: " << initial_condition.transpose() << endl;
 		cout << endl;
 
-//		to_file(matrix_H);
+		//to_file(matrix_H);
+		//to_file(K);
 
 		//system("pause");
 #endif
@@ -142,9 +146,14 @@ VectorXd LeastSquareMethod::GetInitialCondition() const
 
 
 
-void LeastSquareMethod::SetDelta(const Eigen::VectorXd& new_delta_vec)
+void LeastSquareMethod::SetDelta(const VectorXd& new_delta_vec)
 {
 	delta_vec = new_delta_vec;
+}
+
+void LeastSquareMethod::SetDeltaObserve(const VectorXd& new_delta_observe_vec)
+{
+	delta_observe_vec = new_delta_observe_vec;
 }
 
 
@@ -538,7 +547,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 
 			for (size_t deviation = 0; deviation < NUM_OF_DEVIATIONS; deviation++)
 			{
-				var_state_vector(k) += delta_vec(k) * sign[deviation];
+				var_state_vector(k) += delta_observe_vec(k) * sign[deviation];
 
 				temp_observation = p_observation_model->MakeObservation(var_state_vector, t);
 				var_observations[deviation].col(k) = temp_observation;
@@ -550,7 +559,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 		// поэлементное деление
 		part_derivate_from_state[i] =
 			(var_observations[0] - var_observations[1]).array().rowwise() *
-			(2 * delta_vec).array().inverse().transpose();
+			(2 * delta_observe_vec).array().inverse().transpose();
 
 #ifdef TEST
 #ifdef CONSOLE_OUTPUT

@@ -26,6 +26,7 @@ public:
 	Eigen::VectorXd GetInitialCondition() const;
 
 	void SetDelta(const Eigen::VectorXd & new_delta_vec);
+	void SetDeltaObserve(const Eigen::VectorXd & new_delta_observe_vec);
 
 	void SetObservationsError(const Eigen::VectorXd & observations_disp_vec);
 	void SetObservations(const Eigen::MatrixXd & observations_vec);
@@ -40,6 +41,7 @@ private:
 	Eigen::MatrixXd H_matrix;
 	
 	Eigen::VectorXd delta_vec;
+	Eigen::VectorXd delta_observe_vec;
 
 	Eigen::VectorXd error_cov_vec;
 	Eigen::MatrixXd observations; // первым столбцом будет время
