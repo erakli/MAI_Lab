@@ -21,7 +21,8 @@
 #define LSM_TEST
 //#define TEST
 #define INITIALS
-//#define FALLING
+#define EVOLUTION
+#define FALLING
 
 using namespace Eigen;
 using namespace MyFunc;
@@ -34,7 +35,7 @@ MatrixXd GenerateSputnikOrbit(const VectorXd& initial_conditions, TYPE t0, TYPE 
 
 int main()
 {
-	TYPE duration = SECINDAY * 2.0;
+	TYPE duration = SECINDAY * 30;
 
 	TYPE stddev =
 		//0.5;
@@ -79,28 +80,33 @@ int main()
 #ifdef LSM_TEST
 		cout << endl << "Started LSM" << endl;
 
-		//ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
+		ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
 
-		//// берём только последнее измерение
-		//observation_sessions_vec.assign(
-		//	1, lsm_start_session);
+		// берём только последнее измерение
+		observation_sessions_vec.assign(
+			1, lsm_start_session);
 
-		observation_sessions_vec = ground_station.GetObservationSessionsVector();
-		ObservationSession lsm_start_session = observation_sessions_vec.front();
+//		observation_sessions_vec = ground_station.GetObservationSessionsVector();
+		//ObservationSession lsm_start_session = observation_sessions_vec.front();
 
 		// берём вектор состояния на первый момент наблюдений и слегка варьируем
 		true_initial_condition =
 			sputnik_orbit.row(lsm_start_session.start_moment);
 
-		initial_condition = true_initial_condition;
-		initial_condition(0) += 100.0;
-		initial_condition(1) -= 10.0;
-		initial_condition(2) -= 50.0;
-		//Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
-		//another_elements.a += another_elements.a * 1.0e-1;
-		//another_elements.e -= another_elements.e * 1.0e-2;
-		//another_elements.i += another_elements.i * 1.0e-2;
-		//initial_condition = Orbit::Kepler2Decart(another_elements);
+		//Vector6d init_delta;
+		//init_delta << 11.0, -4.0, -12.0, -0.01, 0.003, -0.007;
+
+		//initial_condition = true_initial_condition;
+//		initial_condition += init_delta;
+
+		Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
+		another_elements.a += another_elements.a * 1.0e-2;
+		another_elements.e -= another_elements.e * 1.0e-2;
+		another_elements.i += another_elements.i * 1.0e-2;
+		another_elements.omega += another_elements.omega * 1.0e-3;
+		another_elements._Omega -= another_elements._Omega * 1.0e-3;
+		another_elements.teta += another_elements.teta * 1.0e-3;
+		initial_condition = Orbit::Kepler2Decart(another_elements);
 #endif
 //	}
 
@@ -109,7 +115,7 @@ int main()
 	observations_disp_vec <<
 		pow(deg2rad(stddev), 2),
 		pow(deg2rad(stddev), 2);
-//		1.0, 1.0;	// TODO: временно убрали ошибки измерений
+		//1.0, 1.0;	// TODO: временно убрали ошибки измерений
 
 	GravitationField central_field;
 	AerodynamicForce aerodynamic_force;
@@ -147,26 +153,26 @@ int main()
 	LeastSquareMethod ls_method;
 	ls_method.SetInitialCondition(initial_condition);
 	// TODO: возьмём только последний участок измерений
-//	ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
-	ls_method.SetObservations(ground_station.GetObservations());
+	ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
+	//ls_method.SetObservations(ground_station.GetObservations());
 	ls_method.SetObservationsError(observations_disp_vec);
 	ls_method.SetModel(&sputnik);
 	ls_method.SetObservationModel(&observation_model);
 	ls_method.SetObservationSessionsVec(observation_sessions_vec);
 
 
-	TYPE pos_delta = 1.0e-4;
-	TYPE veloc_delta = 1.0e-4;
+	TYPE pos_delta = 1.0e-6;
+	TYPE veloc_delta = 1.0e-6;
 	VectorXd delta(6);
 	delta << 
 		pos_delta, pos_delta, pos_delta, 
 		veloc_delta, veloc_delta, veloc_delta;
 
 	ls_method.SetDelta(delta);
+	ls_method.SetDeltaObserve(delta * 100.0);
 
 	Vector6d stop_condition;
 	stop_condition << 1.0e-3, 1.0e-3, 1.0e-3, 1.0e-3, 1.0e-3, 1.0e-3;
-	//TYPE stop_condition = 3.0;
 
 	MatrixXd log_matrix = ls_method.Run(stop_condition);
 
@@ -242,7 +248,7 @@ int main()
 		if (min > 0.5)
 			continue;
 
-		JD = orbit_result(min_idx, 0) / SECINDAY - 0.5;
+		JD = orbit_result(min_idx, 0) / SECINDAY + J2000;
 
 		fall_fix.row(num_of_fall) = temp_vec;
 
@@ -258,7 +264,7 @@ int main()
 
 	fall_results.rightCols(2) *= DEG_IN_RAD;
 
-	VectorXd mean_vec(2);
+	VectorXd mean_vec;
 	mean_vec = fall_results.rightCols(2).colwise().mean();
 
 	MatrixXd K_matrix(2, 2);
