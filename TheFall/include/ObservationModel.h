@@ -74,6 +74,6 @@ protected:
 	// вектор, в котором записаны параметры случайных ошибок
 	DistributionParamVec random_error_params;
 
-	std::default_random_engine generator;
+	std::mt19937 generator;
 	MyNormalDistribution distribution;
 };
