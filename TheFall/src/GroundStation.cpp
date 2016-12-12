@@ -93,15 +93,17 @@ void GroundStation::SetVisionZoneAngle(TYPE new_vision_zone_angle)
 
 
 
+#define DELTA	30	// в метрах
+
 GroundStation2::GroundStation2() : GroundStation()
 {
-
+	observation_vec_size = 1 + 1;
 }
 
 GroundStation2::GroundStation2(const Vector3d &geographic_pos, TYPE vision_zone_angle)
 	: GroundStation(geographic_pos, vision_zone_angle)
 {
-
+	observation_vec_size = 1 + 1;
 }
 
 
@@ -111,16 +113,38 @@ VectorXd GroundStation2::MakeObservation(const VectorXd & X, TYPE t) const
 	Vector3d cur_geographic_pos = _geographic_pos;
 	cur_geographic_pos(2) += StarTime(start_star_time, t);
 
-	TYPE JD = t / SECINDAY - 0.5;
+	TYPE JD = J2000 + t / SECINDAY;
 
 	Vector3d cur_fix_pos = Geographic2Fix(cur_geographic_pos, JD);
 	Vector3d temp = X.head(VEC_SIZE) - cur_fix_pos;
 	VectorXd result(1);
-	result << temp.norm() + X(X.size() - 1);
+	result << temp.norm();
 	return result;
 }
 
-void GroundStation2::SaveObservation(const VectorXd & X, TYPE t, size_t time_moment = -1)
+void GroundStation2::SaveObservation(const VectorXd & X, TYPE t, size_t time_moment)
 {
+	Vector2d sputnik_horiz_pos = GroundStation::MakeObservation(X, t);
 
+	// проверка на попадание элевации в конус видимости НИП
+	if (sputnik_horiz_pos(0) >= _vision_zone_angle)
+	{
+		if (is_session_initialized == false)
+			InitObservationSession(time_moment);
+
+		VectorXd distance = MakeObservation(X, t);
+
+		if (do_random)
+		{
+			// TODO: ошибку приводим к км
+			distance(0) += 
+				(DELTA + distribution(generator, random_error_params[0])) / 1000;
+		}
+
+		ObservationModel::SaveObservation(distance, t, time_moment);
+	}
+	else if (is_session_initialized == true)
+	{
+		CloseObservationSession(time_moment);	// момент после последнего измерения
+	}
 }
