@@ -18,11 +18,14 @@
 
 #include "LeastSquareMethod.h"
 
+#define MAIN_TEST
 #define LSM_TEST
-//#define TEST
+////#define TEST
 #define INITIALS
 #define EVOLUTION
 #define FALLING
+
+#define NUM_OF_FALLS	30
 
 using namespace Eigen;
 using namespace MyFunc;
@@ -35,6 +38,7 @@ MatrixXd GenerateSputnikOrbit(const VectorXd& initial_conditions, TYPE t0, TYPE 
 
 int main()
 {
+#ifdef MAIN_TEST
 	TYPE duration = SECINDAY * 30;
 
 	TYPE stddev =
@@ -71,8 +75,8 @@ int main()
 
 		cout << endl << "Finished" << endl;
 
-		//cout << " * Saving sputnik_orbit" << endl;
-		//to_file(sputnik_orbit);
+		cout << " * Saving sputnik_orbit" << endl;
+		to_file(sputnik_orbit);
 
 		//cout << " * Saving observations" << endl;
 		//to_file(ground_station.GetObservations(), false);
@@ -208,33 +212,51 @@ int main()
 	to_file(initial_evolution);
 #endif
 
+#endif	// LSM_TEST
+
+#endif	// MAIN_TEST
+
 #ifdef FALLING
 	cout << endl << "Modelling fall of sputnik" << endl;
 
 	MatrixXd orbit_result;
 	MatrixXd pos_matrix;
-	TYPE t0 = lsm_start_session.start_moment;
-	TYPE t1 = t0 + SECINDAY * 30;
+//	TYPE t0 = lsm_start_session.start_moment;
+	TYPE t0 = 0.0;
+	TYPE t1 = t0 + SECINDAY * 60;
 	TYPE min;
 	size_t min_idx;
 	VectorXd min_vec;
 	Vector3d temp_vec;
 	Vector3d fall_coord;
 
-	MatrixXd fall_results(30, 3);
-	MatrixXd fall_fix(30, 3);
-	//MatrixXd fall_test(30, 3);
+	MatrixXd fall_results(NUM_OF_FALLS, VEC_SIZE);
+	MatrixXd fall_fix(NUM_OF_FALLS, VEC_SIZE);
+	//MatrixXd fall_test(NUM_OF_FALLS, VEC_SIZE);
 	size_t num_of_fall = 0;
 
 	TYPE JD;
 
-	for (size_t i = 0; i < 30; i++)
+#ifdef MAIN_TEST
+	VectorXd falling_init = res_initial_condition;
+#else
+	TYPE alpha_height = 970 + Earth::meanRadius;
+	TYPE pi_height = 140 + Earth::meanRadius;
+
+	TYPE a = (alpha_height + pi_height) / 2.0;
+	TYPE e = (alpha_height - pi_height) / (alpha_height + pi_height);
+	Orbit::Kepler_elements
+		elements = { 0, deg2rad(42), 0, a, e, deg2rad(0) };
+	VectorXd falling_init = Orbit::Kepler2Decart(elements);
+#endif
+
+	for (size_t i = 0; i < NUM_OF_FALLS; i++)
 	{
 		cout << endl << "Num of falling - " << i << endl;
 
 		// со временем смоделируем
 		orbit_result = 
-			GenerateSputnikOrbit(res_initial_condition, t0, t1, true).bottomLeftCorner(15, VEC_SIZE + 1);
+			GenerateSputnikOrbit(falling_init, t0, t1, true).bottomLeftCorner(15, VEC_SIZE + 1);
 		pos_matrix = orbit_result.rightCols(VEC_SIZE);
 
 		min_vec = pos_matrix.rowwise().stableNorm();
@@ -244,12 +266,12 @@ int main()
 		cout << "min_idx = " << min_idx << endl;
 		cout << "min_vec:" << endl << min_vec << endl;
 
-		temp_vec = pos_matrix.row(min_idx);
 		if (min > 0.5)
 			continue;
 
 		JD = orbit_result(min_idx, 0) / SECINDAY + J2000;
 
+		temp_vec = pos_matrix.row(min_idx);
 		fall_fix.row(num_of_fall) = temp_vec;
 
 		fall_coord = Decart2Spher(temp_vec);
@@ -258,11 +280,11 @@ int main()
 		num_of_fall++;
 	}
 
+	fall_results.rightCols(2) *= DEG_IN_RAD;
+
 	cout << " * Saving fall_results" << endl;
 	to_file(MatrixXd(fall_fix.topRows(num_of_fall)));
 	to_file(MatrixXd(fall_results.topRows(num_of_fall)));
-
-	fall_results.rightCols(2) *= DEG_IN_RAD;
 
 	VectorXd mean_vec;
 	mean_vec = fall_results.rightCols(2).colwise().mean();
@@ -290,8 +312,6 @@ int main()
 
 	to_file(mean_vec);
 	to_file(K_matrix);
-
-#endif
 
 #endif
 
