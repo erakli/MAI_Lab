@@ -33,13 +33,13 @@ using namespace Transform;
 using namespace std;
 
 void Information(const Orbit::Kepler_elements &elements);
-MatrixXd GenerateSputnikOrbit(TYPE duration);
+MatrixXd GenerateSputnikOrbit(TYPE duration, bool with_time);
 MatrixXd GenerateSputnikOrbit(const VectorXd& initial_conditions, TYPE t0, TYPE t1, bool with_time = false);
 
 int main()
 {
 #ifdef MAIN_TEST
-	TYPE duration = SECINDAY * 30;
+	TYPE duration = SECINDAY * 5;
 
 	TYPE stddev =
 		//0.5;
@@ -58,7 +58,9 @@ int main()
 #endif
 
 //	{
-		MatrixXd sputnik_orbit = GenerateSputnikOrbit(duration);
+		MatrixXd sputnik_orbit_with_time = GenerateSputnikOrbit(duration, true);
+		VectorXd times = sputnik_orbit_with_time.leftCols(1);
+		MatrixXd sputnik_orbit = sputnik_orbit_with_time.rightCols(sputnik_orbit_with_time.cols() - 1);
 		size_t num_of_results = sputnik_orbit.rows();
 
 		ground_station.SetRandomErrorParams(random_param_vec);
@@ -75,42 +77,37 @@ int main()
 
 		cout << endl << "Finished" << endl;
 
-		cout << " * Saving sputnik_orbit" << endl;
-		to_file(sputnik_orbit);
-
-		//cout << " * Saving observations" << endl;
-		//to_file(ground_station.GetObservations(), false);
-
 #ifdef LSM_TEST
 		cout << endl << "Started LSM" << endl;
 
-		ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
+		//ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
+		ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().back();
 
 		// берём только последнее измерение
 		observation_sessions_vec.assign(
 			1, lsm_start_session);
 
-//		observation_sessions_vec = ground_station.GetObservationSessionsVector();
+		//observation_sessions_vec = ground_station.GetObservationSessionsVector();
 		//ObservationSession lsm_start_session = observation_sessions_vec.front();
 
 		// берём вектор состояния на первый момент наблюдений и слегка варьируем
 		true_initial_condition =
 			sputnik_orbit.row(lsm_start_session.start_moment);
 
-		//Vector6d init_delta;
-		//init_delta << 11.0, -4.0, -12.0, -0.01, 0.003, -0.007;
+		Vector6d init_delta;
+		init_delta << 11.0, -4.0, -12.0, -0.01, 0.01, -0.01;
 
-		//initial_condition = true_initial_condition;
-//		initial_condition += init_delta;
+		initial_condition = true_initial_condition;
+		initial_condition += init_delta;
 
-		Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
-		another_elements.a += another_elements.a * 1.0e-2;
-		another_elements.e -= another_elements.e * 1.0e-2;
-		another_elements.i += another_elements.i * 1.0e-2;
-		another_elements.omega += another_elements.omega * 1.0e-3;
-		another_elements._Omega -= another_elements._Omega * 1.0e-3;
-		another_elements.teta += another_elements.teta * 1.0e-3;
-		initial_condition = Orbit::Kepler2Decart(another_elements);
+		//Orbit::Kepler_elements another_elements = Orbit::Decart2Kepler(true_initial_condition);
+		//another_elements.a += another_elements.a * 1.0e-2;
+		//another_elements.e -= another_elements.e * 1.0e-2;
+		//another_elements.i += another_elements.i * 1.0e-2;
+		//another_elements.omega += another_elements.omega * 1.0e-3;
+		//another_elements._Omega -= another_elements._Omega * 1.0e-3;
+		//another_elements.teta += another_elements.teta * 1.0e-3;
+		//initial_condition = Orbit::Kepler2Decart(another_elements);
 #endif
 //	}
 
@@ -157,7 +154,8 @@ int main()
 	LeastSquareMethod ls_method;
 	ls_method.SetInitialCondition(initial_condition);
 	// TODO: возьмём только последний участок измерений
-	ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
+	//ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
+	ls_method.SetObservations(ground_station.GetObservations().bottomRows(lsm_start_session.GetDuration()));
 	//ls_method.SetObservations(ground_station.GetObservations());
 	ls_method.SetObservationsError(observations_disp_vec);
 	ls_method.SetModel(&sputnik);
@@ -165,18 +163,28 @@ int main()
 	ls_method.SetObservationSessionsVec(observation_sessions_vec);
 
 
-	TYPE pos_delta = 1.0e-6;
-	TYPE veloc_delta = 1.0e-6;
+	TYPE pos_delta = 1.0e-10;
+	TYPE veloc_delta = 1.0e-10;
 	VectorXd delta(6);
 	delta << 
 		pos_delta, pos_delta, pos_delta, 
 		veloc_delta, veloc_delta, veloc_delta;
 
 	ls_method.SetDelta(delta);
-	ls_method.SetDeltaObserve(delta * 100.0);
 
+	pos_delta = 1.0e-11;
+	veloc_delta = 1.0e-11;
+	delta <<
+		pos_delta, pos_delta, pos_delta,
+		veloc_delta, veloc_delta, veloc_delta;
+
+	ls_method.SetDeltaObserve(delta);
+
+	TYPE stop_cond = 5.0e-3;
 	Vector6d stop_condition;
-	stop_condition << 1.0e-3, 1.0e-3, 1.0e-3, 1.0e-3, 1.0e-3, 1.0e-3;
+	stop_condition << 
+		stop_cond, stop_cond, stop_cond, 
+		stop_cond / 10.0, stop_cond / 10.0, stop_cond / 10.0;
 
 	MatrixXd log_matrix = ls_method.Run(stop_condition);
 
@@ -218,20 +226,21 @@ int main()
 
 #ifdef FALLING
 	cout << endl << "Modelling fall of sputnik" << endl;
+	system("pause");
 
 	MatrixXd orbit_result;
 	MatrixXd pos_matrix;
 //	TYPE t0 = lsm_start_session.start_moment;
 	TYPE t0 = 0.0;
-	TYPE t1 = t0 + SECINDAY * 60;
+	TYPE t1 = t0 + SECINDAY * 15;
 	TYPE min;
 	size_t min_idx;
 	VectorXd min_vec;
 	Vector3d temp_vec;
 	Vector3d fall_coord;
 
+	MatrixXd fall_fix(NUM_OF_FALLS, VEC_SIZE + 1);
 	MatrixXd fall_results(NUM_OF_FALLS, VEC_SIZE);
-	MatrixXd fall_fix(NUM_OF_FALLS, VEC_SIZE);
 	//MatrixXd fall_test(NUM_OF_FALLS, VEC_SIZE);
 	size_t num_of_fall = 0;
 
@@ -271,9 +280,9 @@ int main()
 
 		JD = orbit_result(min_idx, 0) / SECINDAY + J2000;
 
-		temp_vec = pos_matrix.row(min_idx);
-		fall_fix.row(num_of_fall) = temp_vec;
+		fall_fix.row(num_of_fall) = orbit_result.row(min_idx);
 
+		temp_vec = pos_matrix.row(min_idx);
 		fall_coord = Decart2Spher(temp_vec);
 		fall_results.row(num_of_fall) = Spher2Geographic(fall_coord, JD);
 
@@ -315,6 +324,12 @@ int main()
 
 #endif
 
+	cout << " * Saving sputnik_orbit" << endl;
+	to_file(sputnik_orbit_with_time);
+
+	cout << " * Saving observations" << endl;
+	to_file(ground_station.GetObservations(), false);
+
 //	system("pause");
 }
 
@@ -334,7 +349,7 @@ void Information(const Orbit::Kepler_elements &elements)
 
 
 
-MatrixXd GenerateSputnikOrbit(TYPE duration)
+MatrixXd GenerateSputnikOrbit(TYPE duration, bool with_time)
 {
 	TYPE alpha_height = 970 + Earth::meanRadius;
 	TYPE pi_height = 140 + Earth::meanRadius;
@@ -358,7 +373,11 @@ MatrixXd GenerateSputnikOrbit(TYPE duration)
 	//cout << "Result X2: " << X2.transpose() << endl;
 #endif
 
-	return GenerateSputnikOrbit(Orbit::Kepler2Decart(elements), 0.0, duration);
+	VectorXd start_cond = Orbit::Kepler2Decart(elements);
+//	cout << "Saving start condition" << endl;
+//	to_file(start_cond);
+
+	return GenerateSputnikOrbit(start_cond, 0.0, duration, with_time);
 }
 
 
