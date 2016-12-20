@@ -17,7 +17,7 @@ using namespace std;
 //#define CONSOLE_OUTPUT
 #define CONSOLE_OUTPUT2
 //#define TEST
-//#define TEST2
+#define TEST2
 
 #if defined(CONSOLE_OUTPUT) || defined(CONSOLE_OUTPUT2)
 #include <iostream>
@@ -56,6 +56,7 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 	MatrixXd matrix_H;
 	MatrixXd D_eta;
 	MatrixXd H_D_eta;
+	MatrixXd K_inv;
 	MatrixXd K;
 
 	VectorXd delta_X;
@@ -87,7 +88,7 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		cout << endl << "Saving observations_deviation vector" << endl;
 		Map<Matrix<double, Dynamic, Dynamic, RowMajor>> 
 			temp_deviations(observations_deviation.data(), observations_deviation.size() / 2, 2);
-		to_file(MatrixXd(temp_deviations));
+		to_file(MatrixXd(temp_deviations * DEG_IN_RAD));
 
 		//system("pause");
 #endif
@@ -95,7 +96,18 @@ MatrixXd LeastSquareMethod::Run(const Eigen::VectorXd & stop_condition)
 		matrix_H = EvalH(reference_trajectory);
 
 		H_D_eta = matrix_H.transpose() * D_eta;
-		K = (H_D_eta * matrix_H).inverse();
+		K_inv = H_D_eta * matrix_H;
+
+		if (abs(K_inv.determinant()) < 1.0e-32)
+		{
+#ifdef CONSOLE_OUTPUT2
+			cout << "K_inv determinant is too small" << endl;
+			system("pause");
+#endif
+			break;
+		}
+
+		K = K_inv.inverse();
 
 		delta_X = K * H_D_eta * observations_deviation;
 
@@ -384,14 +396,14 @@ MatrixXd LeastSquareMethod::EvalH(const MatrixXd& reference_trajectory)
 				temp_sum += from_state[i].col(k).array() * from_initial[j](i, k);
 
 #ifdef CONSOLE_OUTPUT
-				//cout << endl << "k = " << k << endl;
-				//cout << "from_state[i].col(k).array()" << endl << from_state[i].col(k).array() << endl;
-				//cout << "from_initial[j](i, k) = " << from_initial[j](i, k) << endl;
-				//cout << "from_state[i].col(k).array() * from_initial[j](i, k):" << endl << from_state[i].col(k).array() * from_initial[j](i, k) << endl;
-				//cout << "temp_sum:" << endl << temp_sum << endl;
-				//cout << endl;
+				cout << endl << "k = " << k << endl;
+				cout << "from_state[i].col(k).array()" << endl << from_state[i].col(k).array() << endl;
+				cout << "from_initial[j](i, k) = " << from_initial[j](i, k) << endl;
+				cout << "from_state[i].col(k).array() * from_initial[j](i, k):" << endl << from_state[i].col(k).array() * from_initial[j](i, k) << endl;
+				cout << "temp_sum:" << endl << temp_sum << endl;
+				cout << endl;
 
-				//system("pause");
+				system("pause");
 #endif
 
 			}
@@ -440,7 +452,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromInitial()
 	VectorXd var_initial_condition = initial_condition;
 
 	MatrixXd var_traectories[NUM_OF_DEVIATIONS];
-	short sign[NUM_OF_DEVIATIONS] = { 1, -1 };
+	TYPE sign[NUM_OF_DEVIATIONS] = { 1.0, -1.0 };
 
 	MatrixXd temp_trajectory;
 	TYPE temp;
@@ -518,7 +530,7 @@ VectorOfMatrix LeastSquareMethod::EvalPartDerivateFromState(const MatrixXd & ref
 	VectorXd var_state_vector;
 
 	MatrixXd var_observations[NUM_OF_DEVIATIONS];
-	short sign[NUM_OF_DEVIATIONS] = { 1, -1 };
+	TYPE sign[NUM_OF_DEVIATIONS] = { 1.0, -1.0 };
 
 	for (size_t deviation = 0; deviation < NUM_OF_DEVIATIONS; deviation++)
 	{
