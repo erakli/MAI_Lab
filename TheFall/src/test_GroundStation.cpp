@@ -20,10 +20,10 @@
 
 #define MAIN_TEST
 #define LSM_TEST
-////#define TEST
+//#define TEST
 #define INITIALS
 #define EVOLUTION
-#define FALLING
+//#define FALLING
 
 #define NUM_OF_FALLS	30
 
@@ -80,8 +80,8 @@ int main()
 #ifdef LSM_TEST
 		cout << endl << "Started LSM" << endl;
 
-		//ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
-		ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().back();
+		ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().front();
+		//ObservationSession lsm_start_session = ground_station.GetObservationSessionsVector().back();
 
 		// берём только последнее измерение
 		observation_sessions_vec.assign(
@@ -95,7 +95,7 @@ int main()
 			sputnik_orbit.row(lsm_start_session.start_moment);
 
 		Vector6d init_delta;
-		init_delta << 11.0, -4.0, -12.0, -0.01, 0.01, -0.01;
+		init_delta << 100.0, -400.0, -12.0, -0.5, 0.5, -0.5;
 
 		initial_condition = true_initial_condition;
 		initial_condition += init_delta;
@@ -154,8 +154,8 @@ int main()
 	LeastSquareMethod ls_method;
 	ls_method.SetInitialCondition(initial_condition);
 	// TODO: возьмём только последний участок измерений
-	//ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
-	ls_method.SetObservations(ground_station.GetObservations().bottomRows(lsm_start_session.GetDuration()));
+	ls_method.SetObservations(ground_station.GetObservations().topRows(lsm_start_session.GetDuration()));
+	//ls_method.SetObservations(ground_station.GetObservations().bottomRows(lsm_start_session.GetDuration()));
 	//ls_method.SetObservations(ground_station.GetObservations());
 	ls_method.SetObservationsError(observations_disp_vec);
 	ls_method.SetModel(&sputnik);
@@ -163,8 +163,8 @@ int main()
 	ls_method.SetObservationSessionsVec(observation_sessions_vec);
 
 
-	TYPE pos_delta = 1.0e-10;
-	TYPE veloc_delta = 1.0e-10;
+	TYPE pos_delta = 1.0e-3;
+	TYPE veloc_delta = 1.0e-3;
 	VectorXd delta(6);
 	delta << 
 		pos_delta, pos_delta, pos_delta, 
@@ -172,15 +172,15 @@ int main()
 
 	ls_method.SetDelta(delta);
 
-	pos_delta = 1.0e-11;
-	veloc_delta = 1.0e-11;
+	pos_delta = 1.0e-4;
+	veloc_delta = 1.0e-4;
 	delta <<
 		pos_delta, pos_delta, pos_delta,
 		veloc_delta, veloc_delta, veloc_delta;
 
 	ls_method.SetDeltaObserve(delta);
 
-	TYPE stop_cond = 5.0e-3;
+	TYPE stop_cond = 1.0e-3;
 	Vector6d stop_condition;
 	stop_condition << 
 		stop_cond, stop_cond, stop_cond, 
@@ -324,11 +324,11 @@ int main()
 
 #endif
 
-	cout << " * Saving sputnik_orbit" << endl;
-	to_file(sputnik_orbit_with_time);
+	//cout << " * Saving sputnik_orbit" << endl;
+	//to_file(sputnik_orbit_with_time);
 
-	cout << " * Saving observations" << endl;
-	to_file(ground_station.GetObservations(), false);
+	//cout << " * Saving observations" << endl;
+	//to_file(ground_station.GetObservations(), false);
 
 //	system("pause");
 }
