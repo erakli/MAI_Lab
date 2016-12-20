@@ -26,8 +26,10 @@ VectorXd GetWhiteNoise(TYPE omega, TYPE t0, TYPE t1, TYPE &dt)
 	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
 
 	// генератор с гауссовским нормальным распределением СВ
-	default_random_engine generator(seed);
+	default_random_engine generator;
 	normal_distribution<TYPE> distribution(0, sqrt(Disp));
+
+	generator.seed(seed);
 
 	for (size_t i = 0; i < vector_size; i++)
 		WhiteNoise(i) = distribution(generator);
