@@ -35,10 +35,10 @@ ObservationModel::ObservationModel()
 	do_random = false;
 
 	// construct a trivial random generator engine from a time - based seed :
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	//unsigned seed = chrono::system_clock::now().time_since_epoch().count();
 
-	// генератор с гауссовским нормальным распределением СВ
-	generator.seed(seed);
+	//// генератор с гауссовским нормальным распределением СВ
+	//generator.seed(seed);
 }
 
 ObservationModel::~ObservationModel()
