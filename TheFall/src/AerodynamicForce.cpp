@@ -5,9 +5,11 @@
 
 #include "DormanPrinceSolver_fixed.h"
 #include "ShapingFilter.h"
+#include <file_output.h>
 
 using namespace Eigen;
 
+//#define CONSOLE_OUTPUT
 
 #ifdef CONSOLE_OUTPUT
 #include <iostream>
@@ -188,13 +190,15 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 		ShapingFilter shaping_filter;
 		DormanPrinceSolver_fixed integrator;
 
-		TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
+//		TYPE omega = 2 * PI / CORRELATION_INTERVAL;	// частота генерации Белого Шума
+		TYPE omega = 1.0e+1;
 
 		shaping_filter.SetInterval(CORRELATION_INTERVAL);
 		shaping_filter.Set_t1(t1 + CORRELATION_INTERVAL + 10);
 		shaping_filter.Generate_WhiteNoise(omega);
 
-		integrator.SetCorrelationInterval(CORRELATION_INTERVAL);
+		TYPE corr_interval = shaping_filter.GetCorrelationInterval();
+		integrator.SetCorrelationInterval(corr_interval);
 
 		integrator.Run(shaping_filter);
 
@@ -206,12 +210,12 @@ void AerodynamicForce::GenerateRandomRealization(TYPE t1)
 		cout << shaping_filter.GetResult().topRows(10);
 		cout << endl;
 
-		cout << endl;
-		cout << "random_process_realization:" << endl;
-		cout << random_process_realization.head(10);
-		cout << endl;
+		//cout << endl;
+		//cout << "random_process_realization:" << endl;
+		//cout << random_process_realization.head(10);
+		//cout << endl;
 
-		system("pause");
+		//system("pause");
 #endif
 	}
 }
